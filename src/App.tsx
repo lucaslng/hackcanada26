@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { Header } from './components/Header';
+import type { PortalView } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomePage } from './components/wizard/HomePage';
 import { WizardShell } from './components/wizard/WizardShell';
+import { AdminReviewerPanel } from './components/admin/AdminReviewerPanel';
 import { useTheme } from './hooks/useTheme';
 import { useWizard } from './hooks/useWizard';
 import { getServiceText, getUIStrings } from './constants/i18n';
@@ -15,6 +17,7 @@ import './App.css';
 export default function App() {
   const { theme, setTheme } = useTheme();
   const [language, setLanguage] = useState<Language>('en');
+  const [view, setView] = useState<PortalView>('canadian-user');
   const [started, setStarted] = useState(false);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
 
@@ -40,10 +43,17 @@ export default function App() {
   };
 
   const navigateToSection = (sectionId: string) => {
+    setView('canadian-user');
     setStarted(false);
     window.setTimeout(() => {
       document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 0);
+  };
+
+  const changeView = (nextView: PortalView) => {
+    setView(nextView);
+    if (nextView === 'canadian-user') return;
+    setStarted(false);
   };
 
   return (
@@ -56,24 +66,32 @@ export default function App() {
         t={t}
         theme={theme}
         onThemeChange={setTheme}
+        view={view}
+        onViewChange={changeView}
       />
       <main className="main">
-        {started ? (
-          <WizardShell
-            t={t}
-            state={state}
-            actions={actions}
-            serviceTitle={serviceTitle}
-            language={language}
-            onExit={resetFlow}
-          />
+        {view === 'admin-reviewer' ? (
+          <AdminReviewerPanel />
         ) : (
-          <HomePage
-            t={t}
-            language={language}
-            onStartService={startService}
-            onNavigate={navigateToSection}
-          />
+          <>
+            {started ? (
+              <WizardShell
+                t={t}
+                state={state}
+                actions={actions}
+                serviceTitle={serviceTitle}
+                language={language}
+                onExit={resetFlow}
+              />
+            ) : (
+              <HomePage
+                t={t}
+                language={language}
+                onStartService={startService}
+                onNavigate={navigateToSection}
+              />
+            )}
+          </>
         )}
         <Footer t={t} />
       </main>
