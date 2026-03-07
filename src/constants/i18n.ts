@@ -1,5 +1,14 @@
 // i18n.ts
 
+export {
+  LANGUAGE_OPTIONS,
+  getLocale,
+  getProvinceName,
+  getServiceDetailsText,
+  getServiceText,
+  getUIStrings,
+} from './locales';
+
 export type Language = "en" | "fr";
 
 export const UI = {
@@ -356,3 +365,4 @@ export const SERVICE_TEXT: Record<
     },
   },
 };
+export type { Language, LocalePack, UIStrings } from './locales';

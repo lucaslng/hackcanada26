@@ -2,20 +2,21 @@
 
 import { Button } from "../ui/Button";
 import { Step1, Step2, Step3, Step4, Step5, Step8 } from "./WizardSteps";
+import { Step6 } from "./Step6";
+import { Step7 } from "./Step7Submission";
 import {
   TOTAL_STEPS,
   type WizardState,
   type WizardActions,
 } from "../../hooks/useWizard";
-import type { UIStrings } from "../../constants/i18n";
-import { Step6 } from "./Step6";
-import { Step7 } from "./Step7Submission";
+import type { Language, UIStrings } from "../../constants/i18n";
 
 interface WizardShellProps {
   t: UIStrings;
   state: WizardState;
   actions: WizardActions;
   serviceTitle: string;
+  language: Language;
   onExit: () => void;
 }
 
@@ -24,6 +25,7 @@ export function WizardShell({
   state,
   actions,
   serviceTitle,
+  language,
   onExit,
 }: WizardShellProps) {
   const { step, canContinue, submitStatus } = state;
@@ -34,6 +36,7 @@ export function WizardShell({
         return (
           <Step1
             t={t}
+            language={language}
             selectedOption={state.selectedOption}
             serviceTitle={serviceTitle}
           />
@@ -42,6 +45,7 @@ export function WizardShell({
         return (
           <Step2
             t={t}
+            language={language}
             contactInfo={state.contactInfo}
             onFieldChange={actions.updateContactField}
           />
@@ -108,16 +112,16 @@ export function WizardShell({
   const isStep7 = step === 7;
 
   const step7ContinueLabel = () => {
-    if (submitStatus === 'processing') return 'Submitting…';
-    if (submitStatus === 'done') return t.continue;
-    return 'Submit application';
+    if (submitStatus === "processing") return "Submitting…";
+    if (submitStatus === "done") return t.continue;
+    return "Submit application";
   };
 
   const handleContinueClick = () => {
     if (isStep7) {
-      if (submitStatus === 'idle') {
+      if (submitStatus === "idle") {
         actions.submitApplication();
-      } else if (submitStatus === 'done') {
+      } else if (submitStatus === "done") {
         actions.goNext();
       }
       // "processing" → button is disabled, so this branch won't fire
@@ -128,7 +132,7 @@ export function WizardShell({
 
   const isContinueDisabled = () => {
     if (isStep7) {
-      return submitStatus === 'processing';
+      return submitStatus === "processing";
     }
     return !canContinue;
   };
@@ -151,24 +155,21 @@ export function WizardShell({
           <Button
             variant="ghost"
             onClick={actions.goBack}
-            disabled={step === 1 || (isStep7 && submitStatus === 'processing')}
+            disabled={step === 1 || (isStep7 && submitStatus === "processing")}
           >
             {t.back}
           </Button>
           <Button
             variant="ghost"
             onClick={onExit}
-            disabled={isStep7 && submitStatus === 'processing'}
+            disabled={isStep7 && submitStatus === "processing"}
           >
             {t.exitSetup}
           </Button>
         </div>
 
         {step < TOTAL_STEPS ? (
-          <Button
-            onClick={handleContinueClick}
-            disabled={isContinueDisabled()}
-          >
+          <Button onClick={handleContinueClick} disabled={isContinueDisabled()}>
             {isStep7 ? step7ContinueLabel() : t.continue}
           </Button>
         ) : (

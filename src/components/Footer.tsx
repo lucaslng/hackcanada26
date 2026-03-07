@@ -1,48 +1,45 @@
 // Footer.tsx
 
+import type { UIStrings } from '../constants/i18n';
+
 interface FooterProps {
-  language: 'en' | 'fr';
+  t: UIStrings;
 }
 
-export function Footer({ language }: FooterProps) {
-  const isFr = language === 'fr';
+export function Footer({ t }: FooterProps) {
   return (
     <footer className="site-footer">
       <div className="footer-inner">
         <div className="footer-brand">
-          <span>{isFr ? 'Portail de renouvellement Service Canada' : 'Service Canada Renewal Portal'}</span>
+          <span>{t.footerBrand}</span>
         </div>
 
         <div className="footer-columns">
           <div>
-            <h4>{isFr ? 'Services' : 'Services'}</h4>
-            <a href="#services">{isFr ? 'Renouvellement de passeport' : 'Passport Renewal'}</a>
-            <a href="#services">{isFr ? 'Permis de conduire' : "Driver's Licence"}</a>
-            <a href="#services">{isFr ? 'Carte santé' : 'Health Card'}</a>
-            <a href="#services">{isFr ? 'Mises à jour NAS' : 'SIN Updates'}</a>
+            <h4>{t.footerServicesTitle}</h4>
+            <a href="#services">{t.footerPassportRenewal}</a>
+            <a href="#services">{t.footerDriversLicense}</a>
+            <a href="#services">{t.footerHealthCard}</a>
+            <a href="#services">{t.footerSinUpdates}</a>
           </div>
           <div>
-            <h4>{isFr ? 'Ressources' : 'Resources'}</h4>
-            <a href="#information">{isFr ? 'Fonctionnement' : 'How It Works'}</a>
-            <a href="#security-privacy">{isFr ? 'Sécurité et confidentialité' : 'Security & Privacy'}</a>
-            <a href="#support">{isFr ? 'Accessibilité' : 'Accessibility'}</a>
+            <h4>{t.footerResourcesTitle}</h4>
+            <a href="#information">{t.footerHowItWorks}</a>
+            <a href="#security-privacy">{t.footerSecurityPrivacy}</a>
+            <a href="#support">{t.footerAccessibility}</a>
           </div>
           <div>
-            <h4>{isFr ? 'Contact et aide' : 'Contact & Support'}</h4>
-            <a href="#contact">{isFr ? 'Contact' : 'Contact Us'}</a>
-            <a href="#support">{isFr ? "Centre d'aide" : 'Help Centre'}</a>
-            <a href="#support">{isFr ? 'Support technique' : 'Technical Support'}</a>
+            <h4>{t.footerContactSupportTitle}</h4>
+            <a href="#contact">{t.footerContactUs}</a>
+            <a href="#support">{t.footerHelpCentre}</a>
+            <a href="#support">{t.footerTechnicalSupport}</a>
           </div>
         </div>
 
         <div className="footer-legal">
-          <span>{isFr ? '© Gouvernement du Canada, 2026' : '© Government of Canada, 2026'}</span>
-          <span>{isFr ? 'Conditions et confidentialité' : 'Terms and Privacy'}</span>
-          <span>
-            {isFr
-              ? "Cette application est une démonstration et n'est pas un service officiel en production."
-              : 'This is a demonstration application and not an official production service.'}
-          </span>
+          <span>{t.footerCopyright}</span>
+          <span>{t.footerTermsPrivacy}</span>
+          <span>{t.footerDemoDisclaimer}</span>
         </div>
       </div>
     </footer>

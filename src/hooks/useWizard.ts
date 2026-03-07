@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import type { CloudinaryUploadResult } from '../cloudinary/UploadWidget';
 import { RENEWAL_OPTIONS, type RenewalForm, type RenewalOption } from '../data/renewalOptions';
+import { getServiceDetailsText, getServiceText, type Language } from '../constants/i18n';
 
 export const TOTAL_STEPS = 8;
 
@@ -110,7 +111,7 @@ async function dummySubmitApi(): Promise<string> {
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
-export function useWizard(selectedOptionId: string | null) {
+export function useWizard(selectedOptionId: string | null, language: Language) {
   const [step, setStep] = useState(1);
   const [contactInfo, setContactInfo] = useState<ContactInfo>(EMPTY_CONTACT);
   const [typedIntent, setTypedIntent] = useState('');
@@ -179,7 +180,16 @@ export function useWizard(selectedOptionId: string | null) {
     if (!text) return null;
     return (
       availableOptions.find(
-        (o) => o.keywords.some((kw) => text.includes(kw)) || text.includes(o.title.toLowerCase()),
+        (o) => {
+          const localizedTitle = getServiceText(o.id, language)?.title ?? '';
+          const localizedKeywords = getServiceDetailsText(o.id, language)?.keywords ?? [];
+          const allKeywords = [...o.keywords, ...localizedKeywords];
+          return (
+            allKeywords.some((kw) => text.includes(kw.toLowerCase()))
+            || text.includes(o.title.toLowerCase())
+            || text.includes(localizedTitle.toLowerCase())
+          );
+        },
       ) ?? null
     );
   };

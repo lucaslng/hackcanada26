@@ -23,6 +23,8 @@ interface UploadWidgetProps {
   onUploadSuccess?: (result: CloudinaryUploadResult) => void;
   onUploadError?: (error: Error) => void;
   buttonText?: string;
+  loadingText?: string;
+  loadErrorText?: string;
   className?: string;
 }
 
@@ -30,6 +32,8 @@ export function UploadWidget({
   onUploadSuccess,
   onUploadError,
   buttonText = 'Upload Image',
+  loadingText = 'Loading…',
+  loadErrorText = 'Upload widget failed to load. Please refresh the page or check your network connection.',
   className = 'ui-btn ui-btn--primary',
 }: UploadWidgetProps) {
   const widgetRef = useRef<{ open: () => void } | null>(null);
@@ -125,7 +129,7 @@ export function UploadWidget({
   if (scriptError) {
     return (
       <div style={{ color: '#dc2626', fontSize: '0.875rem' }}>
-        Upload widget failed to load. Please refresh the page or check your network connection.
+        {loadErrorText}
       </div>
     );
   }
@@ -138,7 +142,7 @@ export function UploadWidget({
       className={className}
       style={{ cursor: isReady ? 'pointer' : 'wait' }}
     >
-      {isReady ? buttonText : 'Loading…'}
+      {isReady ? buttonText : loadingText}
     </button>
   );
 }

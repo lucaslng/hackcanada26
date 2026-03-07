@@ -7,7 +7,7 @@ import { HomePage } from './components/wizard/HomePage';
 import { WizardShell } from './components/wizard/WizardShell';
 import { useTheme } from './hooks/useTheme';
 import { useWizard } from './hooks/useWizard';
-import { UI, SERVICE_TEXT } from './constants/i18n';
+import { getServiceText, getUIStrings } from './constants/i18n';
 import type { Language } from './constants/i18n';
 import { RENEWAL_OPTIONS } from './data/renewalOptions';
 import './App.css';
@@ -18,12 +18,12 @@ export default function App() {
   const [started, setStarted] = useState(false);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
 
-  const t = UI[language];
-  const { state, actions, reset } = useWizard(selectedOptionId);
+  const t = getUIStrings(language);
+  const { state, actions, reset } = useWizard(selectedOptionId, language);
 
   const selectedOption = RENEWAL_OPTIONS.find((o) => o.id === selectedOptionId) ?? null;
   const serviceTitle = selectedOption
-    ? (SERVICE_TEXT[selectedOption.id]?.[language]?.title ?? selectedOption.title)
+    ? (getServiceText(selectedOption.id, language)?.title ?? selectedOption.title)
     : '';
 
   const startService = (optionId: string) => {
@@ -53,7 +53,7 @@ export default function App() {
         onNavigate={navigateToSection}
         language={language}
         onLanguageChange={setLanguage}
-        labels={t.nav}
+        t={t}
         theme={theme}
         onThemeChange={setTheme}
       />
@@ -64,6 +64,7 @@ export default function App() {
             state={state}
             actions={actions}
             serviceTitle={serviceTitle}
+            language={language}
             onExit={resetFlow}
           />
         ) : (
@@ -74,7 +75,7 @@ export default function App() {
             onNavigate={navigateToSection}
           />
         )}
-        <Footer language={language} />
+        <Footer t={t} />
       </main>
     </div>
   );
