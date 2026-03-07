@@ -15,6 +15,15 @@ export interface RequiredDoc {
   required: boolean;
 }
 
+export interface ServiceForm {
+  id: string;
+  name: string;
+  formNumber: string;
+  description: string;
+  url: string;
+  required: boolean;
+}
+
 export interface Service {
   id: ServiceId;
   title: string;
@@ -23,7 +32,9 @@ export interface Service {
   color: string;
   processingTime: string;
   description: string;
+  idRequirement: string;
   docs: RequiredDoc[];
+  forms: ServiceForm[];
 }
 
 export interface UploadedFile {
@@ -32,5 +43,25 @@ export interface UploadedFile {
   publicId: string;
   secureUrl: string;
 }
+
+export interface CapturedPhoto {
+  publicId: string;
+  secureUrl: string;
+  transformedUrl: string;
+}
+
+export interface VerificationResult {
+  passed: boolean;
+  confidence: number;
+  message: string;
+}
+
+export type WizardStep =
+  | 'requirements'
+  | 'id-capture'
+  | 'face-scan'
+  | 'verification'
+  | 'forms'
+  | 'submit';
 
 export type View = 'home' | 'service' | 'confirmation';
