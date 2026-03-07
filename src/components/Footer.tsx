@@ -2,41 +2,51 @@
 
 import canadianFlag from '../../assets/canadian_flag.png';
 
-export function Footer() {
+interface FooterProps {
+  language: 'en' | 'fr';
+}
+
+export function Footer({ language }: FooterProps) {
+  const isFr = language === 'fr';
+
   return (
     <footer className="site-footer">
       <div className="footer-inner">
         <div className="footer-brand">
           <img src={canadianFlag} alt="" className="footer-flag" />
-          <span>Service Canada Renewal Portal</span>
+          <span>{isFr ? 'Portail de renouvellement Service Canada' : 'Service Canada Renewal Portal'}</span>
         </div>
 
         <div className="footer-columns">
           <div>
-            <h4>Services</h4>
-            <a href="#services">Passport Renewal</a>
-            <a href="#services">Driver&apos;s Licence</a>
-            <a href="#services">Health Card</a>
-            <a href="#services">SIN Updates</a>
+            <h4>{isFr ? 'Services' : 'Services'}</h4>
+            <a href="#services">{isFr ? 'Renouvellement de passeport' : 'Passport Renewal'}</a>
+            <a href="#services">{isFr ? 'Permis de conduire' : "Driver's Licence"}</a>
+            <a href="#services">{isFr ? 'Carte santé' : 'Health Card'}</a>
+            <a href="#services">{isFr ? 'Mises à jour NAS' : 'SIN Updates'}</a>
           </div>
           <div>
-            <h4>Resources</h4>
-            <a href="#information">How It Works</a>
-            <a href="#security-privacy">Security &amp; Privacy</a>
-            <a href="#support">Accessibility</a>
+            <h4>{isFr ? 'Ressources' : 'Resources'}</h4>
+            <a href="#information">{isFr ? 'Fonctionnement' : 'How It Works'}</a>
+            <a href="#security-privacy">{isFr ? 'Sécurité et confidentialité' : 'Security & Privacy'}</a>
+            <a href="#support">{isFr ? 'Accessibilité' : 'Accessibility'}</a>
           </div>
           <div>
-            <h4>Contact &amp; Support</h4>
-            <a href="#contact">Contact Us</a>
-            <a href="#support">Help Centre</a>
-            <a href="#support">Technical Support</a>
+            <h4>{isFr ? 'Contact et aide' : 'Contact & Support'}</h4>
+            <a href="#contact">{isFr ? 'Contact' : 'Contact Us'}</a>
+            <a href="#support">{isFr ? "Centre d'aide" : 'Help Centre'}</a>
+            <a href="#support">{isFr ? 'Support technique' : 'Technical Support'}</a>
           </div>
         </div>
 
         <div className="footer-legal">
-          <span>© Government of Canada, 2026</span>
-          <span>Terms and Privacy</span>
-          <span>This is a demonstration application and not an official production service.</span>
+          <span>{isFr ? '© Gouvernement du Canada, 2026' : '© Government of Canada, 2026'}</span>
+          <span>{isFr ? 'Conditions et confidentialité' : 'Terms and Privacy'}</span>
+          <span>
+            {isFr
+              ? "Cette application est une démonstration et n'est pas un service officiel en production."
+              : 'This is a demonstration application and not an official production service.'}
+          </span>
         </div>
       </div>
     </footer>
