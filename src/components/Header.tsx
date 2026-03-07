@@ -39,9 +39,9 @@ export function Header({
             <img src={canadianFlag} alt="" className="flag-image" />
           </span>
           <span className="wordmark-text">
-            <span className="wordmark-canada">{language === 'fr' ? 'Canada' : 'Canada'}</span>
+            <span className="wordmark-canada">Service Canada</span>
             <span className="wordmark-service">
-              {language === 'fr' ? 'Service Canada - Portail de renouvellement' : 'Service Canada - Renewal Portal'}
+              {language === 'fr' ? 'Portail de renouvellement' : 'Renewal Portal'}
             </span>
           </span>
         </button>

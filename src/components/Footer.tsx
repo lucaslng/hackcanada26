@@ -1,7 +1,5 @@
 // Footer.tsx
 
-import canadianFlag from '../../assets/canadian_flag.png';
-
 interface FooterProps {
   language: 'en' | 'fr';
 }
@@ -12,7 +10,6 @@ export function Footer({ language }: FooterProps) {
     <footer className="site-footer">
       <div className="footer-inner">
         <div className="footer-brand">
-          <img src={canadianFlag} alt="" className="footer-flag" />
           <span>{isFr ? 'Portail de renouvellement Service Canada' : 'Service Canada Renewal Portal'}</span>
         </div>
 

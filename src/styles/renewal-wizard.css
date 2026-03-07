@@ -239,6 +239,12 @@
   align-items: center;
 }
 
+.wizard-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .checklist {
   list-style: none;
   padding: 0;
@@ -351,5 +357,11 @@
 
   .wizard-nav {
     gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .wizard-nav-left {
+    width: 100%;
+    justify-content: flex-start;
   }
 }

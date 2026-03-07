@@ -84,8 +84,9 @@ const UI = {
     emailLabel: 'Email',
     smsLabel: 'SMS',
     to: 'to',
-    back: 'Back',
+    back: 'Previous',
     continue: 'Continue',
+    exitSetup: 'Exit',
     returnHome: 'Return Home',
     stepOf: 'Step',
     of: 'of',
@@ -161,8 +162,9 @@ const UI = {
     emailLabel: 'Courriel',
     smsLabel: 'SMS',
     to: 'à',
-    back: 'Retour',
+    back: 'Précédent',
     continue: 'Continuer',
+    exitSetup: 'Quitter la configuration',
     returnHome: "Retour à l'accueil",
     stepOf: 'Étape',
     of: 'sur',
@@ -595,9 +597,14 @@ export default function App() {
             </div>
             {renderStep()}
             <div className="wizard-nav">
-              <Button variant="ghost" onClick={goBack} disabled={step === 1}>
-                {t.back}
-              </Button>
+              <div className="wizard-nav-left">
+                <Button variant="ghost" onClick={goBack} disabled={step === 1}>
+                  {t.back}
+                </Button>
+                <Button variant="ghost" onClick={resetFlow}>
+                  {t.exitSetup}
+                </Button>
+              </div>
               {step < TOTAL_STEPS ? (
                 <Button onClick={goNext} disabled={!canContinue()}>
                   {t.continue}
