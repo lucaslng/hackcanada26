@@ -26,7 +26,7 @@ export function WizardShell({
   serviceTitle,
   onExit,
 }: WizardShellProps) {
-  const { step, canContinue } = state;
+  const { step, canContinue, submitStatus } = state;
 
   const renderStep = () => {
     switch (step) {
@@ -79,6 +79,8 @@ export function WizardShell({
             contactInfo={state.contactInfo}
             selectedOption={state.selectedOption}
             matchScore={state.matchScore}
+            submitStatus={state.submitStatus}
+            confirmationId={state.confirmationId}
           />
         );
       case 8:
@@ -96,6 +98,39 @@ export function WizardShell({
       default:
         return null;
     }
+  };
+
+  // ── Step 7 continue button behaviour ────────────────────────────────────────
+  // "idle"       → button reads "Submit", click triggers submitApplication
+  // "processing" → button is disabled with a spinner label
+  // "done"       → button reads "Continue", click advances to step 8
+
+  const isStep7 = step === 7;
+
+  const step7ContinueLabel = () => {
+    if (submitStatus === 'processing') return 'Submitting…';
+    if (submitStatus === 'done') return t.continue;
+    return 'Submit application';
+  };
+
+  const handleContinueClick = () => {
+    if (isStep7) {
+      if (submitStatus === 'idle') {
+        actions.submitApplication();
+      } else if (submitStatus === 'done') {
+        actions.goNext();
+      }
+      // "processing" → button is disabled, so this branch won't fire
+    } else {
+      actions.goNext();
+    }
+  };
+
+  const isContinueDisabled = () => {
+    if (isStep7) {
+      return submitStatus === 'processing';
+    }
+    return !canContinue;
   };
 
   return (
@@ -116,17 +151,25 @@ export function WizardShell({
           <Button
             variant="ghost"
             onClick={actions.goBack}
-            disabled={step === 1}
+            disabled={step === 1 || (isStep7 && submitStatus === 'processing')}
           >
             {t.back}
           </Button>
-          <Button variant="ghost" onClick={onExit}>
+          <Button
+            variant="ghost"
+            onClick={onExit}
+            disabled={isStep7 && submitStatus === 'processing'}
+          >
             {t.exitSetup}
           </Button>
         </div>
+
         {step < TOTAL_STEPS ? (
-          <Button onClick={actions.goNext} disabled={!canContinue}>
-            {t.continue}
+          <Button
+            onClick={handleContinueClick}
+            disabled={isContinueDisabled()}
+          >
+            {isStep7 ? step7ContinueLabel() : t.continue}
           </Button>
         ) : (
           <Button onClick={onExit}>{t.returnHome}</Button>

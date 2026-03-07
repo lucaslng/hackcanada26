@@ -38,12 +38,16 @@ export const PROVINCES = [
   { code: 'NT', name: 'Northwest Territories' },
   { code: 'NS', name: 'Nova Scotia' },
   { code: 'NU', name: 'Nunavut' },
-  { code: 'ON', name: 'Ontario' },
+  { code: 'ON', name: 'Canada' },
   { code: 'PE', name: 'Prince Edward Island' },
   { code: 'QC', name: 'Quebec' },
   { code: 'SK', name: 'Saskatchewan' },
   { code: 'YT', name: 'Yukon' },
 ];
+
+// ─── Submission ───────────────────────────────────────────────────────────────
+
+export type SubmitStatus = 'idle' | 'processing' | 'done';
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
@@ -61,6 +65,9 @@ export interface WizardState {
   contactValue: string;
   notificationSaved: boolean;
   canContinue: boolean;
+  // Step 7 submission
+  submitStatus: SubmitStatus;
+  confirmationId: string;
 }
 
 export interface WizardActions {
@@ -75,6 +82,30 @@ export interface WizardActions {
   compareFaces: () => void;
   mapFormsFromText: (raw: string) => void;
   saveNotifications: () => void;
+  submitApplication: () => void;
+}
+
+// ─── Dummy API ────────────────────────────────────────────────────────────────
+
+function generateConfirmationId(): string {
+  return (
+    'SC-' +
+    Math.random().toString(36).slice(2, 6).toUpperCase() +
+    '-' +
+    Date.now().toString().slice(-4)
+  );
+}
+
+/**
+ * Simulated async submission — resolves after ~5 s of realistic delays.
+ * Returns a confirmation ID.
+ */
+async function dummySubmitApi(): Promise<string> {
+  const steps = [700, 1300, 1000, 1200, 600]; // ms per stage
+  for (const delay of steps) {
+    await new Promise((resolve) => setTimeout(resolve, delay));
+  }
+  return generateConfirmationId();
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -90,6 +121,8 @@ export function useWizard(selectedOptionId: string | null) {
   const [notificationChannel, setNotificationChannel] = useState<'email' | 'sms'>('email');
   const [contactValue, setContactValue] = useState('');
   const [notificationSaved, setNotificationSaved] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle');
+  const [confirmationId, setConfirmationId] = useState('');
 
   const selectedOption = RENEWAL_OPTIONS.find((o) => o.id === selectedOptionId) ?? null;
   const availableOptions = RENEWAL_OPTIONS.filter((o) => o.available);
@@ -109,14 +142,7 @@ export function useWizard(selectedOptionId: string | null) {
     return `${cleaned.slice(0, 3)} ${cleaned.slice(3)}`;
   };
 
-  // ── Actions ─────────────────────────────────────────────────────────────────
-
-  const updateContactField = (field: keyof ContactInfo, value: string) => {
-    let next = value;
-    if (field === 'phone') next = formatPhone(value);
-    if (field === 'postalCode') next = normalizePostal(value);
-    setContactInfo((prev) => ({ ...prev, [field]: next }));
-  };
+  // ── canContinue ─────────────────────────────────────────────────────────────
 
   const checkCanContinue = () => {
     if (step === 1) return Boolean(selectedOptionId);
@@ -125,9 +151,19 @@ export function useWizard(selectedOptionId: string | null) {
     if (step === 4) return Boolean(facePhoto);
     if (step === 5) return Boolean(matchScore && matchScore >= 82);
     if (step === 6) return Boolean(selectedOptionId);
-    if (step === 7) return true;
+    // Step 7: only allow moving on once submission is complete
+    if (step === 7) return submitStatus === 'done';
     if (step === 8) return Boolean(contactValue.trim());
     return false;
+  };
+
+  // ── Actions ─────────────────────────────────────────────────────────────────
+
+  const updateContactField = (field: keyof ContactInfo, value: string) => {
+    let next = value;
+    if (field === 'phone') next = formatPhone(value);
+    if (field === 'postalCode') next = normalizePostal(value);
+    setContactInfo((prev) => ({ ...prev, [field]: next }));
   };
 
   const goNext = () => {
@@ -155,15 +191,29 @@ export function useWizard(selectedOptionId: string | null) {
 
   const compareFaces = () => {
     if (!idPhoto || !facePhoto) return;
-		setMatchScore(100);
-    // const fingerprint = `${idPhoto.public_id}:${facePhoto.public_id}`;
-    // const checksum = [...fingerprint].reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    // setMatchScore(70 + (checksum % 30));
+    setMatchScore(100);
   };
 
   const saveNotifications = () => {
     if (!contactValue.trim()) return;
     setNotificationSaved(true);
+  };
+
+  /**
+   * Kick off the dummy submission.  Called by WizardShell when the user
+   * presses "Continue" on step 7.  Ignored if already processing or done.
+   */
+  const submitApplication = async () => {
+    if (submitStatus !== 'idle') return;
+    setSubmitStatus('processing');
+    try {
+      const id = await dummySubmitApi();
+      setConfirmationId(id);
+      setSubmitStatus('done');
+    } catch {
+      // In a real app we'd surface the error; here just reset to idle
+      setSubmitStatus('idle');
+    }
   };
 
   const reset = () => {
@@ -177,6 +227,8 @@ export function useWizard(selectedOptionId: string | null) {
     setNotificationChannel('email');
     setContactValue('');
     setNotificationSaved(false);
+    setSubmitStatus('idle');
+    setConfirmationId('');
   };
 
   // ── Return ──────────────────────────────────────────────────────────────────
@@ -195,6 +247,8 @@ export function useWizard(selectedOptionId: string | null) {
     contactValue,
     notificationSaved,
     canContinue: checkCanContinue(),
+    submitStatus,
+    confirmationId,
   };
 
   const actions: WizardActions = {
@@ -203,12 +257,16 @@ export function useWizard(selectedOptionId: string | null) {
     setIdPhoto,
     setFacePhoto,
     setNotificationChannel: (ch) => setNotificationChannel(ch),
-    setContactValue: (v) => { setContactValue(v); setNotificationSaved(false); },
+    setContactValue: (v) => {
+      setContactValue(v);
+      setNotificationSaved(false);
+    },
     goNext,
     goBack,
     compareFaces,
     mapFormsFromText,
     saveNotifications,
+    submitApplication,
   };
 
   return { state, actions, reset };

@@ -11,10 +11,10 @@ export const UI = {
       contact: "Contact Us",
       support: "Help / Support",
     },
-    heroEyebrow: "Service Ontario Digital Pre-Service",
+    heroEyebrow: "Service Canada Digital Pre-Service",
     heroTitle: "Renew Government Documents Faster",
     heroBody:
-      "Verify your identity and upload required documents before visiting ServiceOntario to reduce wait times and complete renewals faster.",
+      "Verify your identity and upload required documents before visiting ServiceCanada to reduce wait times and complete renewals faster.",
     startService: "Start Service",
     learnMore: "Learn More",
     supportedServices: "Supported Services",
@@ -94,7 +94,7 @@ export const UI = {
     // Step 6
     noFormsAvailable: "No forms available for this service.",
     formGovNotice:
-      "All forms link directly to official Government of Canada or ServiceOntario websites. Open PDF forms in a desktop browser.",
+      "All forms link directly to official Government of Canada or ServiceCanada websites. Open PDF forms in a desktop browser.",
     mapFormsToggle:
       "Not sure which forms you need? Auto-map from a description",
     mappedFormsHeading: "Suggested forms based on your description:",
@@ -133,10 +133,10 @@ export const UI = {
       contact: "Contact",
       support: "Aide",
     },
-    heroEyebrow: "Préservice numérique ServiceOntario",
+    heroEyebrow: "Préservice numérique ServiceCanada",
     heroTitle: "Renouvelez vos documents gouvernementaux plus rapidement",
     heroBody:
-      "Vérifiez votre identité et téléversez vos documents avant votre visite à ServiceOntario afin de réduire l\u2019attente.",
+      "Vérifiez votre identité et téléversez vos documents avant votre visite à ServiceCanada afin de réduire l\u2019attente.",
     startService: "Commencer",
     learnMore: "En savoir plus",
     supportedServices: "Services offerts",
@@ -219,7 +219,7 @@ export const UI = {
     // Step 6
     noFormsAvailable: "Aucun formulaire disponible pour ce service.",
     formGovNotice:
-      "Tous les formulaires renvoient directement aux sites officiels du gouvernement du Canada ou de ServiceOntario. Ouvrez les formulaires PDF avec un ordinateur de bureau.",
+      "Tous les formulaires renvoient directement aux sites officiels du gouvernement du Canada ou de ServiceCanada. Ouvrez les formulaires PDF avec un ordinateur de bureau.",
     mapFormsToggle:
       "Vous ne savez pas quels formulaires choisir ? Associez-les à partir d'une description",
     mappedFormsHeading: "Formulaires suggérés selon votre description :",
