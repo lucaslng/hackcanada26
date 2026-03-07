@@ -13,7 +13,8 @@
 body {
   background: var(--bg);
   color: var(--text);
-  line-height: 1.6;
+  line-height: 1.75;
+  font-size: 17.5px;
   -webkit-font-smoothing: antialiased;
   transition: background 0.25s ease, color 0.25s ease;
 }

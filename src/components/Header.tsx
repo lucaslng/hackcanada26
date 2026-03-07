@@ -7,6 +7,15 @@ export type Theme = 'light' | 'dark' | 'system';
 interface HeaderProps {
   onHome: () => void;
   onNavigate: (sectionId: string) => void;
+  language: 'en' | 'fr';
+  onLanguageChange: (language: 'en' | 'fr') => void;
+  labels: {
+    home: string;
+    services: string;
+    information: string;
+    contact: string;
+    support: string;
+  };
   theme: Theme;
   onThemeChange: (theme: Theme) => void;
 }
@@ -17,13 +26,21 @@ const THEME_OPTIONS: { value: Theme; icon: string; label: string }[] = [
   { value: 'dark', icon: 'dark_mode', label: 'Dark' },
 ];
 
-export function Header({ onHome, onNavigate, theme, onThemeChange }: HeaderProps) {
+export function Header({
+  onHome,
+  onNavigate,
+  language,
+  onLanguageChange,
+  labels,
+  theme,
+  onThemeChange,
+}: HeaderProps) {
   const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'services', label: 'Services' },
-    { id: 'information', label: 'Information' },
-    { id: 'contact', label: 'Contact Us' },
-    { id: 'support', label: 'Help / Support' },
+    { id: 'home', label: labels.home },
+    { id: 'services', label: labels.services },
+    { id: 'information', label: labels.information },
+    { id: 'contact', label: labels.contact },
+    { id: 'support', label: labels.support },
   ];
 
   return (
@@ -35,7 +52,9 @@ export function Header({ onHome, onNavigate, theme, onThemeChange }: HeaderProps
           </span>
           <span className="wordmark-text">
             <span className="wordmark-canada">Service Canada</span>
-            <span className="wordmark-service">Renewal Portal</span>
+            <span className="wordmark-service">
+              {language === 'fr' ? 'Portail de renouvellement' : 'Renewal Portal'}
+            </span>
           </span>
         </button>
 
@@ -45,6 +64,26 @@ export function Header({ onHome, onNavigate, theme, onThemeChange }: HeaderProps
               {item.label}
             </button>
           ))}
+
+          {/* ── Language switch ── */}
+          <div className="language-switch" role="group" aria-label="Language switcher">
+            <span className="material-symbols-outlined" aria-hidden="true">language</span>
+            <button
+              className={language === 'en' ? 'active' : ''}
+              onClick={() => onLanguageChange('en')}
+              aria-pressed={language === 'en'}
+            >
+              EN
+            </button>
+            <span className="lang-sep">|</span>
+            <button
+              className={language === 'fr' ? 'active' : ''}
+              onClick={() => onLanguageChange('fr')}
+              aria-pressed={language === 'fr'}
+            >
+              FR
+            </button>
+          </div>
         </nav>
 
         {/* ── Theme toggle ── */}
