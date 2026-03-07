@@ -140,7 +140,7 @@
 .theme-toggle-group {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 0.2rem;
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -152,17 +152,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.28rem;
-  padding: 0.3rem 0.6rem;
+  width: 2.1rem;
+  height: 2.1rem;
   border-radius: 999px;
-  font-size: 0.76rem;
-  font-weight: 600;
   color: var(--text-muted);
   background: transparent;
   border: none;
   cursor: pointer;
   transition: background 0.18s, color 0.18s;
-  white-space: nowrap;
 }
 
 .theme-toggle-btn:hover {
@@ -176,7 +173,7 @@
 }
 
 .theme-toggle-btn .material-symbols-outlined {
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 
 .view-toggle-group {
@@ -229,12 +226,9 @@
     display: none;
   }
 
-  .theme-toggle-btn span:not(.material-symbols-outlined) {
-    display: none;
-  }
-
   .theme-toggle-btn {
-    padding: 0.3rem 0.45rem;
+    width: 2rem;
+    height: 2rem;
   }
 
   .view-toggle-group {

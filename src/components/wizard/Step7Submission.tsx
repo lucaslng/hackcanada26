@@ -209,49 +209,42 @@ export function Step7({
         </div>
       )}
 
-      {/* ── Summary table ── */}
+      {/* ── Summary groups ── */}
       <div className="s7-section">
         <div className="s7-section-label">
           <span className="material-symbols-outlined">summarize</span>
           {t.step7SummaryHeading}
         </div>
-        <div className="s7-summary-grid">
-          <div className="s7-summary-row">
-            <span className="s7-summary-key">{t.selectedService}</span>
-            <span className="s7-summary-val">{selectedOption ? (getServiceText(selectedOption.id, language)?.title ?? serviceTitle) : '-'}</span>
-          </div>
-          <div className="s7-summary-row">
-            <span className="s7-summary-key">{t.step7SummaryApplicant}</span>
-            <span className="s7-summary-val">{contactInfo.fullName || '-'}</span>
-          </div>
-          <div className="s7-summary-row">
-            <span className="s7-summary-key">{t.emailAddress}</span>
-            <span className="s7-summary-val">{contactInfo.email || '-'}</span>
-          </div>
-          <div className="s7-summary-row">
-            <span className="s7-summary-key">{t.province}</span>
-            <span className="s7-summary-val">{contactInfo.province || '-'}</span>
-          </div>
-          <div className="s7-summary-row">
-            <span className="s7-summary-key">{t.step7SummaryIdDocument}</span>
-            <span className={`s7-summary-val ${idPhoto ? 's7-check' : 's7-miss'}`}>
-              {idPhoto ? `✓ ${t.step7SummaryUploadedEnhanced}` : `✗ ${t.step7SummaryMissing}`}
-            </span>
-          </div>
-          <div className="s7-summary-row">
-            <span className="s7-summary-key">{t.step7SummarySelfie}</span>
-            <span className={`s7-summary-val ${facePhoto ? 's7-check' : 's7-miss'}`}>
-              {facePhoto ? `✓ ${t.step7SummaryCapturedEnhanced}` : `✗ ${t.step7SummaryMissing}`}
-            </span>
-          </div>
-          {matchScore !== null && (
-            <div className="s7-summary-row">
-              <span className="s7-summary-key">{t.step7SummaryIdentityMatch}</span>
-              <span className={`s7-summary-val ${matchScore >= 82 ? 's7-check' : 's7-miss'}`}>
-                {matchScore >= 82 ? `✓ ${t.verified} (${matchScore}%)` : `✗ ${t.notVerified} (${matchScore}%)`}
-              </span>
-            </div>
-          )}
+        <div className="s7-summary-groups">
+          <article className="s7-summary-card">
+            <h4>Applicant</h4>
+            <p><strong>{t.step7SummaryApplicant}:</strong> {contactInfo.fullName || '-'}</p>
+            <p><strong>{t.emailAddress}:</strong> {contactInfo.email || '-'}</p>
+            <p><strong>{t.province}:</strong> {contactInfo.province || '-'}</p>
+          </article>
+          <article className="s7-summary-card">
+            <h4>Service</h4>
+            <p>{selectedOption ? (getServiceText(selectedOption.id, language)?.title ?? serviceTitle) : '-'}</p>
+          </article>
+          <article className="s7-summary-card">
+            <h4>Documents</h4>
+            <p className={idPhoto ? 's7-check' : 's7-miss'}>
+              {idPhoto ? `✓ ${t.step7SummaryUploadedEnhanced}` : `✗ ${t.step7SummaryMissing}`} ({t.step7SummaryIdDocument})
+            </p>
+            <p className={facePhoto ? 's7-check' : 's7-miss'}>
+              {facePhoto ? `✓ ${t.step7SummaryCapturedEnhanced}` : `✗ ${t.step7SummaryMissing}`} ({t.step7SummarySelfie})
+            </p>
+          </article>
+          <article className="s7-summary-card">
+            <h4>Verification</h4>
+            {matchScore === null ? (
+              <p className="s7-miss">{t.step7SummaryMissing}</p>
+            ) : (
+              <p className={matchScore >= 82 ? 's7-check' : 's7-miss'}>
+                {matchScore >= 82 ? `✓ ${t.verified}` : `✗ ${t.notVerified}`} ({matchScore}%)
+              </p>
+            )}
+          </article>
         </div>
       </div>
 
@@ -277,6 +270,11 @@ export function Step7({
             <strong className="s7-conf-id">{confirmationId}</strong>
             <span className="s7-conf-time">{submittedAt}</span>
           </div>
+          <ol className="s7-next-steps">
+            <li>Save your confirmation number.</li>
+            <li>Bring original documents to your in-person appointment.</li>
+            <li>Watch for status updates in your selected channel.</li>
+          </ol>
           <div className="s7-disclaimer">
             <span className="material-symbols-outlined">info</span>
             {t.step7DemoNotice}

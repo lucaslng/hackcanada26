@@ -50,6 +50,19 @@ interface Step2Props extends BaseStepProps {
 }
 
 export function Step2({ t, language, contactInfo, onFieldChange }: Step2Props) {
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const PHONE_RE = /^\(\d{3}\)\s\d{3}-\d{4}$/;
+  const POSTAL_RE = /^[A-Z]\d[A-Z]\s?\d[A-Z]\d$/;
+
+  const fieldStatus = {
+    email: contactInfo.email.length === 0 ? 'neutral' : EMAIL_RE.test(contactInfo.email) ? 'valid' : 'error',
+    phone: contactInfo.phone.length === 0 ? 'neutral' : PHONE_RE.test(contactInfo.phone) ? 'valid' : 'error',
+    postalCode: contactInfo.postalCode.length === 0 ? 'neutral' : POSTAL_RE.test(contactInfo.postalCode) ? 'valid' : 'error',
+  } as const;
+
+  const getFieldClass = (status: 'neutral' | 'valid' | 'error') =>
+    `ui-input ${status === 'valid' ? 'is-valid' : status === 'error' ? 'is-error' : ''}`.trim();
+
   return (
     <SectionCard title={t.step2Title} subtitle={t.step2Subtitle} icon="contact_mail">
       <div className="contact-form-grid">
@@ -68,11 +81,14 @@ export function Step2({ t, language, contactInfo, onFieldChange }: Step2Props) {
           <input
             id="email"
             type="email"
-            className="ui-input"
+            className={getFieldClass(fieldStatus.email)}
+            placeholder={t.emailPlaceholder}
             value={contactInfo.email}
             onChange={(e) => onFieldChange('email', e.target.value)}
           />
-          <p className="field-helper">{t.emailHelper}</p>
+          <p className={`field-helper ${fieldStatus.email === 'error' ? 'field-helper--error' : fieldStatus.email === 'valid' ? 'field-helper--good' : ''}`}>
+            {fieldStatus.email === 'error' ? t.invalidEmail : t.emailHelper}
+          </p>
         </div>
 
         <div className="contact-field">
@@ -80,11 +96,14 @@ export function Step2({ t, language, contactInfo, onFieldChange }: Step2Props) {
           <input
             id="phone"
             type="tel"
-            className="ui-input"
+            className={getFieldClass(fieldStatus.phone)}
+            placeholder="(416) 555-1212"
             value={contactInfo.phone}
             onChange={(e) => onFieldChange('phone', e.target.value)}
           />
-          <p className="field-helper">{t.phoneHelper}</p>
+          <p className={`field-helper ${fieldStatus.phone === 'error' ? 'field-helper--error' : fieldStatus.phone === 'valid' ? 'field-helper--good' : ''}`}>
+            {fieldStatus.phone === 'error' ? t.invalidPhone : t.phoneHelper}
+          </p>
         </div>
 
         <div className="contact-field contact-field--full">
@@ -138,10 +157,12 @@ export function Step2({ t, language, contactInfo, onFieldChange }: Step2Props) {
           <label className="ui-label" htmlFor="postal">{t.postalCode}</label>
           <input
             id="postal"
-            className="ui-input"
+            className={getFieldClass(fieldStatus.postalCode)}
+            placeholder="A1A 1A1"
             value={contactInfo.postalCode}
             onChange={(e) => onFieldChange('postalCode', e.target.value)}
           />
+          {fieldStatus.postalCode === 'error' && <p className="field-helper field-helper--error">{t.invalidPostal}</p>}
         </div>
       </div>
       <p className="contact-note">{t.contactInfoNotice}</p>
@@ -153,20 +174,32 @@ export function Step2({ t, language, contactInfo, onFieldChange }: Step2Props) {
 
 interface Step3Props extends BaseStepProps {
   idPhoto: CloudinaryUploadResult | null;
-  onUpload: (result: CloudinaryUploadResult) => void;
+  onUpload: (result: CloudinaryUploadResult | null) => void;
 }
 
 export function Step3({ t, idPhoto, onUpload }: Step3Props) {
   return (
     <SectionCard title={t.step3Title} subtitle={t.step3Subtitle} icon="upload_file">
-      <UploadWidget
-        onUploadSuccess={onUpload}
-        onUploadError={(err) => alert(`${t.idUploadFailed} ${err.message}`)}
-        buttonText={t.uploadIdBtn}
-        loadingText={t.uploadWidgetLoading}
-        loadErrorText={t.uploadWidgetLoadError}
-      />
-      {idPhoto && <p className="status-good">{t.uploadIdSuccess}</p>}
+      <div className="upload-zone">
+        <p className="upload-zone__hint">Drag and drop supported via picker.</p>
+        <UploadWidget
+          onUploadSuccess={onUpload}
+          onUploadError={(err) => alert(`${t.idUploadFailed} ${err.message}`)}
+          buttonText={idPhoto ? 'Replace ID Document' : t.uploadIdBtn}
+          loadingText={t.uploadWidgetLoading}
+          loadErrorText={t.uploadWidgetLoadError}
+        />
+      </div>
+      {idPhoto && (
+        <div className="upload-preview-card">
+          <img src={idPhoto.secure_url} alt={t.step7SummaryIdDocument} />
+          <div>
+            <p>{t.uploadIdSuccess}</p>
+            <p>{Math.round(idPhoto.bytes / 1024)} KB · {idPhoto.format.toUpperCase()}</p>
+          </div>
+          <button type="button" className="upload-remove-btn" onClick={() => onUpload(null)}>Remove</button>
+        </div>
+      )}
     </SectionCard>
   );
 }
@@ -175,20 +208,32 @@ export function Step3({ t, idPhoto, onUpload }: Step3Props) {
 
 interface Step4Props extends BaseStepProps {
   facePhoto: CloudinaryUploadResult | null;
-  onUpload: (result: CloudinaryUploadResult) => void;
+  onUpload: (result: CloudinaryUploadResult | null) => void;
 }
 
 export function Step4({ t, facePhoto, onUpload }: Step4Props) {
   return (
     <SectionCard title={t.step4Title} subtitle={t.step4Subtitle} icon="photo_camera_front">
-      <UploadWidget
-        onUploadSuccess={onUpload}
-        onUploadError={(err) => alert(`${t.selfieUploadFailed} ${err.message}`)}
-        buttonText={t.uploadSelfieBtn}
-        loadingText={t.uploadWidgetLoading}
-        loadErrorText={t.uploadWidgetLoadError}
-      />
-      {facePhoto && <p className="status-good">{t.uploadSelfieSuccess}</p>}
+      <div className="upload-zone">
+        <p className="upload-zone__hint">Capture or upload from local storage.</p>
+        <UploadWidget
+          onUploadSuccess={onUpload}
+          onUploadError={(err) => alert(`${t.selfieUploadFailed} ${err.message}`)}
+          buttonText={facePhoto ? 'Replace Selfie' : t.uploadSelfieBtn}
+          loadingText={t.uploadWidgetLoading}
+          loadErrorText={t.uploadWidgetLoadError}
+        />
+      </div>
+      {facePhoto && (
+        <div className="upload-preview-card upload-preview-card--selfie">
+          <img src={facePhoto.secure_url} alt={t.step7SummarySelfie} />
+          <div>
+            <p>{t.uploadSelfieSuccess}</p>
+            <p>{Math.round(facePhoto.bytes / 1024)} KB · {facePhoto.format.toUpperCase()}</p>
+          </div>
+          <button type="button" className="upload-remove-btn" onClick={() => onUpload(null)}>Remove</button>
+        </div>
+      )}
     </SectionCard>
   );
 }
@@ -203,17 +248,36 @@ interface Step5Props extends BaseStepProps {
 }
 
 export function Step5({ t, idPhoto, facePhoto, matchScore, onCompare }: Step5Props) {
+  const matchBand = matchScore === null ? 'pending' : matchScore >= 90 ? 'high' : matchScore >= 82 ? 'medium' : 'low';
   return (
     <SectionCard title={t.step5Title} subtitle={t.step5Subtitle} icon="person_search">
       <div className="ui-stack">
+        <div className="verify-preview-row">
+          <div className="verify-preview-card">
+            <p>{t.step7SummaryIdDocument}</p>
+            {idPhoto ? <img src={idPhoto.secure_url} alt={t.step7SummaryIdDocument} /> : <div className="verify-empty">Missing</div>}
+          </div>
+          <div className="verify-preview-card">
+            <p>{t.step7SummarySelfie}</p>
+            {facePhoto ? <img src={facePhoto.secure_url} alt={t.step7SummarySelfie} /> : <div className="verify-empty">Missing</div>}
+          </div>
+        </div>
         <Button onClick={onCompare} disabled={!idPhoto || !facePhoto}>
           {t.runVerification}
         </Button>
         {matchScore !== null && (
-          <p className={matchScore >= 82 ? 'status-good' : 'status-bad'}>
-            {t.matchScoreLabel}: {matchScore}%{' '}
-            {matchScore >= 82 ? `(${t.verified})` : `(${t.notVerified})`}
-          </p>
+          <div className={`verify-meter verify-meter--${matchBand}`}>
+            <div className="verify-meter__top">
+              <span>{t.matchScoreLabel}</span>
+              <strong>{matchScore}%</strong>
+            </div>
+            <div className="verify-meter__track">
+              <div style={{ width: `${matchScore}%` }} />
+            </div>
+            <p className={matchScore >= 82 ? 'status-good' : 'status-bad'}>
+              {matchScore >= 82 ? t.verified : t.notVerified}
+            </p>
+          </div>
         )}
       </div>
     </SectionCard>
@@ -245,14 +309,20 @@ export function Step8({
       <div className="ui-stack">
         <div className="segmented" role="tablist" aria-label={t.notificationChannelAria}>
           <button
+            role="tab"
+            type="button"
             className={notificationChannel === 'email' ? 'active' : ''}
             onClick={() => onChannelChange('email')}
+            aria-selected={notificationChannel === 'email'}
           >
             {t.emailLabel}
           </button>
           <button
+            role="tab"
+            type="button"
             className={notificationChannel === 'sms' ? 'active' : ''}
             onClick={() => onChannelChange('sms')}
+            aria-selected={notificationChannel === 'sms'}
           >
             {t.smsLabel}
           </button>
@@ -265,9 +335,10 @@ export function Step8({
         />
         <Button onClick={onSave}>{t.savePreference}</Button>
         {notificationSaved && (
-          <p className="status-good">
-            {t.updatesSent} {notificationChannel === 'email' ? t.emailLabel : t.smsLabel} {t.to} {contactValue}.
-          </p>
+          <div className="notice-toast notice-toast--success" role="status" aria-live="polite">
+            <span className="material-symbols-outlined">task_alt</span>
+            <p>{t.updatesSent} {notificationChannel === 'email' ? t.emailLabel : t.smsLabel} {t.to} {contactValue}.</p>
+          </div>
         )}
       </div>
     </SectionCard>

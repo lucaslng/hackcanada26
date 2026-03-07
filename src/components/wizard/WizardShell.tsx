@@ -18,6 +18,17 @@ interface WizardShellProps {
 
 export function WizardShell({ t, state, actions, serviceTitle, language, onExit }: WizardShellProps) {
   const { step, canContinue } = state;
+  const cleanTitle = (value: string) => value.replace(/^Step\s+\d+:\s*/i, '');
+  const stepMeta = [
+    { id: 1, icon: 'fact_check', label: cleanTitle(t.step1Title) },
+    { id: 2, icon: 'contact_mail', label: cleanTitle(t.step2Title) },
+    { id: 3, icon: 'upload_file', label: cleanTitle(t.step3Title) },
+    { id: 4, icon: 'photo_camera_front', label: cleanTitle(t.step4Title) },
+    { id: 5, icon: 'person_search', label: cleanTitle(t.step5Title) },
+    { id: 6, icon: 'description', label: cleanTitle(t.step6Title) },
+    { id: 7, icon: 'send', label: cleanTitle(t.step7Title) },
+    { id: 8, icon: 'notifications_active', label: cleanTitle(t.step8Title) },
+  ];
 
   const renderStep = () => {
     switch (step) {
@@ -95,11 +106,41 @@ export function WizardShell({ t, state, actions, serviceTitle, language, onExit 
         <div className="step-progress">
           <div style={{ width: `${(step / TOTAL_STEPS) * 100}%` }} />
         </div>
+        <ol className="step-node-list" aria-label="Wizard steps">
+          {stepMeta.map((node) => {
+            const isDone = node.id < step;
+            const isCurrent = node.id === step;
+            const isLocked = node.id > step;
+            const className = [
+              'step-node',
+              isDone ? 'is-done' : '',
+              isCurrent ? 'is-current' : '',
+              isLocked ? 'is-locked' : '',
+            ].filter(Boolean).join(' ');
+            return (
+              <li key={node.id} className={className}>
+                <button
+                  type="button"
+                  className="step-node-btn"
+                  onClick={() => actions.jumpToStep(node.id)}
+                  disabled={!isDone}
+                  aria-current={isCurrent ? 'step' : undefined}
+                >
+                  <span className="step-node-index">{isDone ? '✓' : node.id}</span>
+                  <span className="material-symbols-outlined">{node.icon}</span>
+                  <span className="step-node-label">{node.label}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
       </div>
 
-      {renderStep()}
+      <div key={step} className="step-content-shell">
+        {renderStep()}
+      </div>
 
-      <div className="wizard-nav">
+      <div className="wizard-nav wizard-nav-sticky">
         <div className="wizard-nav-left">
           <Button
             variant="ghost"

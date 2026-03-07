@@ -3,7 +3,7 @@
 import canadianFlag from '../../assets/canadian_flag.png';
 import { LANGUAGE_OPTIONS, type Language, type UIStrings } from '../constants/i18n';
 
-export type Theme = 'light' | 'dark' | 'system';
+export type Theme = 'light' | 'dark';
 export type PortalView = 'canadian-user' | 'admin-reviewer';
 
 interface HeaderProps {
@@ -31,7 +31,6 @@ export function Header({
 }: HeaderProps) {
   const themeOptions: { value: Theme; icon: string; label: string }[] = [
     { value: 'light', icon: 'light_mode', label: t.themeLight },
-    { value: 'system', icon: 'brightness_auto', label: t.themeSystem },
     { value: 'dark', icon: 'dark_mode', label: t.themeDark },
   ];
 
@@ -98,9 +97,9 @@ export function Header({
               onClick={() => onThemeChange(value)}
               aria-pressed={theme === value}
               title={label}
+              aria-label={label}
             >
               <span className="material-symbols-outlined">{icon}</span>
-              <span>{label}</span>
             </button>
           ))}
         </div>

@@ -59,6 +59,7 @@ export interface WizardActions {
   setContactValue: (value: string) => void;
   goNext: () => void;
   goBack: () => void;
+  jumpToStep: (targetStep: number) => void;
   compareFaces: () => void;
   mapFormsFromText: (raw: string) => void;
   saveNotifications: () => void;
@@ -123,6 +124,12 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
 
   const goBack = () => {
     if (step > 1) setStep((prev) => prev - 1);
+  };
+
+  const jumpToStep = (targetStep: number) => {
+    if (targetStep < 1 || targetStep > TOTAL_STEPS) return;
+    if (targetStep >= step) return;
+    setStep(targetStep);
   };
 
   const matchIntentToOption = (raw: string): RenewalOption | null => {
@@ -202,6 +209,7 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     setContactValue: (v) => { setContactValue(v); setNotificationSaved(false); },
     goNext,
     goBack,
+    jumpToStep,
     compareFaces,
     mapFormsFromText,
     saveNotifications,

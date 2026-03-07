@@ -101,8 +101,6 @@ export const en: LocalePack = {
     mapFormsLabel: 'Type your request to map forms',
     mapFormsPlaceholder: "Example: renew driver's licence",
     mapRequestBtn: 'Map Request',
-        noFormsAvailable: 'No forms available for this service.',
-    formGovNotice: 'All forms link directly to official Government of Canada or ServiceOntario websites. Open PDF forms in a desktop browser.',
     formBadgePdf: 'PDF',
     formBadgeWeb: 'Web',
     formActionDownload: 'Download',

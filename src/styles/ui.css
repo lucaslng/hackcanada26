@@ -105,6 +105,16 @@
   border-color: color-mix(in srgb, var(--red) 60%, transparent);
 }
 
+.ui-input.is-valid {
+  border-color: var(--status-good-border);
+  background: color-mix(in srgb, var(--status-good-bg) 38%, var(--surface));
+}
+
+.ui-input.is-error {
+  border-color: var(--status-bad-border);
+  background: color-mix(in srgb, var(--status-bad-bg) 32%, var(--surface));
+}
+
 .ui-stack {
   display: flex;
   flex-direction: column;
