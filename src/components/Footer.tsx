@@ -8,7 +8,6 @@ interface FooterProps {
 
 export function Footer({ language }: FooterProps) {
   const isFr = language === 'fr';
-
   return (
     <footer className="site-footer">
       <div className="footer-inner">

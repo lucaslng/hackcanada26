@@ -20,13 +20,6 @@
   margin-bottom: 1.4rem;
 }
 
-.footer-flag {
-  width: 18px;
-  height: 18px;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
 .footer-columns {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

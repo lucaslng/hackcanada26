@@ -1,7 +1,5 @@
 // FacescanStep.tsx
 
-// FacescanStep.ts// FaceScanStep.tsx
-
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CapturedPhoto } from '../../types';
 
