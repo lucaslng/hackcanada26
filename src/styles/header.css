@@ -179,6 +179,36 @@
   font-size: 1rem;
 }
 
+.view-toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+.view-toggle-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  white-space: nowrap;
+}
+
+.view-toggle-btn.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
 @media (max-width: 640px) {
   .header-inner {
     gap: 0.65rem;
@@ -205,5 +235,15 @@
 
   .theme-toggle-btn {
     padding: 0.3rem 0.45rem;
+  }
+
+  .view-toggle-group {
+    width: 100%;
+    order: 4;
+  }
+
+  .view-toggle-btn {
+    flex: 1;
+    text-align: center;
   }
 }

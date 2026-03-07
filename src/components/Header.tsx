@@ -4,6 +4,7 @@ import canadianFlag from '../../assets/canadian_flag.png';
 import { LANGUAGE_OPTIONS, type Language, type UIStrings } from '../constants/i18n';
 
 export type Theme = 'light' | 'dark' | 'system';
+export type PortalView = 'canadian-user' | 'admin-reviewer';
 
 interface HeaderProps {
   onHome: () => void;
@@ -13,6 +14,8 @@ interface HeaderProps {
   t: UIStrings;
   theme: Theme;
   onThemeChange: (theme: Theme) => void;
+  view: PortalView;
+  onViewChange: (view: PortalView) => void;
 }
 
 export function Header({
@@ -23,6 +26,8 @@ export function Header({
   t,
   theme,
   onThemeChange,
+  view,
+  onViewChange,
 }: HeaderProps) {
   const themeOptions: { value: Theme; icon: string; label: string }[] = [
     { value: 'light', icon: 'light_mode', label: t.themeLight },
@@ -98,6 +103,23 @@ export function Header({
               <span>{label}</span>
             </button>
           ))}
+        </div>
+
+        <div className="view-toggle-group" role="group" aria-label="Portal view">
+          <button
+            className={`view-toggle-btn${view === 'canadian-user' ? ' active' : ''}`}
+            onClick={() => onViewChange('canadian-user')}
+            aria-pressed={view === 'canadian-user'}
+          >
+            Canadian User
+          </button>
+          <button
+            className={`view-toggle-btn${view === 'admin-reviewer' ? ' active' : ''}`}
+            onClick={() => onViewChange('admin-reviewer')}
+            aria-pressed={view === 'admin-reviewer'}
+          >
+            Admin Reviewer
+          </button>
         </div>
       </div>
     </header>

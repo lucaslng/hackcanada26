@@ -4,7 +4,7 @@
 
 import { useState } from 'react';
 import type { CloudinaryUploadResult } from '../../cloudinary/UploadWidget';
-import type { UIStrings } from '../../constants/i18n';
+import { getServiceText, type Language, type UIStrings } from '../../constants/i18n';
 import type { ContactInfo } from '../../hooks/useWizard';
 import type { RenewalOption } from '../../data/renewalOptions';
 
@@ -12,10 +12,12 @@ import type { RenewalOption } from '../../data/renewalOptions';
 
 interface Step7Props {
   t: UIStrings;
+  language: Language;
   idPhoto: CloudinaryUploadResult | null;
   facePhoto: CloudinaryUploadResult | null;
   contactInfo: ContactInfo;
   selectedOption: RenewalOption | null;
+  serviceTitle: string;
   matchScore: number | null;
 }
 
@@ -50,7 +52,7 @@ function buildFacePreviewUrl(publicId: string): string {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function EnhancedDocPreview({ photo, label }: { photo: CloudinaryUploadResult; label: string }) {
+function EnhancedDocPreview({ photo, label, t }: { photo: CloudinaryUploadResult; label: string; t: UIStrings }) {
   const [loaded, setLoaded] = useState(false);
   const url = buildDocPreviewUrl(photo.public_id);
 
@@ -66,7 +68,7 @@ function EnhancedDocPreview({ photo, label }: { photo: CloudinaryUploadResult; l
         />
         <div className="s7-doc-badge">
           <span className="material-symbols-outlined">auto_fix_high</span>
-          Cloudinary enhanced
+          {t.step7CloudinaryEnhanced}
         </div>
       </div>
       <p className="s7-doc-label">{label}</p>
@@ -74,7 +76,7 @@ function EnhancedDocPreview({ photo, label }: { photo: CloudinaryUploadResult; l
   );
 }
 
-function FaceChip({ photo }: { photo: CloudinaryUploadResult }) {
+function FaceChip({ photo, t }: { photo: CloudinaryUploadResult; t: UIStrings }) {
   const [loaded, setLoaded] = useState(false);
   const url = buildFacePreviewUrl(photo.public_id);
 
@@ -83,7 +85,7 @@ function FaceChip({ photo }: { photo: CloudinaryUploadResult }) {
       {!loaded && <div className="s7-face-skeleton" />}
       <img
         src={url}
-        alt="Face verified"
+        alt={t.step7FaceVerifiedAlt}
         onLoad={() => setLoaded(true)}
         style={{ opacity: loaded ? 1 : 0 }}
       />
@@ -92,13 +94,13 @@ function FaceChip({ photo }: { photo: CloudinaryUploadResult }) {
   );
 }
 
-function ProgressSteps({ active }: { active: number }) {
+function ProgressSteps({ active, t }: { active: number; t: UIStrings }) {
   const steps = [
-    { icon: 'cloud_upload', label: 'Uploading documents' },
-    { icon: 'auto_fix_high', label: 'Enhancing with Cloudinary' },
-    { icon: 'verified_user', label: 'Verifying identity' },
-    { icon: 'send', label: 'Submitting to ServiceOntario' },
-    { icon: 'task_alt', label: 'Confirmation generated' },
+    { icon: 'cloud_upload', label: t.step7ProgressUpload },
+    { icon: 'auto_fix_high', label: t.step7ProgressEnhance },
+    { icon: 'verified_user', label: t.step7ProgressVerify },
+    { icon: 'send', label: t.step7ProgressSubmit },
+    { icon: 'task_alt', label: t.step7ProgressConfirmation },
   ];
 
   return (
@@ -128,10 +130,12 @@ function ProgressSteps({ active }: { active: number }) {
 
 export function Step7({
   t,
+  language,
   idPhoto,
   facePhoto,
   contactInfo,
   selectedOption,
+  serviceTitle,
   matchScore,
 }: Step7Props) {
   const [status, setStatus] = useState<SubmitStatus>('idle');
@@ -139,7 +143,7 @@ export function Step7({
   const [confirmationId] = useState(() =>
     'SC-' + Math.random().toString(36).slice(2, 6).toUpperCase() + '-' + Date.now().toString().slice(-4)
   );
-  const [submittedAt] = useState(() => new Date().toLocaleString('en-CA', {
+  const [submittedAt] = useState(() => new Date().toLocaleString(language, {
     dateStyle: 'long', timeStyle: 'short',
   }));
 
@@ -172,7 +176,7 @@ export function Step7({
         <div>
           <h2>{t.step7Title}</h2>
           <p className="s7-subtitle">
-            Review your enhanced documents and submit your pre-service application.
+            {t.step7ReviewSubtitle}
           </p>
         </div>
       </div>
@@ -182,26 +186,25 @@ export function Step7({
         <div className="s7-section">
           <div className="s7-section-label">
             <span className="material-symbols-outlined">auto_fix_high</span>
-            Cloudinary-enhanced document previews
+            {t.step7DocPreviewHeading}
           </div>
           <div className="s7-doc-row">
-            {idPhoto && <EnhancedDocPreview photo={idPhoto} label="ID Document" />}
+            {idPhoto && <EnhancedDocPreview photo={idPhoto} label={t.step7SummaryIdDocument} t={t} />}
             {facePhoto && (
               <div className="s7-face-col">
-                <FaceChip photo={facePhoto} />
+                <FaceChip photo={facePhoto} t={t} />
                 {matchScore !== null && (
                   <span className={`s7-match-badge ${matchScore >= 82 ? 's7-match-badge--pass' : 's7-match-badge--fail'}`}>
                     <span className="material-symbols-outlined">{matchScore >= 82 ? 'verified' : 'warning'}</span>
-                    {matchScore}% match
+                    {matchScore}% {t.matchScoreLabel}
                   </span>
                 )}
-                <p className="s7-doc-label">Live selfie</p>
+                <p className="s7-doc-label">{t.step7SummarySelfie}</p>
               </div>
             )}
           </div>
           <p className="s7-cloudinary-note">
-            Images are automatically contrast-corrected, sharpened, and face-cropped by Cloudinary
-            before transmission. Original files are not modified.
+            {t.step7CloudinaryEnhanced}
           </p>
         </div>
       )}
@@ -210,42 +213,42 @@ export function Step7({
       <div className="s7-section">
         <div className="s7-section-label">
           <span className="material-symbols-outlined">summarize</span>
-          Submission summary
+          {t.step7SummaryHeading}
         </div>
         <div className="s7-summary-grid">
           <div className="s7-summary-row">
-            <span className="s7-summary-key">Service</span>
-            <span className="s7-summary-val">{selectedOption?.title ?? '—'}</span>
+            <span className="s7-summary-key">{t.selectedService}</span>
+            <span className="s7-summary-val">{selectedOption ? (getServiceText(selectedOption.id, language)?.title ?? serviceTitle) : '-'}</span>
           </div>
           <div className="s7-summary-row">
-            <span className="s7-summary-key">Applicant</span>
-            <span className="s7-summary-val">{contactInfo.fullName || '—'}</span>
+            <span className="s7-summary-key">{t.step7SummaryApplicant}</span>
+            <span className="s7-summary-val">{contactInfo.fullName || '-'}</span>
           </div>
           <div className="s7-summary-row">
-            <span className="s7-summary-key">Email</span>
-            <span className="s7-summary-val">{contactInfo.email || '—'}</span>
+            <span className="s7-summary-key">{t.emailAddress}</span>
+            <span className="s7-summary-val">{contactInfo.email || '-'}</span>
           </div>
           <div className="s7-summary-row">
-            <span className="s7-summary-key">Province</span>
-            <span className="s7-summary-val">{contactInfo.province || '—'}</span>
+            <span className="s7-summary-key">{t.province}</span>
+            <span className="s7-summary-val">{contactInfo.province || '-'}</span>
           </div>
           <div className="s7-summary-row">
-            <span className="s7-summary-key">ID document</span>
+            <span className="s7-summary-key">{t.step7SummaryIdDocument}</span>
             <span className={`s7-summary-val ${idPhoto ? 's7-check' : 's7-miss'}`}>
-              {idPhoto ? '✓ Uploaded & enhanced' : '✗ Missing'}
+              {idPhoto ? `✓ ${t.step7SummaryUploadedEnhanced}` : `✗ ${t.step7SummaryMissing}`}
             </span>
           </div>
           <div className="s7-summary-row">
-            <span className="s7-summary-key">Selfie</span>
+            <span className="s7-summary-key">{t.step7SummarySelfie}</span>
             <span className={`s7-summary-val ${facePhoto ? 's7-check' : 's7-miss'}`}>
-              {facePhoto ? '✓ Captured & enhanced' : '✗ Missing'}
+              {facePhoto ? `✓ ${t.step7SummaryCapturedEnhanced}` : `✗ ${t.step7SummaryMissing}`}
             </span>
           </div>
           {matchScore !== null && (
             <div className="s7-summary-row">
-              <span className="s7-summary-key">Identity match</span>
+              <span className="s7-summary-key">{t.step7SummaryIdentityMatch}</span>
               <span className={`s7-summary-val ${matchScore >= 82 ? 's7-check' : 's7-miss'}`}>
-                {matchScore >= 82 ? `✓ Verified (${matchScore}%)` : `✗ Failed (${matchScore}%)`}
+                {matchScore >= 82 ? `✓ ${t.verified} (${matchScore}%)` : `✗ ${t.notVerified} (${matchScore}%)`}
               </span>
             </div>
           )}
@@ -255,7 +258,7 @@ export function Step7({
       {/* ── Processing animation ── */}
       {status === 'processing' && (
         <div className="s7-section">
-          <ProgressSteps active={progressStep} />
+          <ProgressSteps active={progressStep} t={t} />
         </div>
       )}
 
@@ -265,19 +268,18 @@ export function Step7({
           <div className="s7-success-icon">
             <span className="material-symbols-outlined">task_alt</span>
           </div>
-          <h3>Application submitted</h3>
+          <h3>{t.step7SuccessTitle}</h3>
           <p>
-            Your pre-service package has been securely transmitted to ServiceOntario.
-            Bring your confirmation number to your appointment.
+            {t.step7SuccessBody}
           </p>
           <div className="s7-confirmation-chip">
-            <span className="s7-conf-label">Confirmation number</span>
+            <span className="s7-conf-label">{t.step7ConfirmationNumber}</span>
             <strong className="s7-conf-id">{confirmationId}</strong>
             <span className="s7-conf-time">{submittedAt}</span>
           </div>
           <div className="s7-disclaimer">
             <span className="material-symbols-outlined">info</span>
-            This is a demonstration — no real data has been submitted to any government system.
+            {t.step7DemoNotice}
           </div>
         </div>
       )}
@@ -288,7 +290,7 @@ export function Step7({
           {!canSubmit && (
             <p className="s7-warning">
               <span className="material-symbols-outlined">warning</span>
-              Complete steps 2–5 before submitting (contact info, ID upload, selfie, verification).
+              {t.step7IncompleteWarning}
             </p>
           )}
           <button
@@ -297,7 +299,7 @@ export function Step7({
             disabled={!canSubmit}
           >
             <span className="material-symbols-outlined">send</span>
-            Submit pre-service application
+            {t.step7SubmitButton}
           </button>
           <p className="s7-disclaimer">
             <span className="material-symbols-outlined">info</span>
