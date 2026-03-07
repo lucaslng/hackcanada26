@@ -41,7 +41,7 @@
   height: 28px;
   border-radius: 2px;
   overflow: hidden;
-  background: #fff;
+  background: transparent;
   flex-shrink: 0;
 }
 
