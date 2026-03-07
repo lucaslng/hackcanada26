@@ -1,3 +1,5 @@
+// en.ts
+
 import type { LocalePack } from './types';
 
 export const en: LocalePack = {
@@ -88,7 +90,7 @@ export const en: LocalePack = {
     verified: 'Verified',
     notVerified: 'Not verified',
     step6Title: 'Step 6: Forms to Print and Sign',
-    step6Subtitle: 'Review forms and optionally auto-map from a typed request.',
+    step6Subtitle: 'Review and download forms.',
     mapFormsLabel: 'Type your request to map forms',
     mapFormsPlaceholder: "Example: renew driver's licence",
     mapRequestBtn: 'Map Request',
