@@ -18,4 +18,6 @@ declare global {
   }
 }
 
+declare module 'resemblejs';
+
 export {};

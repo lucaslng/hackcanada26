@@ -15,16 +15,13 @@ const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string;
 
 // Maps our hook status to the animated step list labels
 const STATUS_LABELS: Record<string, string> = {
-  'loading-models': 'Loading biometric models…',
   analyzing: 'Enhancing images with Cloudinary…',
 };
 
 const ANALYSIS_STEPS = [
-  'Loading biometric models…',
   'Enhancing images with Cloudinary…',
-  'Detecting facial landmarks…',
-  'Computing 128‑D face descriptor…',
-  'Calculating euclidean distance…',
+  'Normalizing both face crops…',
+  'Computing resemble.js similarity…',
   'Generating confidence score…',
 ];
 
@@ -37,18 +34,13 @@ export function VerificationStep({
 }: VerificationStepProps) {
   const { result, verify, reset } = useFaceVerification(CLOUD_NAME);
 
-  const isAnalyzing = result.status === 'loading-models' || result.status === 'analyzing';
+  const isAnalyzing = result.status === 'analyzing';
   const isDone = result.status === 'done';
-  const isFailed = result.status === 'failed' || (!result.passed && isDone);
-  const isError =
-    result.status === 'error' ||
-    result.status === 'no-face-id' ||
-    result.status === 'no-face-selfie';
+  const isError = result.status === 'error';
 
   // Map status → which step bullet is "active" in the animated list
   const activeStep =
-    result.status === 'loading-models' ? 0
-      : result.status === 'analyzing' ? 2   // show halfway through while processing
+    result.status === 'analyzing' ? 1
         : isDone ? ANALYSIS_STEPS.length
           : 0;
 
@@ -83,8 +75,8 @@ export function VerificationStep({
         </div>
         <h2>Identity Verification</h2>
         <p>
-          We enhance both images using Cloudinary, then run a real face-recognition model
-          (face-api.js) directly in your browser to compare the faces.
+          We enhance both images using Cloudinary, then run a resemble.js structural similarity
+          check in your browser to compare your ID face crop and selfie.
         </p>
       </div>
 
@@ -133,7 +125,7 @@ export function VerificationStep({
           <div className="verify-idle-panel">
             <p className="verify-idle-desc">
               Click <strong>Run Verification</strong> to enhance both images via Cloudinary and then
-              run a real neural-network face comparison — entirely in your browser. No data is sent
+              run a resemble.js-based image comparison entirely in your browser. No data is sent
               to any external verification API.
             </p>
             <button
@@ -198,10 +190,10 @@ export function VerificationStep({
               </div>
             </div>
 
-            {result.distance !== null && (
+            {result.score !== null && (
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                Euclidean distance: <strong>{result.distance}</strong>
-                &nbsp;(threshold&nbsp;≤&nbsp;0.55)
+                Resemble score: <strong>{result.score}</strong>
+                &nbsp;(threshold&nbsp;≥&nbsp;0.62)
               </p>
             )}
 
@@ -235,10 +227,10 @@ export function VerificationStep({
               </div>
             </div>
 
-            {result.distance !== null && (
+            {result.score !== null && (
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                Euclidean distance: <strong>{result.distance}</strong>
-                &nbsp;(threshold&nbsp;≤&nbsp;0.55)
+                Resemble score: <strong>{result.score}</strong>
+                &nbsp;(threshold&nbsp;≥&nbsp;0.62)
               </p>
             )}
 
@@ -256,11 +248,7 @@ export function VerificationStep({
           <div className="result-panel result-panel--fail">
             <div className="result-icon result-icon--fail" style={{ fontSize: '1.5rem' }}>!</div>
             <h3>
-              {result.status === 'no-face-id'
-                ? 'No Face Found in ID'
-                : result.status === 'no-face-selfie'
-                  ? 'No Face Found in Selfie'
-                  : 'Verification Error'}
+              Verification Error
             </h3>
             <p className="result-message">{result.message}</p>
             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>

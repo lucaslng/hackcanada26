@@ -1,60 +1,33 @@
 // useFaceVerification.ts
-// Loads face-api.js models once, then runs real 1:1 face comparison
-// between two Cloudinary-transformed image URLs.
+// Compares two Cloudinary-transformed image URLs using resemble.js.
 
 import { useCallback, useRef, useState } from 'react';
-import * as faceapi from 'face-api.js';
+// import { ssim } from 'ssim.js';
+import resemble from 'resemblejs';
 
 export type FaceVerifyStatus =
     | 'idle'
-    | 'loading-models'
     | 'analyzing'
     | 'done'
-    | 'no-face-id'
-    | 'no-face-selfie'
     | 'error';
 
 export interface FaceVerifyResult {
     status: FaceVerifyStatus;
     /** 0-100 similarity score, present when status is 'done' */
     similarity: number | null;
-    /** Euclidean distance from face-api (lower = more similar, < 0.6 = same person) */
-    distance: number | null;
+    /** Resemble score from 0-1 (higher = more similar) */
+    score: number | null;
     /** Human-readable message */
     message: string;
-    /** true if same person (distance < 0.55 threshold) */
+    /** true if same person (score >= threshold) */
     passed: boolean;
 }
 
-const MODELS_URL = '/models';
-// face-api euclidean distance thresholds (FaceNet style):
-//   < 0.40 → very confident same person
-//   < 0.55 → confident same person  ← we use this as pass threshold
-//   > 0.60 → likely different people
-const PASS_THRESHOLD = 0.55;
-
-let modelsLoaded = false; // module-level singleton so we only load once
-let loadingPromise: Promise<void> | null = null;
-
-async function ensureModelsLoaded() {
-    if (modelsLoaded) return;
-    if (loadingPromise) return loadingPromise;
-
-    loadingPromise = (async () => {
-        await Promise.all([
-            faceapi.nets.ssdMobilenetv1.loadFromUri(MODELS_URL),
-            faceapi.nets.faceLandmark68Net.loadFromUri(MODELS_URL),
-            faceapi.nets.faceRecognitionNet.loadFromUri(MODELS_URL),
-        ]);
-        modelsLoaded = true;
-    })();
-
-    return loadingPromise;
-}
+const PASS_THRESHOLD = 0.62;
+const COMPARISON_CANVAS_SIZE = 256;
 
 /**
- * Fetch an image from a URL — with a CORS proxy workaround for Cloudinary.
- * Cloudinary URLs already support CORS so we can fetch them directly.
+ * Fetch an image from a URL.
  */
 async function loadImageFromUrl(url: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
@@ -67,10 +40,37 @@ async function loadImageFromUrl(url: string): Promise<HTMLImageElement> {
     });
 }
 
+function toDataUrl(img: HTMLImageElement, size: number): string {
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Failed to create 2D canvas context for comparison.');
+    ctx.drawImage(img, 0, 0, size, size);
+    return canvas.toDataURL('image/jpeg', 0.92);
+}
+
+function compareWithResemble(firstDataUrl: string, secondDataUrl: string): Promise<number> {
+    return new Promise((resolve, reject) => {
+        resemble(firstDataUrl)
+            .compareTo(secondDataUrl)
+            .ignoreAntialiasing()
+            .onComplete((data: { misMatchPercentage?: string }) => {
+                const mismatch = Number.parseFloat(data.misMatchPercentage ?? '');
+                if (Number.isNaN(mismatch)) {
+                    reject(new Error('Resemble returned an invalid mismatch percentage.'));
+                    return;
+                }
+                const similarity = Math.max(0, 1 - mismatch / 100);
+                resolve(similarity);
+            });
+    });
+}
+
 /**
  * Apply face-enhancing Cloudinary transformations to a public_id.
- * This normalises lighting, upscales, sharpens, and face-crops both images
- * to the same 400×400 canvas before face-api.js processes them.
+ * This normalizes lighting, upscales, sharpens, and face-crops both images
+ * to the same 400x400 canvas before resemble.js comparison.
  */
 export function buildFaceUrl(cloudName: string, publicId: string): string {
     return (
@@ -84,7 +84,7 @@ export function useFaceVerification(cloudName: string) {
     const [result, setResult] = useState<FaceVerifyResult>({
         status: 'idle',
         similarity: null,
-        distance: null,
+        score: null,
         message: '',
         passed: false,
     });
@@ -96,19 +96,8 @@ export function useFaceVerification(cloudName: string) {
             if (runningRef.current) return;
             runningRef.current = true;
 
-            // ── Step 1: Load models ──────────────────────────────────────────
-            setResult({ status: 'loading-models', similarity: null, distance: null, message: 'Loading face recognition models…', passed: false });
-
-            try {
-                await ensureModelsLoaded();
-            } catch {
-                setResult({ status: 'error', similarity: null, distance: null, message: 'Failed to load face recognition models. Please refresh.', passed: false });
-                runningRef.current = false;
-                return;
-            }
-
-            // ── Step 2: Preprocess via Cloudinary ───────────────────────────
-            setResult({ status: 'analyzing', similarity: null, distance: null, message: 'Enhancing images with Cloudinary…', passed: false });
+            // ── Step 1: Preprocess via Cloudinary ───────────────────────────
+            setResult({ status: 'analyzing', similarity: null, score: null, message: 'Enhancing images with Cloudinary…', passed: false });
 
             const idUrl = buildFaceUrl(cloudName, idPublicId);
             const selfieUrl = buildFaceUrl(cloudName, selfiePublicId);
@@ -125,7 +114,7 @@ export function useFaceVerification(cloudName: string) {
                 setResult({
                     status: 'error',
                     similarity: null,
-                    distance: null,
+                    score: null,
                     message: `Could not load images for comparison: ${err instanceof Error ? err.message : 'network error'}`,
                     passed: false,
                 });
@@ -133,48 +122,38 @@ export function useFaceVerification(cloudName: string) {
                 return;
             }
 
-            // ── Step 3: Detect faces + extract 128-d descriptors ────────────
-            setResult({ status: 'analyzing', similarity: null, distance: null, message: 'Detecting facial features…', passed: false });
-
-            let face1: faceapi.WithFaceDescriptor<faceapi.WithFaceLandmarks<{ detection: faceapi.FaceDetection }>> | undefined;
-            let face2: typeof face1;
-
+            // ── Step 2: Compute resemble.js similarity ───────────────────────
+            let score: number;
             try {
-                [face1, face2] = await Promise.all([
-                    faceapi.detectSingleFace(idImg).withFaceLandmarks().withFaceDescriptor(),
-                    faceapi.detectSingleFace(selfieImg).withFaceLandmarks().withFaceDescriptor(),
-                ]);
+                const idDataUrl = toDataUrl(idImg, COMPARISON_CANVAS_SIZE);
+                const selfieDataUrl = toDataUrl(selfieImg, COMPARISON_CANVAS_SIZE);
+                score = await compareWithResemble(idDataUrl, selfieDataUrl);
+                // const idData = toImageData(idImg, COMPARISON_CANVAS_SIZE);
+                // const selfieData = toImageData(selfieImg, COMPARISON_CANVAS_SIZE);
+                // const { mssim } = ssim(idData, selfieData);
+                // score = mssim;
             } catch (err) {
-                setResult({ status: 'error', similarity: null, distance: null, message: `Face detection failed: ${err instanceof Error ? err.message : 'unknown error'}`, passed: false });
+                setResult({
+                    status: 'error',
+                    similarity: null,
+                    score: null,
+                    message: `Resemble.js comparison failed: ${err instanceof Error ? err.message : 'unknown error'}`,
+                    passed: false,
+                });
                 runningRef.current = false;
                 return;
             }
 
-            if (!face1) {
-                setResult({ status: 'no-face-id', similarity: null, distance: null, message: 'No face detected in your ID photo. Please retake your ID photo with your face clearly visible.', passed: false });
-                runningRef.current = false;
-                return;
-            }
-            if (!face2) {
-                setResult({ status: 'no-face-selfie', similarity: null, distance: null, message: 'No face detected in your selfie. Please retake your selfie with your face centred and well-lit.', passed: false });
-                runningRef.current = false;
-                return;
-            }
-
-            // ── Step 4: Compute similarity ───────────────────────────────────
-            const distance = faceapi.euclideanDistance(face1.descriptor, face2.descriptor);
-            // Convert distance [0..2] to a 0–100% similarity score
-            // Distance 0 = identical, distance ≥ 1 = clearly different
-            const similarity = Math.max(0, Math.round((1 - distance) * 100));
-            const passed = distance < PASS_THRESHOLD;
+            const similarity = Math.round(score * 100);
+            const passed = score >= PASS_THRESHOLD;
 
             setResult({
                 status: 'done',
                 similarity,
-                distance: Math.round(distance * 1000) / 1000,
+                score: Math.round(score * 1000) / 1000,
                 message: passed
-                    ? `Facial geometry and biometric markers are consistent across both images.`
-                    : `The facial features in your ID and selfie do not match closely enough. Distance: ${(distance).toFixed(3)}`,
+                    ? 'Image structures are consistent across your ID and selfie.'
+                    : `The ID and selfie are not structurally similar enough. Score: ${score.toFixed(3)}`,
                 passed,
             });
 
@@ -185,7 +164,7 @@ export function useFaceVerification(cloudName: string) {
 
     const reset = useCallback(() => {
         runningRef.current = false;
-        setResult({ status: 'idle', similarity: null, distance: null, message: '', passed: false });
+        setResult({ status: 'idle', similarity: null, score: null, message: '', passed: false });
     }, []);
 
     return { result, verify, reset };
