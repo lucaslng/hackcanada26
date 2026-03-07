@@ -4,15 +4,15 @@
   /* Colours */
   --red: #C8102E;
   --red-dark: #9a0c23;
-  --navy: #0e2a56;
-  --navy-mid: #1a3d6e;
+  --navy: #C8102E;
+  --navy-mid: #9a0c23;
   --white: #ffffff;
-  --off-white: #f6f7f9;
-  --grey-light: #e8eaee;
-  --grey-mid: #c4c9d4;
-  --grey-text: #6b7280;
-  --text: #1a1f2e;
-  --text-soft: #4a5568;
+  --off-white: #ffffff;
+  --grey-light: #e6e6e6;
+  --grey-mid: #b8b8b8;
+  --grey-text: #4b4b4b;
+  --text: #111111;
+  --text-soft: #2f2f2f;
 
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);

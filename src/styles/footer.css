@@ -1,19 +1,68 @@
 /* footer.css */
 
 .site-footer {
-  background: var(--navy);
-  color: rgba(255,255,255,0.65);
-  padding: 2rem 1.5rem;
-  margin-top: 4rem;
+  background: #121212;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 3rem 1.5rem 2rem;
+  margin-top: 5rem;
 }
 
 .footer-inner {
   max-width: 1200px;
   margin: 0 auto;
-  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-  font-size: 0.8rem;
 }
 
-.footer-inner .maple-leaf { color: var(--red); opacity: 0.8; width: 14px; height: 14px; flex-shrink: 0; }
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  margin-bottom: 1.4rem;
+}
 
-.footer-disclaimer { margin-left: auto; font-style: italic; opacity: 0.55; font-size: 0.75rem; }
+.footer-brand .maple-leaf {
+  color: var(--red);
+  width: 18px;
+  height: 18px;
+}
+
+.footer-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.footer-columns h4 {
+  margin-bottom: 0.55rem;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.footer-columns a {
+  display: block;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.88rem;
+  margin-bottom: 0.35rem;
+}
+
+.footer-columns a:hover {
+  color: #fff;
+}
+
+.footer-legal {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.8rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 760px) {
+  .footer-columns {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}

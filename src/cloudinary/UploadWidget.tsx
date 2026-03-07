@@ -30,7 +30,7 @@ export function UploadWidget({
   onUploadSuccess,
   onUploadError,
   buttonText = 'Upload Image',
-  className = '',
+  className = 'ui-btn ui-btn--primary',
 }: UploadWidgetProps) {
   const widgetRef = useRef<{ open: () => void } | null>(null);
   const [isReady, setIsReady] = useState(false);
@@ -136,24 +136,7 @@ export function UploadWidget({
       onClick={handleClick}
       disabled={!isReady}
       className={className}
-      style={{
-        padding: '0.75rem 1.5rem',
-        fontSize: '1rem',
-        fontWeight: 500,
-        color: 'white',
-        backgroundColor: isReady ? '#6366f1' : '#9ca3af',
-        border: 'none',
-        borderRadius: '0.5rem',
-        cursor: isReady ? 'pointer' : 'wait',
-        transition: 'background-color 0.2s',
-        opacity: isReady ? 1 : 0.7,
-      }}
-      onMouseEnter={(e) => {
-        if (isReady) e.currentTarget.style.backgroundColor = '#4f46e5';
-      }}
-      onMouseLeave={(e) => {
-        if (isReady) e.currentTarget.style.backgroundColor = '#6366f1';
-      }}
+      style={{ cursor: isReady ? 'pointer' : 'wait' }}
     >
       {isReady ? buttonText : 'Loading…'}
     </button>

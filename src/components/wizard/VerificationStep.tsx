@@ -1,6 +1,6 @@
 // VerificationStep.tsx
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { CapturedPhoto, VerificationResult } from '../../types';
 
 interface VerificationStepProps {

@@ -23,6 +23,7 @@ export interface SubmitApplicationResponse {
 export async function submitApplication(
   payload: SubmitApplicationPayload,
 ): Promise<SubmitApplicationResponse> {
+  void payload;
   // ─── Simulated network call ──────────────────────────────────────────────
   // Replace this block with:
   //   const res = await fetch('/api/submit', { method: 'POST', body: JSON.stringify(payload) });
