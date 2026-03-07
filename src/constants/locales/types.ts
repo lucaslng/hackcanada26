@@ -1,3 +1,5 @@
+// types.ts
+
 export type Language =
   | 'en'
   | 'fr'
