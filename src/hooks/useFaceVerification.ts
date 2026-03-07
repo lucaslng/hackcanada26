@@ -33,7 +33,7 @@ export interface FaceVerifyResult {
  * Euclidean distance ≤ 0.55 is a strong match; ≤ 0.6 is the default threshold.
  * We use 0.55 for tighter accuracy.
  */
-const PASS_THRESHOLD = 0.55;
+const PASS_THRESHOLD = 0.60;
 
 /**
  * Maximum meaningful Euclidean distance for display purposes.
