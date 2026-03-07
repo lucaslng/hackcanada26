@@ -1,7 +1,7 @@
 // WizardShell.tsx
 
 import { Button } from "../ui/Button";
-import { Step1, Step2, Step3, Step4, Step5, Step7, Step8 } from "./WizardSteps";
+import { Step1, Step2, Step3, Step4, Step5, Step8 } from "./WizardSteps";
 import {
   TOTAL_STEPS,
   type WizardState,
@@ -9,6 +9,7 @@ import {
 } from "../../hooks/useWizard";
 import type { UIStrings } from "../../constants/i18n";
 import { Step6 } from "./Step6";
+import { Step7 } from "./Step7Submission";
 
 interface WizardShellProps {
   t: UIStrings;
@@ -70,7 +71,16 @@ export function WizardShell({
       case 6:
         return <Step6 t={t} selectedOption={state.selectedOption} />;
       case 7:
-        return <Step7 t={t} />;
+        return (
+          <Step7
+            t={t}
+            idPhoto={state.idPhoto}
+            facePhoto={state.facePhoto}
+            contactInfo={state.contactInfo}
+            selectedOption={state.selectedOption}
+            matchScore={state.matchScore}
+          />
+        );
       case 8:
         return (
           <Step8

@@ -210,16 +210,6 @@ export function Step5({ t, idPhoto, facePhoto, matchScore, onCompare }: Step5Pro
   );
 }
 
-// ─── Step 7: Submission ───────────────────────────────────────────────────────
-
-export function Step7({ t }: BaseStepProps) {
-  return (
-    <SectionCard title={t.step7Title} subtitle={t.step7Subtitle} icon="send">
-      <p className="status-neutral">{t.submissionNotice}</p>
-    </SectionCard>
-  );
-}
-
 // ─── Step 8: Notifications ────────────────────────────────────────────────────
 
 interface Step8Props extends BaseStepProps {

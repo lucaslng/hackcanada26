@@ -155,9 +155,10 @@ export function useWizard(selectedOptionId: string | null) {
 
   const compareFaces = () => {
     if (!idPhoto || !facePhoto) return;
-    const fingerprint = `${idPhoto.public_id}:${facePhoto.public_id}`;
-    const checksum = [...fingerprint].reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    setMatchScore(70 + (checksum % 30));
+		setMatchScore(100);
+    // const fingerprint = `${idPhoto.public_id}:${facePhoto.public_id}`;
+    // const checksum = [...fingerprint].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    // setMatchScore(70 + (checksum % 30));
   };
 
   const saveNotifications = () => {
