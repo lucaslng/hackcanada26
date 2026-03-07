@@ -5,7 +5,7 @@ import { Button } from '../ui/Button';
 import { UploadWidget } from '../../cloudinary/UploadWidget';
 import type { CloudinaryUploadResult } from '../../cloudinary/UploadWidget';
 import type { RenewalForm, RenewalOption } from '../../data/renewalOptions';
-import { SERVICE_DETAILS_TEXT, type Language, type UIStrings } from '../../constants/i18n';
+import { getProvinceName, getServiceDetailsText, type Language, type UIStrings } from '../../constants/i18n';
 import type { ContactInfo } from '../../hooks/useWizard';
 import { PROVINCES } from '../../hooks/useWizard';
 
@@ -25,7 +25,7 @@ interface Step1Props extends BaseStepProps {
 
 export function Step1({ t, language, selectedOption, serviceTitle }: Step1Props) {
   const requirements = selectedOption
-    ? (SERVICE_DETAILS_TEXT[selectedOption.id]?.[language]?.requirements ?? selectedOption.requirements)
+    ? (getServiceDetailsText(selectedOption.id, language)?.requirements ?? selectedOption.requirements)
     : [];
 
   return (
@@ -126,9 +126,9 @@ export function Step2({ t, language, contactInfo, onFieldChange }: Step2Props) {
             onChange={(e) => onFieldChange('province', e.target.value)}
           >
             <option value="">{t.selectProvince}</option>
-            {PROVINCES.map((p) => (
-              <option key={p.code} value={p.code}>
-                {p.code} - {p.name[language]}
+            {PROVINCES.map((code) => (
+              <option key={code} value={code}>
+                {code} - {getProvinceName(code, language)}
               </option>
             ))}
           </select>
@@ -241,10 +241,8 @@ export function Step6({
   onMapForms,
 }: Step6Props) {
   const getLocalizedFormLabel = (form: RenewalForm) => {
-    for (const serviceDetails of Object.values(SERVICE_DETAILS_TEXT)) {
-      const label = serviceDetails[language].forms[form.id];
-      if (label) return label;
-    }
+    const label = selectedOption ? getServiceDetailsText(selectedOption.id, language)?.forms[form.id] : null;
+    if (label) return label;
     return form.label;
   };
 
@@ -336,7 +334,7 @@ export function Step8({
         </div>
         <input
           className="ui-input"
-          placeholder={notificationChannel === 'email' ? 'you@example.com' : '+1 416 555 1212'}
+          placeholder={notificationChannel === 'email' ? t.emailPlaceholder : t.smsPlaceholder}
           value={contactValue}
           onChange={(e) => onContactChange(e.target.value)}
         />

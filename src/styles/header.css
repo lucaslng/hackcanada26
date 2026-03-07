@@ -120,29 +120,20 @@
   margin-right: 0.15rem;
 }
 
-.language-switch button {
-  font-size: 1rem;
+.language-select {
+  min-width: 170px;
+  font-size: 0.95rem;
   font-weight: 600;
-  padding: 0.35rem 0.45rem;
-  border-radius: 4px;
-  line-height: 1;
   color: var(--text);
-  transition: background 0.15s, color 0.15s;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.36rem 0.55rem;
 }
 
-.language-switch button.active {
-  color: var(--red);
-}
-
-.language-switch button:hover,
-.language-switch button:focus-visible {
-  background: var(--surface-2);
+.language-select:focus-visible {
+  border-color: var(--red);
   outline: none;
-}
-
-.lang-sep {
-  color: var(--grey-mid);
-  font-size: 0.86rem;
 }
 
 /* ── Theme Toggle ── */
@@ -197,6 +188,11 @@
     width: 100%;
     order: 3;
     margin-left: 0;
+  }
+
+  .language-select {
+    min-width: 0;
+    width: 100%;
   }
 
   .wordmark-service {

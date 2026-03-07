@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import type { CloudinaryUploadResult } from '../cloudinary/UploadWidget';
 import { RENEWAL_OPTIONS, type RenewalForm, type RenewalOption } from '../data/renewalOptions';
-import { SERVICE_DETAILS_TEXT, SERVICE_TEXT, type Language } from '../constants/i18n';
+import { getServiceDetailsText, getServiceText, type Language } from '../constants/i18n';
 
 export const TOTAL_STEPS = 8;
 
@@ -30,21 +30,7 @@ const EMPTY_CONTACT: ContactInfo = {
   postalCode: '',
 };
 
-export const PROVINCES = [
-  { code: 'AB', name: { en: 'Alberta', fr: 'Alberta' } },
-  { code: 'BC', name: { en: 'British Columbia', fr: 'Colombie-Britannique' } },
-  { code: 'MB', name: { en: 'Manitoba', fr: 'Manitoba' } },
-  { code: 'NB', name: { en: 'New Brunswick', fr: 'Nouveau-Brunswick' } },
-  { code: 'NL', name: { en: 'Newfoundland and Labrador', fr: 'Terre-Neuve-et-Labrador' } },
-  { code: 'NT', name: { en: 'Northwest Territories', fr: 'Territoires du Nord-Ouest' } },
-  { code: 'NS', name: { en: 'Nova Scotia', fr: 'Nouvelle-Ecosse' } },
-  { code: 'NU', name: { en: 'Nunavut', fr: 'Nunavut' } },
-  { code: 'ON', name: { en: 'Ontario', fr: 'Ontario' } },
-  { code: 'PE', name: { en: 'Prince Edward Island', fr: 'Ile-du-Prince-Edouard' } },
-  { code: 'QC', name: { en: 'Quebec', fr: 'Quebec' } },
-  { code: 'SK', name: { en: 'Saskatchewan', fr: 'Saskatchewan' } },
-  { code: 'YT', name: { en: 'Yukon', fr: 'Yukon' } },
-];
+export const PROVINCES = ['AB', 'BC', 'MB', 'NB', 'NL', 'NT', 'NS', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT'] as const;
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
@@ -145,8 +131,8 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     return (
       availableOptions.find(
         (o) => {
-          const localizedTitle = SERVICE_TEXT[o.id]?.[language]?.title ?? '';
-          const localizedKeywords = SERVICE_DETAILS_TEXT[o.id]?.[language]?.keywords ?? [];
+          const localizedTitle = getServiceText(o.id, language)?.title ?? '';
+          const localizedKeywords = getServiceDetailsText(o.id, language)?.keywords ?? [];
           const allKeywords = [...o.keywords, ...localizedKeywords];
           return (
             allKeywords.some((kw) => text.includes(kw.toLowerCase()))

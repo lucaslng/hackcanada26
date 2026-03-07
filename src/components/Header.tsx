@@ -1,15 +1,15 @@
 // Header.tsx
 
 import canadianFlag from '../../assets/canadian_flag.png';
-import type { UIStrings } from '../constants/i18n';
+import { LANGUAGE_OPTIONS, type Language, type UIStrings } from '../constants/i18n';
 
 export type Theme = 'light' | 'dark' | 'system';
 
 interface HeaderProps {
   onHome: () => void;
   onNavigate: (sectionId: string) => void;
-  language: 'en' | 'fr';
-  onLanguageChange: (language: 'en' | 'fr') => void;
+  language: Language;
+  onLanguageChange: (language: Language) => void;
   t: UIStrings;
   theme: Theme;
   onThemeChange: (theme: Theme) => void;
@@ -48,7 +48,7 @@ export function Header({
           <span className="wordmark-text">
             <span className="wordmark-canada">Service Canada</span>
             <span className="wordmark-service">
-              {language === 'fr' ? 'Portail de renouvellement' : 'Renewal Portal'}
+              {t.portalLabel}
             </span>
           </span>
         </button>
@@ -61,23 +61,21 @@ export function Header({
           ))}
 
           {/* ── Language switch ── */}
-          <div className="language-switch" role="group" aria-label={t.languageSwitcherAria}>
+          <div className="language-switch">
             <span className="material-symbols-outlined" aria-hidden="true">language</span>
-            <button
-              className={language === 'en' ? 'active' : ''}
-              onClick={() => onLanguageChange('en')}
-              aria-pressed={language === 'en'}
+            <select
+              id="language-select"
+              className="language-select"
+              aria-label={t.languageSwitcherAria}
+              value={language}
+              onChange={(e) => onLanguageChange(e.target.value as Language)}
             >
-              EN
-            </button>
-            <span className="lang-sep">|</span>
-            <button
-              className={language === 'fr' ? 'active' : ''}
-              onClick={() => onLanguageChange('fr')}
-              aria-pressed={language === 'fr'}
-            >
-              FR
-            </button>
+              {LANGUAGE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
         </nav>
 

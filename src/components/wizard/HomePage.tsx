@@ -3,7 +3,7 @@
 import { RevealSection } from '../ui/RevealSection';
 import { Button } from '../ui/Button';
 import { RENEWAL_OPTIONS, type RenewalOption } from '../../data/renewalOptions';
-import { SERVICE_TEXT, type UIStrings, type Language } from '../../constants/i18n';
+import { getServiceText, type UIStrings, type Language } from '../../constants/i18n';
 
 interface HomePageProps {
   t: UIStrings;
@@ -13,7 +13,7 @@ interface HomePageProps {
 }
 
 function getServiceCopy(option: RenewalOption, language: Language) {
-  return SERVICE_TEXT[option.id]?.[language] ?? { title: option.title, description: option.description };
+  return getServiceText(option.id, language) ?? { title: option.title, description: option.description };
 }
 
 export function HomePage({ t, language, onStartService, onNavigate }: HomePageProps) {
