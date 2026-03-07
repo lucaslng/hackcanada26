@@ -91,6 +91,9 @@ export const en: LocalePack = {
     notVerified: 'Not verified',
     step6Title: 'Step 6: Forms to Print and Sign',
     step6Subtitle: 'Review and download forms.',
+    noFormsAvailable: "No forms available for this service.",
+    formGovNotice:
+      "All forms link directly to official Government of Canada or ServiceCanada websites. Open PDF forms in a desktop browser.",
     mapFormsLabel: 'Type your request to map forms',
     mapFormsPlaceholder: "Example: renew driver's licence",
     mapRequestBtn: 'Map Request',

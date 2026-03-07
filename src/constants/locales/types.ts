@@ -1,3 +1,5 @@
+// types.ts
+
 export type Language =
   | 'en'
   | 'fr'
@@ -97,6 +99,8 @@ export interface UIStrings {
   notVerified: string;
   step6Title: string;
   step6Subtitle: string;
+  noFormsAvailable: string;
+  formGovNotice: string;
   mapFormsLabel: string;
   mapFormsPlaceholder: string;
   mapRequestBtn: string;
