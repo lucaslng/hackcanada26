@@ -6,6 +6,8 @@ import { UploadWidget } from '../../cloudinary/UploadWidget';
 import type { CloudinaryUploadResult } from '../../cloudinary/UploadWidget';
 import type { RenewalForm, RenewalOption } from '../../data/renewalOptions';
 import type { UIStrings } from '../../constants/i18n';
+import type { ContactInfo } from '../../hooks/useWizard';
+import { PROVINCES } from '../../hooks/useWizard';
 
 // ─── Shared prop types ────────────────────────────────────────────────────────
 
@@ -13,7 +15,7 @@ interface BaseStepProps {
   t: UIStrings;
 }
 
-// ─── Step 1 ───────────────────────────────────────────────────────────────────
+// ─── Step 1: Requirements ─────────────────────────────────────────────────────
 
 interface Step1Props extends BaseStepProps {
   selectedOption: RenewalOption | null;
@@ -34,16 +36,123 @@ export function Step1({ t, selectedOption, serviceTitle }: Step1Props) {
   );
 }
 
-// ─── Step 2 ───────────────────────────────────────────────────────────────────
+// ─── Step 2: Contact Information ──────────────────────────────────────────────
 
 interface Step2Props extends BaseStepProps {
+  contactInfo: ContactInfo;
+  onFieldChange: (field: keyof ContactInfo, value: string) => void;
+}
+
+export function Step2({ t, contactInfo, onFieldChange }: Step2Props) {
+  return (
+    <SectionCard title={t.step2Title} subtitle={t.step2Subtitle} icon="contact_mail">
+      <div className="contact-form-grid">
+        <div className="contact-field contact-field--full">
+          <label className="ui-label" htmlFor="full-name">{t.fullName}</label>
+          <input
+            id="full-name"
+            className="ui-input"
+            value={contactInfo.fullName}
+            onChange={(e) => onFieldChange('fullName', e.target.value)}
+          />
+        </div>
+
+        <div className="contact-field">
+          <label className="ui-label" htmlFor="email">{t.emailAddress}</label>
+          <input
+            id="email"
+            type="email"
+            className="ui-input"
+            value={contactInfo.email}
+            onChange={(e) => onFieldChange('email', e.target.value)}
+          />
+          <p className="field-helper">{t.emailHelper}</p>
+        </div>
+
+        <div className="contact-field">
+          <label className="ui-label" htmlFor="phone">{t.phoneNumber}</label>
+          <input
+            id="phone"
+            type="tel"
+            className="ui-input"
+            value={contactInfo.phone}
+            onChange={(e) => onFieldChange('phone', e.target.value)}
+          />
+          <p className="field-helper">{t.phoneHelper}</p>
+        </div>
+
+        <div className="contact-field contact-field--full">
+          <label className="ui-label" htmlFor="street">{t.streetAddress}</label>
+          <input
+            id="street"
+            className="ui-input"
+            value={contactInfo.streetAddress}
+            onChange={(e) => onFieldChange('streetAddress', e.target.value)}
+          />
+        </div>
+
+        <div className="contact-field">
+          <label className="ui-label" htmlFor="unit">{t.apartmentUnit}</label>
+          <input
+            id="unit"
+            className="ui-input"
+            value={contactInfo.unit}
+            onChange={(e) => onFieldChange('unit', e.target.value)}
+          />
+        </div>
+
+        <div className="contact-field">
+          <label className="ui-label" htmlFor="city">{t.city}</label>
+          <input
+            id="city"
+            className="ui-input"
+            value={contactInfo.city}
+            onChange={(e) => onFieldChange('city', e.target.value)}
+          />
+        </div>
+
+        <div className="contact-field">
+          <label className="ui-label" htmlFor="province">{t.province}</label>
+          <select
+            id="province"
+            className="ui-input"
+            value={contactInfo.province}
+            onChange={(e) => onFieldChange('province', e.target.value)}
+          >
+            <option value="">{t.selectProvince}</option>
+            {PROVINCES.map((p) => (
+              <option key={p.code} value={p.code}>
+                {p.code} - {p.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="contact-field">
+          <label className="ui-label" htmlFor="postal">{t.postalCode}</label>
+          <input
+            id="postal"
+            className="ui-input"
+            value={contactInfo.postalCode}
+            onChange={(e) => onFieldChange('postalCode', e.target.value)}
+          />
+        </div>
+      </div>
+      <p className="contact-note">{t.contactInfoNotice}</p>
+    </SectionCard>
+  );
+}
+
+// ─── Step 3: Upload ID ────────────────────────────────────────────────────────
+
+interface Step3Props extends BaseStepProps {
   idPhoto: CloudinaryUploadResult | null;
   onUpload: (result: CloudinaryUploadResult) => void;
 }
 
-export function Step2({ t, idPhoto, onUpload }: Step2Props) {
+export function Step3({ t, idPhoto, onUpload }: Step3Props) {
   return (
-    <SectionCard title={t.step2Title} subtitle={t.step2Subtitle} icon="upload_file">
+    <SectionCard title={t.step3Title} subtitle={t.step3Subtitle} icon="upload_file">
       <UploadWidget
         onUploadSuccess={onUpload}
         onUploadError={(err) => alert(`ID upload failed: ${err.message}`)}
@@ -54,16 +163,16 @@ export function Step2({ t, idPhoto, onUpload }: Step2Props) {
   );
 }
 
-// ─── Step 3 ───────────────────────────────────────────────────────────────────
+// ─── Step 4: Selfie ───────────────────────────────────────────────────────────
 
-interface Step3Props extends BaseStepProps {
+interface Step4Props extends BaseStepProps {
   facePhoto: CloudinaryUploadResult | null;
   onUpload: (result: CloudinaryUploadResult) => void;
 }
 
-export function Step3({ t, facePhoto, onUpload }: Step3Props) {
+export function Step4({ t, facePhoto, onUpload }: Step4Props) {
   return (
-    <SectionCard title={t.step3Title} subtitle={t.step3Subtitle} icon="photo_camera_front">
+    <SectionCard title={t.step4Title} subtitle={t.step4Subtitle} icon="photo_camera_front">
       <UploadWidget
         onUploadSuccess={onUpload}
         onUploadError={(err) => alert(`Face scan failed: ${err.message}`)}
@@ -74,18 +183,18 @@ export function Step3({ t, facePhoto, onUpload }: Step3Props) {
   );
 }
 
-// ─── Step 4 ───────────────────────────────────────────────────────────────────
+// ─── Step 5: Identity Comparison ─────────────────────────────────────────────
 
-interface Step4Props extends BaseStepProps {
+interface Step5Props extends BaseStepProps {
   idPhoto: CloudinaryUploadResult | null;
   facePhoto: CloudinaryUploadResult | null;
   matchScore: number | null;
   onCompare: () => void;
 }
 
-export function Step4({ t, idPhoto, facePhoto, matchScore, onCompare }: Step4Props) {
+export function Step5({ t, idPhoto, facePhoto, matchScore, onCompare }: Step5Props) {
   return (
-    <SectionCard title={t.step4Title} subtitle={t.step4Subtitle} icon="person_search">
+    <SectionCard title={t.step5Title} subtitle={t.step5Subtitle} icon="person_search">
       <div className="ui-stack">
         <Button onClick={onCompare} disabled={!idPhoto || !facePhoto}>
           {t.runVerification}
@@ -101,9 +210,9 @@ export function Step4({ t, idPhoto, facePhoto, matchScore, onCompare }: Step4Pro
   );
 }
 
-// ─── Step 5 ───────────────────────────────────────────────────────────────────
+// ─── Step 6: Forms ────────────────────────────────────────────────────────────
 
-interface Step5Props extends BaseStepProps {
+interface Step6Props extends BaseStepProps {
   selectedOption: RenewalOption | null;
   typedIntent: string;
   mappedForms: RenewalForm[];
@@ -111,16 +220,16 @@ interface Step5Props extends BaseStepProps {
   onMapForms: () => void;
 }
 
-export function Step5({
+export function Step6({
   t,
   selectedOption,
   typedIntent,
   mappedForms,
   onIntentChange,
   onMapForms,
-}: Step5Props) {
+}: Step6Props) {
   return (
-    <SectionCard title={t.step5Title} subtitle={t.step5Subtitle} icon="description">
+    <SectionCard title={t.step6Title} subtitle={t.step6Subtitle} icon="description">
       <ul className="form-list">
         {selectedOption?.forms.map((form) => (
           <li key={form.id}>
@@ -158,19 +267,19 @@ export function Step5({
   );
 }
 
-// ─── Step 6 ───────────────────────────────────────────────────────────────────
+// ─── Step 7: Submission ───────────────────────────────────────────────────────
 
-export function Step6({ t }: BaseStepProps) {
+export function Step7({ t }: BaseStepProps) {
   return (
-    <SectionCard title={t.step6Title} subtitle={t.step6Subtitle} icon="send">
+    <SectionCard title={t.step7Title} subtitle={t.step7Subtitle} icon="send">
       <p className="status-neutral">{t.submissionNotice}</p>
     </SectionCard>
   );
 }
 
-// ─── Step 7 ───────────────────────────────────────────────────────────────────
+// ─── Step 8: Notifications ────────────────────────────────────────────────────
 
-interface Step7Props extends BaseStepProps {
+interface Step8Props extends BaseStepProps {
   notificationChannel: 'email' | 'sms';
   contactValue: string;
   notificationSaved: boolean;
@@ -179,7 +288,7 @@ interface Step7Props extends BaseStepProps {
   onSave: () => void;
 }
 
-export function Step7({
+export function Step8({
   t,
   notificationChannel,
   contactValue,
@@ -187,9 +296,9 @@ export function Step7({
   onChannelChange,
   onContactChange,
   onSave,
-}: Step7Props) {
+}: Step8Props) {
   return (
-    <SectionCard title={t.step7Title} subtitle={t.step7Subtitle} icon="notifications_active">
+    <SectionCard title={t.step8Title} subtitle={t.step8Subtitle} icon="notifications_active">
       <div className="ui-stack">
         <div className="segmented" role="tablist" aria-label="Notification channel">
           <button

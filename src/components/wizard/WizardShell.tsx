@@ -1,7 +1,7 @@
 // WizardShell.tsx
 
 import { Button } from '../ui/Button';
-import { Step1, Step2, Step3, Step4, Step5, Step6, Step7 } from './WizardSteps';
+import { Step1, Step2, Step3, Step4, Step5, Step6, Step7, Step8 } from './WizardSteps';
 import { TOTAL_STEPS, type WizardState, type WizardActions } from '../../hooks/useWizard';
 import type { UIStrings } from '../../constants/i18n';
 
@@ -19,20 +19,22 @@ export function WizardShell({ t, state, actions, serviceTitle, onExit }: WizardS
   const renderStep = () => {
     switch (step) {
       case 1:
-        return (
-          <Step1 t={t} selectedOption={state.selectedOption} serviceTitle={serviceTitle} />
-        );
+        return <Step1 t={t} selectedOption={state.selectedOption} serviceTitle={serviceTitle} />;
       case 2:
         return (
-          <Step2 t={t} idPhoto={state.idPhoto} onUpload={actions.setIdPhoto} />
+          <Step2
+            t={t}
+            contactInfo={state.contactInfo}
+            onFieldChange={actions.updateContactField}
+          />
         );
       case 3:
-        return (
-          <Step3 t={t} facePhoto={state.facePhoto} onUpload={actions.setFacePhoto} />
-        );
+        return <Step3 t={t} idPhoto={state.idPhoto} onUpload={actions.setIdPhoto} />;
       case 4:
+        return <Step4 t={t} facePhoto={state.facePhoto} onUpload={actions.setFacePhoto} />;
+      case 5:
         return (
-          <Step4
+          <Step5
             t={t}
             idPhoto={state.idPhoto}
             facePhoto={state.facePhoto}
@@ -40,9 +42,9 @@ export function WizardShell({ t, state, actions, serviceTitle, onExit }: WizardS
             onCompare={actions.compareFaces}
           />
         );
-      case 5:
+      case 6:
         return (
-          <Step5
+          <Step6
             t={t}
             selectedOption={state.selectedOption}
             typedIntent={state.typedIntent}
@@ -51,11 +53,11 @@ export function WizardShell({ t, state, actions, serviceTitle, onExit }: WizardS
             onMapForms={() => actions.mapFormsFromText(state.typedIntent)}
           />
         );
-      case 6:
-        return <Step6 t={t} />;
       case 7:
+        return <Step7 t={t} />;
+      case 8:
         return (
-          <Step7
+          <Step8
             t={t}
             notificationChannel={state.notificationChannel}
             contactValue={state.contactValue}
