@@ -15,7 +15,7 @@ const TOTAL_STEPS = 7;
 const UI = {
   en: {
     nav: { home: 'Home', services: 'Services', information: 'Information', contact: 'Contact Us', support: 'Help / Support' },
-    heroEyebrow: 'ServiceOntario Digital Pre-Service',
+    heroEyebrow: 'Service Ontario Digital Pre-Service',
     heroTitle: 'Renew Government Documents Faster',
     heroBody:
       'Verify your identity and upload required documents before visiting ServiceOntario to reduce wait times and complete renewals faster.',
