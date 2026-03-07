@@ -51,7 +51,7 @@ export function FormsStep({ service, serviceColor, onNext, onBack }: FormsStepPr
     <div className="wizard-step-content forms-step">
       <div className="step-header">
         <div className="step-icon-circle" style={{ background: `color-mix(in srgb, ${serviceColor} 12%, white)`, color: serviceColor }}>
-          📁
+          DOC
         </div>
         <h2>Documents &amp; Forms</h2>
         <p>Upload your supporting documents and confirm you have filled in the required forms.</p>
@@ -61,7 +61,7 @@ export function FormsStep({ service, serviceColor, onNext, onBack }: FormsStepPr
         {/* Forms to print & fill */}
         <div className="forms-section">
           <div className="forms-section-header">
-            <h3>📝 Forms to Print &amp; Fill</h3>
+            <h3>Forms to complete</h3>
             <p>Download each form, fill it in by hand or digitally, then scan and upload below.</p>
           </div>
 
@@ -84,7 +84,7 @@ export function FormsStep({ service, serviceColor, onNext, onBack }: FormsStepPr
                     className="btn-form-download"
                     style={{ borderColor: serviceColor, color: serviceColor }}
                   >
-                    ↓ Download Form
+                    Download form
                   </a>
 
                   {/* Toggle upload for this form's scanned copy */}
@@ -93,7 +93,7 @@ export function FormsStep({ service, serviceColor, onNext, onBack }: FormsStepPr
                     style={uploads[`form-${form.id}`] ? { borderColor: '#16a34a', color: '#16a34a' } : undefined}
                     onClick={() => setActiveFormId(activeFormId === form.id ? null : form.id)}
                   >
-                    {uploads[`form-${form.id}`] ? '✓ Uploaded' : '↑ Upload Filled Form'}
+                    {uploads[`form-${form.id}`] ? 'Uploaded' : 'Upload completed form'}
                   </button>
 
                   <label className="form-check-label">
@@ -124,7 +124,7 @@ export function FormsStep({ service, serviceColor, onNext, onBack }: FormsStepPr
         {/* Supporting Documents */}
         <div className="forms-section">
           <div className="forms-section-header">
-            <h3>📎 Supporting Documents</h3>
+            <h3>Supporting documents</h3>
             <div className="doc-progress">
               <span>{uploadedCount} of {totalDocs} uploaded</span>
               <div className="doc-progress-bar">
@@ -166,7 +166,7 @@ export function FormsStep({ service, serviceColor, onNext, onBack }: FormsStepPr
                         style={{ '--service-color': serviceColor } as React.CSSProperties}
                         onClick={() => setActiveDocId(isActive ? null : doc.id)}
                       >
-                        {isActive ? 'Cancel' : '+ Upload'}
+                        {isActive ? 'Cancel' : 'Upload'}
                       </button>
                     )}
                   </div>
@@ -202,7 +202,7 @@ export function FormsStep({ service, serviceColor, onNext, onBack }: FormsStepPr
 
       <div className="step-actions step-actions--end">
         <button className="btn-step-secondary" onClick={onBack}>
-          ← Back
+          Back
         </button>
         <button
           className="btn-step-primary"
@@ -211,13 +211,13 @@ export function FormsStep({ service, serviceColor, onNext, onBack }: FormsStepPr
           onClick={() => canProceed && onNext(Object.values(uploads))}
           title={!canProceed ? 'Upload all required documents and confirm all required forms' : undefined}
         >
-          Review &amp; Submit →
+          Review and submit
         </button>
       </div>
 
       {!canProceed && (
         <p className="step-warning">
-          ⚠ {!requiredDocsComplete && 'Upload all required documents. '}
+          {!requiredDocsComplete && 'Upload all required documents. '}
           {!requiredFormsComplete && 'Confirm all required forms are filled.'}
         </p>
       )}

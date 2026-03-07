@@ -126,7 +126,7 @@ export function VerificationStep({
     <div className="wizard-step-content verification-step">
       <div className="step-header">
         <div className="step-icon-circle" style={{ background: `color-mix(in srgb, ${serviceColor} 12%, white)`, color: serviceColor }}>
-          🔍
+          VR
         </div>
         <h2>Identity Verification</h2>
         <p>We'll compare your ID photo against your selfie to confirm your identity.</p>
@@ -136,7 +136,7 @@ export function VerificationStep({
         {/* Photo comparison row */}
         <div className="photo-compare-row">
           <div className="compare-photo-card">
-            <div className="compare-photo-label">📄 ID Document Photo</div>
+            <div className="compare-photo-label">ID document photo</div>
             <div className="compare-photo-frame" style={{ borderColor: serviceColor }}>
               <img
                 src={idPhoto.transformedUrl}
@@ -156,7 +156,7 @@ export function VerificationStep({
           </div>
 
           <div className="compare-photo-card">
-            <div className="compare-photo-label">🤳 Live Selfie</div>
+            <div className="compare-photo-label">Live selfie</div>
             <div className="compare-photo-frame" style={{ borderColor: serviceColor }}>
               <img
                 src={selfiePhoto.transformedUrl}
@@ -183,7 +183,7 @@ export function VerificationStep({
               style={{ background: serviceColor }}
               onClick={runVerification}
             >
-              🔍 Run Verification
+              Run verification
             </button>
           </div>
         )}
@@ -232,7 +232,7 @@ export function VerificationStep({
               style={{ background: serviceColor }}
               onClick={() => onNext(result)}
             >
-              Continue to Documents →
+              Continue to documents
             </button>
           </div>
         )}
@@ -258,7 +258,7 @@ export function VerificationStep({
               Please ensure you are using the correct ID and that both photos are clear.
             </p>
             <button className="btn-step-secondary" onClick={onBack}>
-              ← Retake Photos
+              Retake photos
             </button>
           </div>
         )}
@@ -267,7 +267,7 @@ export function VerificationStep({
       {verifyState === 'idle' && (
         <div className="step-actions">
           <button className="btn-step-secondary" onClick={onBack}>
-            ← Back
+            Back
           </button>
         </div>
       )}
