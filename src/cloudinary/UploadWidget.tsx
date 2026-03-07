@@ -1,5 +1,11 @@
+// UploadWidget.tsx
+
 import { useEffect, useRef, useState } from 'react';
 import { uploadPreset } from './config';
+
+// Global declaration lives in src/types/globals.d.ts
+// Importing it here ensures the declaration is applied in this module too.
+import '../types/globals.d';
 
 export interface CloudinaryUploadResult {
   public_id: string;
@@ -20,26 +26,6 @@ interface UploadWidgetProps {
   className?: string;
 }
 
-interface CloudinaryWidgetResult {
-  event: string;
-  info: CloudinaryUploadResult;
-}
-
-interface CloudinaryWidgetError {
-  message?: string;
-}
-
-declare global {
-  interface Window {
-    cloudinary?: {
-      createUploadWidget: (
-        config: Record<string, unknown>,
-        callback: (error: CloudinaryWidgetError | null, result: CloudinaryWidgetResult | null) => void
-      ) => { open: () => void };
-    };
-  }
-}
-
 export function UploadWidget({
   onUploadSuccess,
   onUploadError,
@@ -50,73 +36,75 @@ export function UploadWidget({
   const [isReady, setIsReady] = useState(false);
   const [scriptError, setScriptError] = useState(false);
 
+  // Keep latest callbacks in refs so the widget closure never goes stale.
+  // This avoids re-creating the widget every time a parent re-renders.
+  const onSuccessRef = useRef(onUploadSuccess);
+  const onErrorRef = useRef(onUploadError);
+  useEffect(() => { onSuccessRef.current = onUploadSuccess; }, [onUploadSuccess]);
+  useEffect(() => { onErrorRef.current = onUploadError; }, [onUploadError]);
+
   useEffect(() => {
     let poll: ReturnType<typeof setInterval> | null = null;
     let timeout: ReturnType<typeof setTimeout> | null = null;
     let mounted = true;
 
+    function isWidgetReady(): boolean {
+      return typeof window.cloudinary?.createUploadWidget === 'function';
+    }
+
     function initializeWidget() {
-      if (!mounted || typeof window.cloudinary?.createUploadWidget !== 'function') return;
+      if (!mounted || !isWidgetReady()) return;
 
       if (!uploadPreset) {
         console.warn(
           'VITE_CLOUDINARY_UPLOAD_PRESET is not set. ' +
-          'Create an unsigned upload preset in your Cloudinary dashboard.'
+          'Create an unsigned upload preset in your Cloudinary dashboard.',
         );
       }
 
-      widgetRef.current = window.cloudinary.createUploadWidget(
+      widgetRef.current = window.cloudinary!.createUploadWidget(
         {
           cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
           uploadPreset: uploadPreset || undefined,
           sources: ['local', 'camera', 'url'],
           multiple: false,
         },
-        (error: CloudinaryWidgetError | null, result: CloudinaryWidgetResult | null) => {
+        (error, result) => {
           if (error) {
             console.error('Upload error:', error);
-            onUploadError?.(new Error(error.message || 'Upload failed'));
+            onErrorRef.current?.(new Error(error.message ?? 'Upload failed'));
             return;
           }
-
-          if (result && result.event === 'success') {
-            console.log('Upload success:', result.info);
-            onUploadSuccess?.(result.info);
+          if (result?.event === 'success') {
+            onSuccessRef.current?.(result.info as unknown as CloudinaryUploadResult);
           }
-        }
+        },
       );
 
-      setIsReady(true);
+      if (mounted) setIsReady(true);
     }
 
-    function isWidgetReady(): boolean {
-      return typeof window.cloudinary?.createUploadWidget === 'function';
-    }
-
-    // Poll until createUploadWidget is available
-    // Script should be in index.html, but poll handles any load timing
-    poll = setInterval(() => {
-      if (isWidgetReady()) {
-        if (poll) clearInterval(poll);
-        if (timeout) clearTimeout(timeout);
-        initializeWidget();
-      }
-    }, 100);
-
-    // Timeout after 10 seconds
-    timeout = setTimeout(() => {
-      if (poll) clearInterval(poll);
-      if (mounted && !isWidgetReady()) {
-        console.error('Upload widget script failed to load within 10 seconds');
-        setScriptError(true);
-      }
-    }, 10000);
-
-    // Check immediately in case script is already loaded
+    // Check immediately in case the script already loaded
     if (isWidgetReady()) {
-      if (poll) clearInterval(poll);
-      if (timeout) clearTimeout(timeout);
       initializeWidget();
+    } else {
+      // Poll every 100 ms until createUploadWidget is attached
+      poll = setInterval(() => {
+        if (isWidgetReady()) {
+          clearInterval(poll!);
+          clearTimeout(timeout!);
+          initializeWidget();
+        }
+      }, 100);
+
+      // Give up after 10 s and surface an error
+      timeout = setTimeout(() => {
+        if (poll) clearInterval(poll);
+        if (mounted && !isWidgetReady()) {
+          console.error('Upload widget script failed to load within 10 seconds');
+          setScriptError(true);
+        }
+      }, 10_000);
     }
 
     return () => {
@@ -124,13 +112,13 @@ export function UploadWidget({
       if (poll) clearInterval(poll);
       if (timeout) clearTimeout(timeout);
     };
-  }, [onUploadSuccess, onUploadError]);
+  }, []); // intentionally empty — callbacks are stable via refs
 
   const handleClick = () => {
     if (widgetRef.current) {
       widgetRef.current.open();
     } else if (!scriptError) {
-      console.warn('Upload widget is still loading, please try again.');
+      console.warn('Upload widget is still loading — please try again shortly.');
     }
   };
 
@@ -167,7 +155,7 @@ export function UploadWidget({
         if (isReady) e.currentTarget.style.backgroundColor = '#6366f1';
       }}
     >
-      {isReady ? buttonText : 'Loading...'}
+      {isReady ? buttonText : 'Loading…'}
     </button>
   );
 }

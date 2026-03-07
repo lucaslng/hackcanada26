@@ -5,12 +5,11 @@ import type { Service, UploadedFile } from '../types';
 interface ConfirmationViewProps {
   service: Service;
   files: UploadedFile[];
+  referenceNumber: string;
   onHome: () => void;
 }
 
-export function ConfirmationView({ service, files, onHome }: ConfirmationViewProps) {
-  const refNumber = `SC-${Date.now().toString(36).toUpperCase()}`;
-
+export function ConfirmationView({ service, files, referenceNumber, onHome }: ConfirmationViewProps) {
   return (
     <div className="confirmation-view">
       <div className="confirmation-card">
@@ -27,7 +26,7 @@ export function ConfirmationView({ service, files, onHome }: ConfirmationViewPro
 
         <div className="confirmation-ref">
           <span className="ref-label">Reference Number</span>
-          <span className="ref-number">{refNumber}</span>
+          <span className="ref-number">{referenceNumber}</span>
           <span className="ref-note">Keep this number for your records.</span>
         </div>
 

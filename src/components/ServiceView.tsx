@@ -1,52 +1,58 @@
 // ServiceView.tsx
 
 import { useState } from 'react';
-import { AdvancedImage, placeholder, lazyload } from '@cloudinary/react';
-import { fill } from '@cloudinary/url-gen/actions/resize';
-import { format, quality } from '@cloudinary/url-gen/actions/delivery';
-import { auto } from '@cloudinary/url-gen/qualifiers/format';
-import { auto as autoQuality } from '@cloudinary/url-gen/qualifiers/quality';
-import { cld } from '../cloudinary/config';
+import { AdvancedImage, lazyload, placeholder } from '@cloudinary/react';
+import { submitApplication } from '../api/submitApplication';
 import { UploadWidget } from '../cloudinary/UploadWidget';
 import type { CloudinaryUploadResult } from '../cloudinary/UploadWidget';
-import type { Service, UploadedFile } from '../types';
+import { docPreviewImage } from '../cloudinary/transformations';
+import { useDocumentUpload } from '../hooks/useDocumentUpload';
+import type { Service } from '../types';
 
 interface ServiceViewProps {
   service: Service;
   onBack: () => void;
-  onSubmit: (files: UploadedFile[]) => void;
+  onSubmit: (
+    files: { docId: string; docLabel: string; publicId: string; secureUrl: string }[],
+    referenceNumber: string,
+  ) => void;
 }
 
 export function ServiceView({ service, onBack, onSubmit }: ServiceViewProps) {
-  const [uploads, setUploads] = useState<Record<string, UploadedFile>>({});
-  const [activeDoc, setActiveDoc] = useState<string | null>(null);
+  const {
+    uploads,
+    activeDoc,
+    progress,
+    completedCount,
+    totalCount,
+    requiredComplete,
+    setActiveDoc,
+    handleUploadSuccess,
+  } = useDocumentUpload(service.docs);
+
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const requiredDocIds = service.docs.filter((d) => d.required).map((d) => d.id);
-  const uploadedIds = Object.keys(uploads);
-  const requiredUploaded = requiredDocIds.every((id) => uploadedIds.includes(id));
-
-  const completedCount = uploadedIds.length;
-  const totalCount = service.docs.length;
-  const progress = Math.round((completedCount / totalCount) * 100);
-
-  const handleUploadSuccess = (
-    result: CloudinaryUploadResult,
-    docId: string,
-    docLabel: string,
-  ) => {
-    setUploads((prev) => ({
-      ...prev,
-      [docId]: { docId, docLabel, publicId: result.public_id, secureUrl: result.secure_url },
-    }));
-    setActiveDoc(null);
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const { referenceNumber } = await submitApplication({
+        serviceId: service.id,
+        files: Object.values(uploads),
+      });
+      onSubmit(Object.values(uploads), referenceNumber);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : 'Submission failed. Please try again.',
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleSubmit = () => {
-    setSubmitting(true);
-    setTimeout(() => {
-      onSubmit(Object.values(uploads));
-    }, 1200);
+  const handleDocUpload = (result: CloudinaryUploadResult, docId: string, docLabel: string) => {
+    handleUploadSuccess(result, docId, docLabel);
   };
 
   return (
@@ -96,13 +102,7 @@ export function ServiceView({ service, onBack, onSubmit }: ServiceViewProps) {
             {service.docs.map((doc) => {
               const uploaded = uploads[doc.id];
               const isActive = activeDoc === doc.id;
-              const uploadedImage = uploaded
-                ? cld
-                    .image(uploaded.publicId)
-                    .resize(fill().width(300).height(200))
-                    .delivery(format(auto()))
-                    .delivery(quality(autoQuality()))
-                : null;
+              const previewImage = uploaded ? docPreviewImage(uploaded.publicId) : null;
 
               return (
                 <div
@@ -120,6 +120,7 @@ export function ServiceView({ service, onBack, onSubmit }: ServiceViewProps) {
                       </div>
                       <div className="doc-description">{doc.description}</div>
                     </div>
+
                     {uploaded ? (
                       <button
                         className="doc-replace-btn"
@@ -138,10 +139,10 @@ export function ServiceView({ service, onBack, onSubmit }: ServiceViewProps) {
                     )}
                   </div>
 
-                  {uploaded && !isActive && uploadedImage && (
+                  {uploaded && !isActive && previewImage && (
                     <div className="doc-preview">
                       <AdvancedImage
-                        cldImg={uploadedImage}
+                        cldImg={previewImage}
                         plugins={[placeholder({ mode: 'blur' }), lazyload()]}
                         alt={doc.label}
                         className="doc-preview-img"
@@ -154,7 +155,7 @@ export function ServiceView({ service, onBack, onSubmit }: ServiceViewProps) {
                     <div className="doc-upload-panel">
                       <UploadWidget
                         onUploadSuccess={(result) =>
-                          handleUploadSuccess(result, doc.id, doc.label)
+                          handleDocUpload(result, doc.id, doc.label)
                         }
                         onUploadError={(err) => alert(`Upload failed: ${err.message}`)}
                         buttonText={`Upload ${doc.label}`}
@@ -199,7 +200,10 @@ export function ServiceView({ service, onBack, onSubmit }: ServiceViewProps) {
       </div>
 
       <div className="submit-bar">
-        {!requiredUploaded && (
+        {submitError && (
+          <p className="submit-warning">⚠ {submitError}</p>
+        )}
+        {!requiredComplete && !submitError && (
           <p className="submit-warning">
             ⚠ Please upload all required documents before submitting.
           </p>
@@ -207,12 +211,14 @@ export function ServiceView({ service, onBack, onSubmit }: ServiceViewProps) {
         <button
           className="btn-submit"
           style={{ '--service-color': service.color } as React.CSSProperties}
-          disabled={!requiredUploaded || submitting}
+          disabled={!requiredComplete || submitting}
           onClick={handleSubmit}
         >
           {submitting ? (
             <span className="submitting-dots">
-              Submitting<span>.</span><span>.</span><span>.</span>
+              Submitting<span>.</span>
+              <span>.</span>
+              <span>.</span>
             </span>
           ) : (
             'Submit Application →'

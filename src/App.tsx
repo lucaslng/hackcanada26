@@ -1,6 +1,7 @@
 // App.tsx
 
 import { useState } from 'react';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { ServiceGrid } from './components/ServiceGrid';
@@ -11,10 +12,15 @@ import { SERVICES } from './data/services';
 import type { Service, ServiceId, UploadedFile, View } from './types';
 import './App.css';
 
+interface SubmissionResult {
+  files: UploadedFile[];
+  referenceNumber: string;
+}
+
 export default function App() {
   const [view, setView] = useState<View>('home');
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [submittedFiles, setSubmittedFiles] = useState<UploadedFile[]>([]);
+  const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
 
   const handleSelectService = (id: ServiceId) => {
     const svc = SERVICES.find((s) => s.id === id)!;
@@ -23,8 +29,8 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSubmit = (files: UploadedFile[]) => {
-    setSubmittedFiles(files);
+  const handleSubmit = (files: UploadedFile[], referenceNumber: string) => {
+    setSubmissionResult({ files, referenceNumber });
     setView('confirmation');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -32,7 +38,7 @@ export default function App() {
   const handleHome = () => {
     setView('home');
     setSelectedService(null);
-    setSubmittedFiles([]);
+    setSubmissionResult(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -47,17 +53,22 @@ export default function App() {
             <Footer />
           </>
         )}
+
         {view === 'service' && selectedService && (
-          <ServiceView
-            service={selectedService}
-            onBack={handleHome}
-            onSubmit={handleSubmit}
-          />
+          <ErrorBoundary>
+            <ServiceView
+              service={selectedService}
+              onBack={handleHome}
+              onSubmit={handleSubmit}
+            />
+          </ErrorBoundary>
         )}
-        {view === 'confirmation' && selectedService && (
+
+        {view === 'confirmation' && selectedService && submissionResult && (
           <ConfirmationView
             service={selectedService}
-            files={submittedFiles}
+            files={submissionResult.files}
+            referenceNumber={submissionResult.referenceNumber}
             onHome={handleHome}
           />
         )}
