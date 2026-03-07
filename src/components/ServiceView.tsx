@@ -1,0 +1,224 @@
+// ServiceView.tsx
+
+import { useState } from 'react';
+import { AdvancedImage, placeholder, lazyload } from '@cloudinary/react';
+import { fill } from '@cloudinary/url-gen/actions/resize';
+import { format, quality } from '@cloudinary/url-gen/actions/delivery';
+import { auto } from '@cloudinary/url-gen/qualifiers/format';
+import { auto as autoQuality } from '@cloudinary/url-gen/qualifiers/quality';
+import { cld } from '../cloudinary/config';
+import { UploadWidget } from '../cloudinary/UploadWidget';
+import type { CloudinaryUploadResult } from '../cloudinary/UploadWidget';
+import type { Service, UploadedFile } from '../types';
+
+interface ServiceViewProps {
+  service: Service;
+  onBack: () => void;
+  onSubmit: (files: UploadedFile[]) => void;
+}
+
+export function ServiceView({ service, onBack, onSubmit }: ServiceViewProps) {
+  const [uploads, setUploads] = useState<Record<string, UploadedFile>>({});
+  const [activeDoc, setActiveDoc] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const requiredDocIds = service.docs.filter((d) => d.required).map((d) => d.id);
+  const uploadedIds = Object.keys(uploads);
+  const requiredUploaded = requiredDocIds.every((id) => uploadedIds.includes(id));
+
+  const completedCount = uploadedIds.length;
+  const totalCount = service.docs.length;
+  const progress = Math.round((completedCount / totalCount) * 100);
+
+  const handleUploadSuccess = (
+    result: CloudinaryUploadResult,
+    docId: string,
+    docLabel: string,
+  ) => {
+    setUploads((prev) => ({
+      ...prev,
+      [docId]: { docId, docLabel, publicId: result.public_id, secureUrl: result.secure_url },
+    }));
+    setActiveDoc(null);
+  };
+
+  const handleSubmit = () => {
+    setSubmitting(true);
+    setTimeout(() => {
+      onSubmit(Object.values(uploads));
+    }, 1200);
+  };
+
+  return (
+    <div className="service-view">
+      <button className="back-btn" onClick={onBack}>
+        ← Back to Services
+      </button>
+
+      <div
+        className="service-view-header"
+        style={{ '--service-color': service.color } as React.CSSProperties}
+      >
+        <div className="service-view-icon">{service.icon}</div>
+        <div>
+          <p className="service-view-eyebrow">{service.subtitle}</p>
+          <h1 className="service-view-title">{service.title}</h1>
+          <p className="service-view-desc">{service.description}</p>
+        </div>
+        <div className="service-view-meta">
+          <div className="meta-pill">⏱ Processing time: {service.processingTime}</div>
+        </div>
+      </div>
+
+      <div className="service-view-body">
+        <div className="upload-col">
+          <div className="progress-bar-wrap">
+            <div className="progress-label">
+              <span>
+                {completedCount} of {totalCount} documents uploaded
+              </span>
+              <span>{progress}%</span>
+            </div>
+            <div className="progress-bar">
+              <div
+                className="progress-fill"
+                style={
+                  {
+                    width: `${progress}%`,
+                    '--service-color': service.color,
+                  } as React.CSSProperties
+                }
+              />
+            </div>
+          </div>
+
+          <div className="doc-list">
+            {service.docs.map((doc) => {
+              const uploaded = uploads[doc.id];
+              const isActive = activeDoc === doc.id;
+              const uploadedImage = uploaded
+                ? cld
+                    .image(uploaded.publicId)
+                    .resize(fill().width(300).height(200))
+                    .delivery(format(auto()))
+                    .delivery(quality(autoQuality()))
+                : null;
+
+              return (
+                <div
+                  key={doc.id}
+                  className={`doc-item ${uploaded ? 'uploaded' : ''} ${isActive ? 'active' : ''}`}
+                >
+                  <div className="doc-item-header">
+                    <div className="doc-check">
+                      {uploaded ? '✓' : doc.required ? '●' : '○'}
+                    </div>
+                    <div className="doc-info">
+                      <div className="doc-label">
+                        {doc.label}
+                        {doc.required && <span className="required-badge">Required</span>}
+                      </div>
+                      <div className="doc-description">{doc.description}</div>
+                    </div>
+                    {uploaded ? (
+                      <button
+                        className="doc-replace-btn"
+                        onClick={() => setActiveDoc(isActive ? null : doc.id)}
+                      >
+                        {isActive ? 'Cancel' : 'Replace'}
+                      </button>
+                    ) : (
+                      <button
+                        className="doc-upload-btn"
+                        style={{ '--service-color': service.color } as React.CSSProperties}
+                        onClick={() => setActiveDoc(isActive ? null : doc.id)}
+                      >
+                        {isActive ? 'Cancel' : '+ Upload'}
+                      </button>
+                    )}
+                  </div>
+
+                  {uploaded && !isActive && uploadedImage && (
+                    <div className="doc-preview">
+                      <AdvancedImage
+                        cldImg={uploadedImage}
+                        plugins={[placeholder({ mode: 'blur' }), lazyload()]}
+                        alt={doc.label}
+                        className="doc-preview-img"
+                      />
+                      <span className="doc-preview-label">✓ Uploaded</span>
+                    </div>
+                  )}
+
+                  {isActive && (
+                    <div className="doc-upload-panel">
+                      <UploadWidget
+                        onUploadSuccess={(result) =>
+                          handleUploadSuccess(result, doc.id, doc.label)
+                        }
+                        onUploadError={(err) => alert(`Upload failed: ${err.message}`)}
+                        buttonText={`Upload ${doc.label}`}
+                      />
+                      <p className="upload-hint">
+                        Accepted: JPEG, PNG, PDF, HEIC — Max 10 MB per file
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <aside className="service-sidebar">
+          <div className="sidebar-card">
+            <h3>Before You Submit</h3>
+            <ul className="checklist">
+              <li>All documents must be legible and unobstructed</li>
+              <li>Photos must show all four corners of the document</li>
+              <li>Files must be under 10 MB each</li>
+              <li>Accepted formats: JPEG, PNG, PDF, HEIC</li>
+            </ul>
+          </div>
+          <div className="sidebar-card sidebar-card--privacy">
+            <h3>🔒 Privacy Notice</h3>
+            <p>
+              Your documents are collected under the authority of the{' '}
+              <em>Department of Employment and Social Development Act</em> and are protected under
+              the <em>Privacy Act</em>. Documents are encrypted in transit and at rest.
+            </p>
+          </div>
+          <div className="sidebar-card">
+            <h3>Need Help?</h3>
+            <p>
+              Call <strong>1-800-O-Canada</strong> (1-800-622-6232) Monday–Friday, 8am–8pm local
+              time.
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <div className="submit-bar">
+        {!requiredUploaded && (
+          <p className="submit-warning">
+            ⚠ Please upload all required documents before submitting.
+          </p>
+        )}
+        <button
+          className="btn-submit"
+          style={{ '--service-color': service.color } as React.CSSProperties}
+          disabled={!requiredUploaded || submitting}
+          onClick={handleSubmit}
+        >
+          {submitting ? (
+            <span className="submitting-dots">
+              Submitting<span>.</span><span>.</span><span>.</span>
+            </span>
+          ) : (
+            'Submit Application →'
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
