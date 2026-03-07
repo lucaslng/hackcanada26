@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Header } from './components/Header';
+import { useState, useEffect } from 'react';
+import { Header, type Theme } from './components/Header';
 import { Footer } from './components/Footer';
 import { UploadWidget } from './cloudinary/UploadWidget';
 import type { CloudinaryUploadResult } from './cloudinary/UploadWidget';
@@ -207,7 +207,25 @@ const SERVICE_TEXT: Record<string, { en: { title: string; description: string };
 };
 
 export default function App() {
+  // ── Theme ──────────────────────────────────────────────────────────
+  const [theme, setTheme] = useState<Theme>(() => {
+    return (localStorage.getItem('theme') as Theme) ?? 'system';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'system') {
+      root.removeAttribute('data-theme');
+    } else {
+      root.setAttribute('data-theme', theme);
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  // ── Language ────────────────────────────────────────────────────────
   const [language, setLanguage] = useState<Language>('en');
+
+  // ── Wizard state ────────────────────────────────────────────────────
   const [started, setStarted] = useState(false);
   const [step, setStep] = useState(1);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
@@ -461,6 +479,8 @@ export default function App() {
         language={language}
         onLanguageChange={setLanguage}
         labels={t.nav}
+        theme={theme}
+        onThemeChange={setTheme}
       />
       <main className="main">
         {!started ? (
@@ -617,6 +637,6 @@ export default function App() {
         )}
         <Footer language={language} />
       </main>
-    </div>
+    </div >
   );
 }

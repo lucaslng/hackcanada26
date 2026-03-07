@@ -1,29 +1,164 @@
-/* tokens.css */
+/* tokens.css — semantic design tokens with light / dark / system support */
 
+/* ── Light theme (default) ── */
 :root {
-  /* Colours */
-  --red: #C8102E;
-  --red-dark: #9a0c23;
-  --navy: #C8102E;
-  --navy-mid: #9a0c23;
-  --white: #ffffff;
-  --off-white: #ffffff;
-  --grey-light: #e6e6e6;
-  --grey-mid: #b8b8b8;
-  --grey-text: #4b4b4b;
-  --text: #111111;
-  --text-soft: #2f2f2f;
+  color-scheme: light;
+
+  /* Brand */
+  --red: #c8102e;
+  --red-dark: #a20d26;
+
+  /* Surfaces */
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --surface-2: #f3f5f8;
+  --surface-3: #ebeef3;
+
+  /* Borders */
+  --border: #d8dde6;
+  --border-2: #c4ccd9;
+
+  /* Text */
+  --text: #1f2937;
+  --text-soft: #4b5568;
+  --text-muted: #6b7280;
+
+  /* Navy (accent) */
+  --navy: #1f2f4a;
+  --navy-mid: #2a3f63;
+
+  /* Off-white / grey scale */
+  --off-white: #f3f5f8;
+  --grey-light: #d8dde6;
+  --grey-mid: #a7b1c2;
+  --grey-text: #5a6578;
+
+  /* UI component aliases */
+  --ui-bg: var(--surface);
+  --ui-surface: var(--surface);
+  --ui-border: var(--border);
+  --ui-text: var(--text);
+  --ui-muted: var(--text-soft);
+  --ui-primary: var(--red);
+  --ui-primary-strong: var(--red-dark);
+  --ui-secondary: #fff0f3;
+  --ui-good: #1f8a46;
+  --ui-bad: #b63b3b;
+
+  /* Status */
+  --status-good-bg: #f1f8f3;
+  --status-good-border: #c8dfd0;
+  --status-good-text: #1c5a35;
+  --status-bad-bg: #fff5f5;
+  --status-bad-border: #e9c8c8;
+  --status-bad-text: #9b2f2f;
+  --status-neutral-bg: #fafafa;
+  --status-neutral-border: #e2e2e2;
 
   /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.06);
-  --shadow-lg: 0 12px 32px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.08);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 8px 18px rgba(15, 23, 42, 0.1);
 
   /* Radii */
-  --radius: 10px;
-  --radius-lg: 16px;
+  --radius: 6px;
+  --radius-lg: 10px;
 
   /* Typography */
   font-family: 'Source Sans 3', sans-serif;
   color: var(--text);
+}
+
+/* ── Dark theme (explicit override via [data-theme="dark"]) ── */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface-2: #21253a;
+  --surface-3: #282d42;
+
+  --border: #31384f;
+  --border-2: #3a4260;
+
+  --text: #e8ecf4;
+  --text-soft: #9aa3ba;
+  --text-muted: #6b7490;
+
+  --navy: #7ba4d4;
+  --navy-mid: #93b8e2;
+
+  --off-white: #21253a;
+  --grey-light: #31384f;
+  --grey-mid: #4d5670;
+  --grey-text: #8892a8;
+
+  --ui-bg: var(--surface);
+  --ui-surface: var(--surface);
+  --ui-border: var(--border);
+  --ui-text: var(--text);
+  --ui-muted: var(--text-soft);
+  --ui-secondary: #2c1f25;
+
+  --status-good-bg: #0f2419;
+  --status-good-border: #1e5032;
+  --status-good-text: #6ee09a;
+  --status-bad-bg: #2a1010;
+  --status-bad-border: #6b2222;
+  --status-bad-text: #f08a8a;
+  --status-neutral-bg: #1a1d27;
+  --status-neutral-border: #31384f;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 8px 18px rgba(0, 0, 0, 0.45);
+}
+
+/* ── System auto-dark (when no explicit override is set) ── */
+:root:not([data-theme]) {
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface-2: #21253a;
+    --surface-3: #282d42;
+
+    --border: #31384f;
+    --border-2: #3a4260;
+
+    --text: #e8ecf4;
+    --text-soft: #9aa3ba;
+    --text-muted: #6b7490;
+
+    --navy: #7ba4d4;
+    --navy-mid: #93b8e2;
+
+    --off-white: #21253a;
+    --grey-light: #31384f;
+    --grey-mid: #4d5670;
+    --grey-text: #8892a8;
+
+    --ui-bg: var(--surface);
+    --ui-surface: var(--surface);
+    --ui-border: var(--border);
+    --ui-text: var(--text);
+    --ui-muted: var(--text-soft);
+    --ui-secondary: #2c1f25;
+
+    --status-good-bg: #0f2419;
+    --status-good-border: #1e5032;
+    --status-good-text: #6ee09a;
+    --status-bad-bg: #2a1010;
+    --status-bad-border: #6b2222;
+    --status-bad-text: #f08a8a;
+    --status-neutral-bg: #1a1d27;
+    --status-neutral-border: #31384f;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 8px 18px rgba(0, 0, 0, 0.45);
+  }
 }

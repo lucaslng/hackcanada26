@@ -1,24 +1,12 @@
 /* ui.css */
 
-:root {
-  --ui-bg: #ffffff;
-  --ui-surface: #ffffff;
-  --ui-border: #e4e4e4;
-  --ui-text: #111111;
-  --ui-muted: #4b4b4b;
-  --ui-primary: #c8102e;
-  --ui-primary-strong: #9a0c23;
-  --ui-secondary: #fff0f3;
-  --ui-good: #1f8a46;
-  --ui-bad: #b63b3b;
-}
-
 .ui-card {
   background: var(--ui-surface);
   border: 1px solid var(--ui-border);
   border-radius: 16px;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow-md);
   padding: 1.75rem;
+  transition: background 0.25s ease, border-color 0.25s ease;
 }
 
 .ui-card__head {
@@ -76,7 +64,7 @@
 }
 
 .ui-btn--secondary:hover:not(:disabled) {
-  background: #ffdfe6;
+  filter: brightness(0.96);
   transform: translateY(-1px);
 }
 
@@ -87,7 +75,7 @@
 }
 
 .ui-btn--ghost:hover:not(:disabled) {
-  background: #f8f8f8;
+  background: var(--surface-2);
 }
 
 .ui-btn--full {
@@ -107,13 +95,14 @@
   padding: 0.78rem 0.9rem;
   font-size: 1rem;
   color: var(--ui-text);
-  background: #fff;
+  background: var(--ui-surface);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
 .ui-input:focus {
-  outline: 2px solid #ffd4dc;
+  outline: 2px solid color-mix(in srgb, var(--red) 35%, transparent);
   outline-offset: 0;
-  border-color: #e87f91;
+  border-color: color-mix(in srgb, var(--red) 60%, transparent);
 }
 
 .ui-stack {
@@ -124,7 +113,7 @@
 
 .ui-banner {
   border: 1px solid var(--ui-border);
-  background: #fff5f7;
+  background: color-mix(in srgb, var(--red) 5%, var(--surface));
   border-radius: 10px;
   padding: 0.85rem 1rem;
   margin-bottom: 1rem;

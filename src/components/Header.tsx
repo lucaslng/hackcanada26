@@ -2,6 +2,8 @@
 
 import canadianFlag from '../../assets/canadian_flag.png';
 
+export type Theme = 'light' | 'dark' | 'system';
+
 interface HeaderProps {
   onHome: () => void;
   onNavigate: (sectionId: string) => void;
@@ -14,7 +16,15 @@ interface HeaderProps {
     contact: string;
     support: string;
   };
+  theme: Theme;
+  onThemeChange: (theme: Theme) => void;
 }
+
+const THEME_OPTIONS: { value: Theme; icon: string; label: string }[] = [
+  { value: 'light', icon: 'light_mode', label: 'Light' },
+  { value: 'system', icon: 'brightness_auto', label: 'System' },
+  { value: 'dark', icon: 'dark_mode', label: 'Dark' },
+];
 
 export function Header({
   onHome,
@@ -22,6 +32,8 @@ export function Header({
   language,
   onLanguageChange,
   labels,
+  theme,
+  onThemeChange,
 }: HeaderProps) {
   const navItems = [
     { id: 'home', label: labels.home },
@@ -53,6 +65,7 @@ export function Header({
             </button>
           ))}
 
+          {/* ── Language switch ── */}
           <div className="language-switch" role="group" aria-label="Language switcher">
             <span className="material-symbols-outlined" aria-hidden="true">language</span>
             <button
@@ -72,6 +85,27 @@ export function Header({
             </button>
           </div>
         </nav>
+
+        {/* ── Theme toggle ── */}
+        <div
+          className="theme-toggle-group"
+          role="group"
+          aria-label="Colour scheme"
+        >
+          {THEME_OPTIONS.map(({ value, icon, label }) => (
+            <button
+              key={value}
+              id={`theme-btn-${value}`}
+              className={`theme-toggle-btn${theme === value ? ' active' : ''}`}
+              onClick={() => onThemeChange(value)}
+              aria-pressed={theme === value}
+              title={label}
+            >
+              <span className="material-symbols-outlined">{icon}</span>
+              <span>{label}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </header>
   );
