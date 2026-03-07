@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Header } from './components/Header';
+import { useState, useEffect } from 'react';
+import { Header, type Theme } from './components/Header';
 import { Footer } from './components/Footer';
 import { UploadWidget } from './cloudinary/UploadWidget';
 import type { CloudinaryUploadResult } from './cloudinary/UploadWidget';
@@ -12,6 +12,22 @@ import './App.css';
 const TOTAL_STEPS = 7;
 
 export default function App() {
+  // ── Theme ──────────────────────────────────────────────────────────
+  const [theme, setTheme] = useState<Theme>(() => {
+    return (localStorage.getItem('theme') as Theme) ?? 'system';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'system') {
+      root.removeAttribute('data-theme');
+    } else {
+      root.setAttribute('data-theme', theme);
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  // ── Wizard state ───────────────────────────────────────────────────
   const [started, setStarted] = useState(false);
   const [step, setStep] = useState(1);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
@@ -290,7 +306,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header onHome={resetFlow} onNavigate={navigateToSection} />
+      <Header onHome={resetFlow} onNavigate={navigateToSection} theme={theme} onThemeChange={setTheme} />
       <main className="main">
         {!started ? (
           <div className="gov-home-wrap">

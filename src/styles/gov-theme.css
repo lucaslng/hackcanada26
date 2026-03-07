@@ -1,41 +1,27 @@
-/* gov-theme.css */
-
-:root {
-  --red: #c8102e;
-  --red-dark: #a20d26;
-  --navy: #1f2f4a;
-  --navy-mid: #2a3f63;
-  --off-white: #f3f5f8;
-  --grey-light: #d8dde6;
-  --grey-mid: #a7b1c2;
-  --grey-text: #5a6578;
-  --text: #1f2937;
-  --text-soft: #4b5568;
-  --radius: 6px;
-  --radius-lg: 10px;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 8px 18px rgba(15, 23, 42, 0.1);
-}
+/* gov-theme.css — overrides on top of tokens for gov aesthetic */
 
 body {
-  background: #f5f7fa;
+  background: var(--bg);
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-family: 'Source Sans 3', sans-serif;
   letter-spacing: 0.01em;
 }
 
 .site-header {
-  background: #fff;
+  background: var(--surface);
   color: var(--text);
   border-top: 4px solid var(--red);
-  border-bottom: 1px solid var(--grey-light);
+  border-bottom: 1px solid var(--border);
   box-shadow: none;
 }
 
-.wordmark, .wordmark-canada {
+.wordmark,
+.wordmark-canada {
   color: var(--text);
 }
 
@@ -62,16 +48,18 @@ h1, h2, h3, h4 {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2.75rem 1.5rem 2.25rem;
-  background: #fff;
+  background: var(--surface);
   color: var(--text);
-  border: 1px solid var(--grey-light);
+  border: 1px solid var(--border);
   border-top: none;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   grid-template-columns: 1fr;
   gap: 1rem;
 }
 
-.hero::before, .hero::after, .hero-art {
+.hero::before,
+.hero::after,
+.hero-art {
   display: none;
 }
 
@@ -130,13 +118,13 @@ h1, h2, h3, h4 {
 }
 
 .btn-ghost {
-  background: #fff;
+  background: var(--surface);
   color: var(--navy);
-  border: 1px solid var(--grey-mid);
+  border: 1px solid var(--border);
 }
 
 .btn-ghost:hover {
-  background: var(--off-white);
+  background: var(--surface-2);
 }
 
 .service-grid-section {
@@ -162,6 +150,7 @@ h1, h2, h3, h4 {
   border-radius: 8px;
   padding: 1.1rem;
   box-shadow: none;
+  background: var(--surface);
 }
 
 .service-card::before {
@@ -181,14 +170,14 @@ h1, h2, h3, h4 {
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  background: color-mix(in srgb, var(--service-color, var(--navy)) 14%, white);
-  color: color-mix(in srgb, var(--service-color, var(--navy)) 78%, #111827);
+  background: color-mix(in srgb, var(--service-color, var(--navy)) 14%, var(--surface));
+  color: color-mix(in srgb, var(--service-color, var(--navy)) 78%, var(--text));
 }
 
 .service-card-arrow {
   font-size: 0.75rem;
   font-weight: 700;
-  border: 1px solid var(--grey-mid);
+  border: 1px solid var(--border);
   border-radius: 999px;
   padding: 0.22rem 0.55rem;
   color: var(--navy);
@@ -199,9 +188,9 @@ h1, h2, h3, h4 {
 }
 
 .service-view-header {
-  background: #fff;
+  background: var(--surface);
   color: var(--text);
-  border: 1px solid var(--grey-light);
+  border: 1px solid var(--border);
   border-left: 4px solid var(--service-color, var(--navy));
   box-shadow: none;
 }
@@ -216,21 +205,22 @@ h1, h2, h3, h4 {
 }
 
 .meta-pill {
-  background: var(--off-white);
-  border-color: var(--grey-light);
+  background: var(--surface-2);
+  border-color: var(--border);
   color: var(--text-soft);
   border-radius: 4px;
 }
 
 .back-btn {
   padding: 0.4rem 0.7rem;
-  border: 1px solid var(--grey-mid);
+  border: 1px solid var(--border);
   border-radius: 4px;
   opacity: 1;
+  color: var(--navy);
 }
 
 .back-btn:hover {
-  background: var(--off-white);
+  background: var(--surface-2);
 }
 
 .wizard-step-content {
@@ -257,7 +247,7 @@ h1, h2, h3, h4 {
   font-weight: 700;
   letter-spacing: 0.03em;
   color: var(--grey-text);
-  border: 1px solid var(--grey-mid);
+  border: 1px solid var(--border);
   border-radius: 3px;
   padding: 0.1rem 0.3rem;
 }
@@ -275,7 +265,7 @@ h1, h2, h3, h4 {
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  border: 1px solid var(--grey-mid);
+  border: 1px solid var(--border);
   border-radius: 4px;
   padding: 0.2rem 0.35rem;
   color: var(--text-soft);
@@ -286,8 +276,8 @@ h1, h2, h3, h4 {
 }
 
 .cloudinary-badge {
-  background: var(--off-white);
-  border-color: var(--grey-light);
+  background: var(--surface-2);
+  border-color: var(--border);
 }
 
 .compare-photo-label {
@@ -299,13 +289,14 @@ h1, h2, h3, h4 {
 .sidebar-card,
 .form-card {
   box-shadow: none;
-  border-color: var(--grey-light);
+  border-color: var(--border);
+  background: var(--surface);
 }
 
 .site-footer {
-  background: #fff;
+  background: var(--surface);
   color: var(--text-soft);
-  border-top: 1px solid var(--grey-light);
+  border-top: 1px solid var(--border);
   padding: 1.25rem 1.5rem;
   margin-top: 2.5rem;
 }

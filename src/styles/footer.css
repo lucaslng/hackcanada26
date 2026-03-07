@@ -1,10 +1,12 @@
 /* footer.css */
 
 .site-footer {
-  background: #121212;
-  color: rgba(255, 255, 255, 0.9);
+  background: var(--surface-3);
+  color: var(--text-soft);
   padding: 3rem 1.5rem 2rem;
   margin-top: 5rem;
+  border-top: 1px solid var(--border);
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 .footer-inner {
@@ -17,6 +19,7 @@
   align-items: center;
   gap: 0.6rem;
   font-weight: 700;
+  color: var(--text);
   margin-bottom: 1.4rem;
 }
 
@@ -25,31 +28,32 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 1px solid var(--border);
 }
 
 .footer-columns h4 {
   margin-bottom: 0.55rem;
   font-size: 0.95rem;
-  color: #fff;
+  color: var(--text);
 }
 
 .footer-columns a {
   display: block;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-soft);
   font-size: 0.88rem;
   margin-bottom: 0.35rem;
+  transition: color 0.15s;
 }
 
 .footer-columns a:hover {
-  color: #fff;
+  color: var(--text);
 }
 
 .footer-legal {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--text-muted);
   font-size: 0.8rem;
   margin-top: 1rem;
 }

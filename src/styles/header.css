@@ -1,13 +1,14 @@
 /* header.css */
 
 .site-header {
-  background: white;
-  color: #111;
+  background: var(--surface);
+  color: var(--text);
   position: sticky;
   top: 0;
   z-index: 100;
   border-top: 4px solid var(--red);
-  border-bottom: 1px solid var(--grey-light);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.25s ease, border-color 0.25s ease;
 }
 
 .header-inner {
@@ -29,7 +30,7 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  color: #111;
+  color: var(--text);
 }
 
 .flag-bar {
@@ -50,9 +51,26 @@
   object-fit: contain;
 }
 
-.wordmark-text { display: flex; flex-direction: column; text-align: left; line-height: 1.2; }
-.wordmark-canada { font-family: 'Libre Baskerville', serif; font-size: 1rem; font-weight: 700; color: #111; }
-.wordmark-service { font-size: 0.72rem; font-weight: 400; color: var(--grey-text); letter-spacing: 0.01em; }
+.wordmark-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  line-height: 1.2;
+}
+
+.wordmark-canada {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.wordmark-service {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--grey-text);
+  letter-spacing: 0.01em;
+}
 
 .header-nav {
   display: flex;
@@ -63,25 +81,89 @@
 }
 
 .header-nav button {
-  color: #111;
+  color: var(--text);
   font-size: 0.86rem;
   font-weight: 600;
   padding: 0.4rem 0.6rem;
   border-radius: 4px;
   border: 1px solid transparent;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .header-nav button:hover,
 .header-nav button:focus-visible {
-  background: #f7f7f7;
-  border-color: var(--grey-light);
+  background: var(--surface-2);
+  border-color: var(--border);
   outline: none;
 }
 
-.header-nav { margin-left: auto; }
+.header-nav {
+  margin-left: auto;
+}
+
+/* ── Theme Toggle ── */
+.theme-toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  white-space: nowrap;
+}
+
+.theme-toggle-btn:hover {
+  color: var(--text);
+}
+
+.theme-toggle-btn.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-toggle-btn .material-symbols-outlined {
+  font-size: 1rem;
+}
 
 @media (max-width: 640px) {
-  .header-inner { gap: 0.65rem; }
-  .header-nav { width: 100%; order: 3; margin-left: 0; }
-  .wordmark-service { display: none; }
+  .header-inner {
+    gap: 0.65rem;
+  }
+
+  .header-nav {
+    width: 100%;
+    order: 3;
+    margin-left: 0;
+  }
+
+  .wordmark-service {
+    display: none;
+  }
+
+  .theme-toggle-btn span:not(.material-symbols-outlined) {
+    display: none;
+  }
+
+  .theme-toggle-btn {
+    padding: 0.3rem 0.45rem;
+  }
 }
