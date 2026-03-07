@@ -1,11 +1,27 @@
 // WizardShell.tsx
 
 import { Button } from '../ui/Button';
-import { Step1, Step2, Step3, Step4, Step5, Step8 } from './WizardSteps';
+import { Step1, Step2, Step3, Step4, Step8 } from './WizardSteps';
 import { Step6 } from './Step6';
 import { Step7 } from './Step7Submission';
+import { VerificationStep } from './VerificationStep';
 import { TOTAL_STEPS, type WizardState, type WizardActions } from '../../hooks/useWizard';
 import type { Language, UIStrings } from '../../constants/i18n';
+import type { CapturedPhoto } from '../../types';
+
+// Brand red — matches --red CSS token
+const SERVICE_COLOR = '#c8102e';
+
+const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string;
+
+/** Build a Cloudinary face-crop preview URL for display in VerificationStep. */
+function toFaceUrl(publicId: string): string {
+  return (
+    `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/` +
+    `c_fill,g_face,w_400,h_400,e_improve,q_auto,f_jpg/` +
+    publicId
+  );
+}
 
 interface WizardShellProps {
   t: UIStrings;
@@ -55,16 +71,39 @@ export function WizardShell({ t, state, actions, serviceTitle, language, onExit 
             onUpload={actions.setFacePhoto}
           />
         );
-      case 5:
+      case 5: {
+        // Guard: both photos must be uploaded before verification
+        if (!state.idPhoto || !state.facePhoto) {
+          return (
+            <div className="status-neutral" style={{ margin: '2rem 0' }}>
+              Please complete steps 3 and 4 (upload your ID and selfie) before running verification.
+            </div>
+          );
+        }
+
+        const idCaptured: CapturedPhoto = {
+          publicId: state.idPhoto.public_id,
+          transformedUrl: toFaceUrl(state.idPhoto.public_id),
+        };
+        const selfieCaptured: CapturedPhoto = {
+          publicId: state.facePhoto.public_id,
+          transformedUrl: toFaceUrl(state.facePhoto.public_id),
+        };
+
         return (
-          <Step5
+          <VerificationStep
             t={t}
-            idPhoto={state.idPhoto}
-            facePhoto={state.facePhoto}
-            matchScore={state.matchScore}
-            onCompare={actions.compareFaces}
+            idPhoto={idCaptured}
+            selfiePhoto={selfieCaptured}
+            serviceColor={SERVICE_COLOR}
+            onNext={(result) => {
+              actions.setMatchScore(result.confidence);
+              actions.goNext();
+            }}
+            onBack={actions.goBack}
           />
         );
+      }
       case 6:
         return <Step6 t={t} selectedOption={state.selectedOption} />;
       case 7:
@@ -96,6 +135,9 @@ export function WizardShell({ t, state, actions, serviceTitle, language, onExit 
         return null;
     }
   };
+
+  // Step 5 manages its own navigation (VerificationStep has built-in back/continue)
+  const isVerificationStep = step === 5;
 
   return (
     <div className="renewal-shell">
@@ -140,29 +182,32 @@ export function WizardShell({ t, state, actions, serviceTitle, language, onExit 
         {renderStep()}
       </div>
 
-      <div className="wizard-nav wizard-nav-sticky">
-        <div className="wizard-nav-left">
-          <Button
-            variant="ghost"
-            onClick={actions.goBack}
-            disabled={step === 1}
-          >
-            {t.back}
-          </Button>
-          <Button variant="ghost" onClick={onExit}>
-            {t.exitSetup}
-          </Button>
-        </div>
-        <div className="wizard-nav-right">
-          {step < TOTAL_STEPS ? (
-            <Button onClick={actions.goNext} disabled={!canContinue}>
-              {t.continue}
+      {/* Hide the shared nav bar on step 5 — VerificationStep has its own controls */}
+      {!isVerificationStep && (
+        <div className="wizard-nav wizard-nav-sticky">
+          <div className="wizard-nav-left">
+            <Button
+              variant="ghost"
+              onClick={actions.goBack}
+              disabled={step === 1}
+            >
+              {t.back}
             </Button>
-          ) : (
-            <Button onClick={onExit}>{t.returnHome}</Button>
-          )}
+            <Button variant="ghost" onClick={onExit}>
+              {t.exitSetup}
+            </Button>
+          </div>
+          <div className="wizard-nav-right">
+            {step < TOTAL_STEPS ? (
+              <Button onClick={actions.goNext} disabled={!canContinue}>
+                {t.continue}
+              </Button>
+            ) : (
+              <Button onClick={onExit}>{t.returnHome}</Button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

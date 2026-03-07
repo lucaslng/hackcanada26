@@ -55,12 +55,12 @@ export interface WizardActions {
   setTypedIntent: (value: string) => void;
   setIdPhoto: (result: CloudinaryUploadResult | null) => void;
   setFacePhoto: (result: CloudinaryUploadResult | null) => void;
+  setMatchScore: (score: number) => void;
   setNotificationChannel: (channel: 'email' | 'sms') => void;
   setContactValue: (value: string) => void;
   goNext: () => void;
   goBack: () => void;
   jumpToStep: (targetStep: number) => void;
-  compareFaces: () => void;
   mapFormsFromText: (raw: string) => void;
   saveNotifications: () => void;
 }
@@ -156,14 +156,6 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     setMappedForms(option ? option.forms : []);
   };
 
-  const compareFaces = () => {
-    if (!idPhoto || !facePhoto) return;
-		setMatchScore(100);
-    // const fingerprint = `${idPhoto.public_id}:${facePhoto.public_id}`;
-    // const checksum = [...fingerprint].reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    // setMatchScore(70 + (checksum % 30));
-  };
-
   const saveNotifications = () => {
     if (!contactValue.trim()) return;
     setNotificationSaved(true);
@@ -205,12 +197,12 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     setTypedIntent,
     setIdPhoto,
     setFacePhoto,
+    setMatchScore,
     setNotificationChannel: (ch) => setNotificationChannel(ch),
     setContactValue: (v) => { setContactValue(v); setNotificationSaved(false); },
     goNext,
     goBack,
     jumpToStep,
-    compareFaces,
     mapFormsFromText,
     saveNotifications,
   };
