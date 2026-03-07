@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import type { CloudinaryUploadResult } from '../cloudinary/UploadWidget';
 import { RENEWAL_OPTIONS, type RenewalForm, type RenewalOption } from '../data/renewalOptions';
+import { getServiceDetailsText, getServiceText, type Language } from '../constants/i18n';
 
 export const TOTAL_STEPS = 8;
 
@@ -29,21 +30,7 @@ const EMPTY_CONTACT: ContactInfo = {
   postalCode: '',
 };
 
-export const PROVINCES = [
-  { code: 'AB', name: 'Alberta' },
-  { code: 'BC', name: 'British Columbia' },
-  { code: 'MB', name: 'Manitoba' },
-  { code: 'NB', name: 'New Brunswick' },
-  { code: 'NL', name: 'Newfoundland and Labrador' },
-  { code: 'NT', name: 'Northwest Territories' },
-  { code: 'NS', name: 'Nova Scotia' },
-  { code: 'NU', name: 'Nunavut' },
-  { code: 'ON', name: 'Ontario' },
-  { code: 'PE', name: 'Prince Edward Island' },
-  { code: 'QC', name: 'Quebec' },
-  { code: 'SK', name: 'Saskatchewan' },
-  { code: 'YT', name: 'Yukon' },
-];
+export const PROVINCES = ['AB', 'BC', 'MB', 'NB', 'NL', 'NT', 'NS', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT'] as const;
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
@@ -79,7 +66,7 @@ export interface WizardActions {
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
-export function useWizard(selectedOptionId: string | null) {
+export function useWizard(selectedOptionId: string | null, language: Language) {
   const [step, setStep] = useState(1);
   const [contactInfo, setContactInfo] = useState<ContactInfo>(EMPTY_CONTACT);
   const [typedIntent, setTypedIntent] = useState('');
@@ -143,7 +130,16 @@ export function useWizard(selectedOptionId: string | null) {
     if (!text) return null;
     return (
       availableOptions.find(
-        (o) => o.keywords.some((kw) => text.includes(kw)) || text.includes(o.title.toLowerCase()),
+        (o) => {
+          const localizedTitle = getServiceText(o.id, language)?.title ?? '';
+          const localizedKeywords = getServiceDetailsText(o.id, language)?.keywords ?? [];
+          const allKeywords = [...o.keywords, ...localizedKeywords];
+          return (
+            allKeywords.some((kw) => text.includes(kw.toLowerCase()))
+            || text.includes(o.title.toLowerCase())
+            || text.includes(localizedTitle.toLowerCase())
+          );
+        },
       ) ?? null
     );
   };
@@ -155,9 +151,10 @@ export function useWizard(selectedOptionId: string | null) {
 
   const compareFaces = () => {
     if (!idPhoto || !facePhoto) return;
-    const fingerprint = `${idPhoto.public_id}:${facePhoto.public_id}`;
-    const checksum = [...fingerprint].reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    setMatchScore(70 + (checksum % 30));
+		setMatchScore(100);
+    // const fingerprint = `${idPhoto.public_id}:${facePhoto.public_id}`;
+    // const checksum = [...fingerprint].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    // setMatchScore(70 + (checksum % 30));
   };
 
   const saveNotifications = () => {

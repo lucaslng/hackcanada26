@@ -1,0 +1,157 @@
+export type Language =
+  | 'en'
+  | 'fr'
+  | 'es'
+  | 'zh-Hans'
+  | 'ar'
+  | 'hi'
+  | 'tl'
+  | 'zh-Hant'
+  | 'it'
+  | 'de'
+  | 'ur';
+
+export interface UIStrings {
+  nav: { home: string; services: string; information: string; contact: string; support: string };
+  heroEyebrow: string;
+  heroTitle: string;
+  heroBody: string;
+  startService: string;
+  learnMore: string;
+  supportedServices: string;
+  supportedServicesBody: string;
+  comingSoon: string;
+  howItWorks: string;
+  howItWorksBody: string;
+  uploadDocuments: string;
+  uploadDocumentsBody: string;
+  verifyIdentity: string;
+  verifyIdentityBody: string;
+  skipLine: string;
+  skipLineBody: string;
+  securityPrivacy: string;
+  securityPrivacyBody: string;
+  secureUploads: string;
+  secureUploadsBody: string;
+  identityVerification: string;
+  identityVerificationBody: string;
+  encryptedProcessing: string;
+  encryptedProcessingBody: string;
+  contactUs: string;
+  contactUsBody: string;
+  helpSupport: string;
+  helpSupportBody: string;
+  help1: string;
+  help2: string;
+  help3: string;
+  phone: string;
+  email: string;
+  hours: string;
+  hoursValue: string;
+  goHomeAria: string;
+  primaryNavigationAria: string;
+  languageSwitcherAria: string;
+  colourSchemeAria: string;
+  themeLight: string;
+  themeSystem: string;
+  themeDark: string;
+  notificationChannelAria: string;
+  matchScoreLabel: string;
+  idUploadFailed: string;
+  selfieUploadFailed: string;
+  uploadWidgetLoading: string;
+  uploadWidgetLoadError: string;
+  step1Title: string;
+  step1Subtitle: string;
+  selectedService: string;
+  selfieRequirement: string;
+  step2Title: string;
+  step2Subtitle: string;
+  fullName: string;
+  emailAddress: string;
+  phoneNumber: string;
+  streetAddress: string;
+  apartmentUnit: string;
+  city: string;
+  province: string;
+  postalCode: string;
+  selectProvince: string;
+  contactInfoNotice: string;
+  emailHelper: string;
+  phoneHelper: string;
+  invalidEmail: string;
+  invalidPhone: string;
+  invalidPostal: string;
+  step3Title: string;
+  step3Subtitle: string;
+  uploadIdBtn: string;
+  uploadIdSuccess: string;
+  step4Title: string;
+  step4Subtitle: string;
+  uploadSelfieBtn: string;
+  uploadSelfieSuccess: string;
+  step5Title: string;
+  step5Subtitle: string;
+  runVerification: string;
+  verified: string;
+  notVerified: string;
+  step6Title: string;
+  step6Subtitle: string;
+  mapFormsLabel: string;
+  mapFormsPlaceholder: string;
+  mapRequestBtn: string;
+  step7Title: string;
+  step7Subtitle: string;
+  submissionNotice: string;
+  step8Title: string;
+  step8Subtitle: string;
+  savePreference: string;
+  updatesSent: string;
+  emailLabel: string;
+  smsLabel: string;
+  emailPlaceholder: string;
+  smsPlaceholder: string;
+  to: string;
+  back: string;
+  continue: string;
+  exitSetup: string;
+  returnHome: string;
+  stepOf: string;
+  of: string;
+  portalLabel: string;
+  footerBrand: string;
+  footerServicesTitle: string;
+  footerPassportRenewal: string;
+  footerDriversLicense: string;
+  footerHealthCard: string;
+  footerSinUpdates: string;
+  footerResourcesTitle: string;
+  footerHowItWorks: string;
+  footerSecurityPrivacy: string;
+  footerAccessibility: string;
+  footerContactSupportTitle: string;
+  footerContactUs: string;
+  footerHelpCentre: string;
+  footerTechnicalSupport: string;
+  footerCopyright: string;
+  footerTermsPrivacy: string;
+  footerDemoDisclaimer: string;
+}
+
+export interface ServiceCopy {
+  title: string;
+  description: string;
+}
+
+export interface ServiceDetails {
+  requirements: string[];
+  forms: Record<string, string>;
+  keywords: string[];
+}
+
+export interface LocalePack {
+  ui: UIStrings;
+  serviceText: Record<string, ServiceCopy>;
+  serviceDetails: Record<string, ServiceDetails>;
+  provinces: Record<string, string>;
+}

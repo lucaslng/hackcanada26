@@ -2,8 +2,9 @@
 
 import { RevealSection } from '../ui/RevealSection';
 import { Button } from '../ui/Button';
+import { useMemo, useState } from 'react';
 import { RENEWAL_OPTIONS, type RenewalOption } from '../../data/renewalOptions';
-import { SERVICE_TEXT, type UIStrings, type Language } from '../../constants/i18n';
+import { getServiceText, type UIStrings, type Language } from '../../constants/i18n';
 
 interface HomePageProps {
   t: UIStrings;
@@ -13,10 +14,41 @@ interface HomePageProps {
 }
 
 function getServiceCopy(option: RenewalOption, language: Language) {
-  return SERVICE_TEXT[option.id]?.[language] ?? { title: option.title, description: option.description };
+  return getServiceText(option.id, language) ?? { title: option.title, description: option.description };
 }
 
+type ServiceCategory = {
+  id: string;
+  title: string;
+  serviceIds: string[];
+};
+
+const SERVICE_CATEGORIES: ServiceCategory[] = [
+  {
+    id: 'identity-travel',
+    title: 'Identity & Travel',
+    serviceIds: ['passport', 'pr-card'],
+  },
+  {
+    id: 'health-licensing',
+    title: 'Health & Licensing',
+    serviceIds: ['drivers-license', 'health-card', 'sin'],
+  },
+  {
+    id: 'personal-records',
+    title: 'Personal Records',
+    serviceIds: ['address-change', 'birth-certificate', 'name-change'],
+  },
+];
+
 export function HomePage({ t, language, onStartService, onNavigate }: HomePageProps) {
+  const [selectedServiceId, setSelectedServiceId] = useState<string>(RENEWAL_OPTIONS[0]?.id ?? '');
+
+  const selectedOption = useMemo(
+    () => RENEWAL_OPTIONS.find((option) => option.id === selectedServiceId) ?? RENEWAL_OPTIONS[0] ?? null,
+    [selectedServiceId],
+  );
+
   return (
     <div className="gov-home-wrap">
       {/* ── Hero ── */}
@@ -38,28 +70,63 @@ export function HomePage({ t, language, onStartService, onNavigate }: HomePagePr
           <h2>{t.supportedServices}</h2>
           <p>{t.supportedServicesBody}</p>
         </div>
-        <div className="service-list-grid">
-          {RENEWAL_OPTIONS.map((option) => {
-            const copy = getServiceCopy(option, language);
-            return (
-              <article key={option.id} className="service-list-card">
-                <div className="service-card-icon">
-                  <span className="material-symbols-outlined" aria-hidden="true">
-                    {option.icon}
-                  </span>
-                </div>
-                <h3>{copy.title}</h3>
-                <p>{copy.description}</p>
-                <Button
-                  onClick={() => onStartService(option.id)}
-                  disabled={!option.available}
-                  fullWidth
-                >
-                  {option.available ? t.startService : t.comingSoon}
-                </Button>
-              </article>
-            );
-          })}
+        <div className="service-selector-layout">
+          <div className="service-selector-panel" aria-label={t.supportedServices}>
+            {SERVICE_CATEGORIES.map((category) => (
+              <section key={category.id} className="service-category">
+                <h3>{category.title}</h3>
+                <ul className="service-compact-list">
+                  {category.serviceIds.map((serviceId) => {
+                    const option = RENEWAL_OPTIONS.find((item) => item.id === serviceId);
+                    if (!option) return null;
+                    const copy = getServiceCopy(option, language);
+                    const isSelected = selectedOption?.id === option.id;
+
+                    return (
+                      <li key={option.id}>
+                        <button
+                          type="button"
+                          className={`service-compact-row ${isSelected ? 'is-selected' : ''}`}
+                          onClick={() => setSelectedServiceId(option.id)}
+                        >
+                          <span className="service-compact-row__icon material-symbols-outlined" aria-hidden="true">
+                            {option.icon}
+                          </span>
+                          <span className="service-compact-row__title">{copy.title}</span>
+                          <span className={`service-status-pill ${option.available ? 'is-active' : 'is-soon'}`}>
+                            {option.available ? t.startService : t.comingSoon}
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            ))}
+          </div>
+
+          {selectedOption && (
+            <aside className="service-detail-panel" aria-live="polite">
+              <div className="service-card-icon">
+                <span className="material-symbols-outlined" aria-hidden="true">
+                  {selectedOption.icon}
+                </span>
+              </div>
+              <p className="service-detail-label">{t.selectedService}</p>
+              <h3>{getServiceCopy(selectedOption, language).title}</h3>
+              <p>{getServiceCopy(selectedOption, language).description}</p>
+              <div className={`service-detail-status ${selectedOption.available ? 'is-active' : 'is-soon'}`}>
+                {selectedOption.available ? 'Active' : t.comingSoon}
+              </div>
+              <Button
+                onClick={() => onStartService(selectedOption.id)}
+                disabled={!selectedOption.available}
+                fullWidth
+              >
+                {selectedOption.available ? t.startService : t.comingSoon}
+              </Button>
+            </aside>
+          )}
         </div>
       </RevealSection>
 
@@ -128,7 +195,7 @@ export function HomePage({ t, language, onStartService, onNavigate }: HomePagePr
         <div className="support-grid">
           <p>{t.phone}: <strong>1-800-622-6232</strong></p>
           <p>{t.email}: <strong>service-support@gov.example</strong></p>
-          <p>{t.hours}: <strong>8:00 AM - 8:00 PM (local)</strong></p>
+          <p>{t.hours}: <strong>{t.hoursValue}</strong></p>
         </div>
       </RevealSection>
 

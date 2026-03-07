@@ -1,46 +1,33 @@
 // WizardShell.tsx
 
-import { Button } from "../ui/Button";
-import { Step1, Step2, Step3, Step4, Step5, Step7, Step8 } from "./WizardSteps";
-import {
-  TOTAL_STEPS,
-  type WizardState,
-  type WizardActions,
-} from "../../hooks/useWizard";
-import type { UIStrings } from "../../constants/i18n";
-import { Step6 } from "./Step6";
+import { Button } from '../ui/Button';
+import { Step1, Step2, Step3, Step4, Step5, Step8 } from './WizardSteps';
+import { Step6 } from './Step6';
+import { Step7 } from './Step7Submission';
+import { TOTAL_STEPS, type WizardState, type WizardActions } from '../../hooks/useWizard';
+import type { Language, UIStrings } from '../../constants/i18n';
 
 interface WizardShellProps {
   t: UIStrings;
   state: WizardState;
   actions: WizardActions;
   serviceTitle: string;
+  language: Language;
   onExit: () => void;
 }
 
-export function WizardShell({
-  t,
-  state,
-  actions,
-  serviceTitle,
-  onExit,
-}: WizardShellProps) {
+export function WizardShell({ t, state, actions, serviceTitle, language, onExit }: WizardShellProps) {
   const { step, canContinue } = state;
 
   const renderStep = () => {
     switch (step) {
       case 1:
-        return (
-          <Step1
-            t={t}
-            selectedOption={state.selectedOption}
-            serviceTitle={serviceTitle}
-          />
-        );
+        return <Step1 t={t} language={language} selectedOption={state.selectedOption} serviceTitle={serviceTitle} />;
       case 2:
         return (
           <Step2
             t={t}
+            language={language}
             contactInfo={state.contactInfo}
             onFieldChange={actions.updateContactField}
           />
@@ -70,7 +57,16 @@ export function WizardShell({
       case 6:
         return <Step6 t={t} selectedOption={state.selectedOption} />;
       case 7:
-        return <Step7 t={t} />;
+        return (
+          <Step7
+            t={t}
+            idPhoto={state.idPhoto}
+            facePhoto={state.facePhoto}
+            contactInfo={state.contactInfo}
+            selectedOption={state.selectedOption}
+            matchScore={state.matchScore}
+          />
+        );
       case 8:
         return (
           <Step8
@@ -114,13 +110,15 @@ export function WizardShell({
             {t.exitSetup}
           </Button>
         </div>
-        {step < TOTAL_STEPS ? (
-          <Button onClick={actions.goNext} disabled={!canContinue}>
-            {t.continue}
-          </Button>
-        ) : (
-          <Button onClick={onExit}>{t.returnHome}</Button>
-        )}
+        <div className="wizard-nav-right">
+          {step < TOTAL_STEPS ? (
+            <Button onClick={actions.goNext} disabled={!canContinue}>
+              {t.continue}
+            </Button>
+          ) : (
+            <Button onClick={onExit}>{t.returnHome}</Button>
+          )}
+        </div>
       </div>
     </div>
   );
