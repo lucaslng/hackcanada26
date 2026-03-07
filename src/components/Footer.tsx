@@ -1,13 +1,10 @@
 // Footer.tsx
 
-import canadianFlag from '../../assets/canadian_flag.png';
-
 export function Footer() {
   return (
     <footer className="site-footer">
       <div className="footer-inner">
         <div className="footer-brand">
-          <img src={canadianFlag} alt="" className="footer-flag" />
           <span>Service Canada Renewal Portal</span>
         </div>
 

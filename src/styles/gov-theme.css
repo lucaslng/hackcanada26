@@ -310,10 +310,6 @@ h1, h2, h3, h4 {
   margin-top: 2.5rem;
 }
 
-.footer-flag {
-  opacity: 1;
-}
-
 button:focus-visible,
 a:focus-visible,
 input:focus-visible {

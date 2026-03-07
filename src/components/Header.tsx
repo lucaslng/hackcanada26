@@ -1,7 +1,5 @@
 // Header.tsx
 
-import canadianFlag from '../../assets/canadian_flag.png';
-
 interface HeaderProps {
   onHome: () => void;
   onNavigate: (sectionId: string) => void;
@@ -21,11 +19,11 @@ export function Header({ onHome, onNavigate }: HeaderProps) {
       <div className="header-inner">
         <button className="wordmark" onClick={onHome} aria-label="Go to home page">
           <span className="flag-bar">
-            <img src={canadianFlag} alt="" className="flag-image" />
+            <img src="/assets/canadian_flag.png" alt="" className="flag-image" />
           </span>
           <span className="wordmark-text">
-            <span className="wordmark-canada">Canada</span>
-            <span className="wordmark-service">Service Canada - Renewal Portal</span>
+            <span className="wordmark-canada">Service Canada</span>
+            <span className="wordmark-service">Renewal Portal</span>
           </span>
         </button>
 
