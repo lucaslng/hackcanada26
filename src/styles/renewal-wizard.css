@@ -7,7 +7,7 @@
 
 .gov-home-hero {
   margin-top: 1rem;
-  padding: 5.5rem 2rem;
+  padding: 6.25rem 2.4rem;
   border-radius: 20px;
   background:
     radial-gradient(circle at 15% 20%, rgba(200, 16, 46, 0.08), transparent 40%),
@@ -27,17 +27,18 @@
 }
 
 .gov-home-hero h1 {
-  font-size: clamp(2rem, 4.5vw, 3.15rem);
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
   line-height: 1.1;
   color: #101010;
-  margin-bottom: 0.9rem;
+  margin-bottom: 1.1rem;
   max-width: 20ch;
+  font-weight: 700;
 }
 
 .gov-home-hero p {
   color: var(--text-soft);
   max-width: 64ch;
-  font-size: 1.05rem;
+  font-size: 1.14rem;
 }
 
 .hero-actions {
@@ -48,7 +49,7 @@
 }
 
 .gov-home-section {
-  margin-top: 5rem;
+  margin-top: 5.75rem;
 }
 
 .section-title-row {
@@ -56,27 +57,32 @@
 }
 
 .section-title-row h2 {
-  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-size: clamp(1.75rem, 3.8vw, 2.5rem);
   color: #121212;
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.6rem;
 }
 
 .section-title-row p {
   color: var(--text-soft);
   max-width: 68ch;
+  font-size: 1.08rem;
 }
 
 .service-list-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+  gap: 1.25rem;
+  align-items: stretch;
 }
 
 .service-list-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   border: 1px solid #ececf0;
   border-radius: 16px;
   background: #fff;
-  padding: 1.2rem;
+  padding: 1.55rem;
   box-shadow: 0 12px 26px rgba(2, 6, 23, 0.06);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
@@ -105,15 +111,21 @@
 
 .service-list-card h3 {
   color: #111;
-  font-size: 1.04rem;
-  margin-bottom: 0.38rem;
+  font-size: 1.28rem;
+  margin-bottom: 0.5rem;
 }
 
 .service-list-card p {
   color: var(--text-soft);
-  margin-bottom: 1rem;
-  font-size: 0.93rem;
+  margin-bottom: 1.25rem;
+  font-size: 1.02rem;
   min-height: 3.6em;
+}
+
+.service-list-card .ui-btn--full {
+  margin-top: auto;
+  min-height: 50px;
+  padding: 0.85rem 1.2rem;
 }
 
 .how-grid {
@@ -137,13 +149,13 @@
 
 .how-step h3 {
   color: #111;
-  font-size: 1.02rem;
+  font-size: 1.2rem;
   margin-bottom: 0.35rem;
 }
 
 .how-step p {
   color: var(--text-soft);
-  font-size: 0.92rem;
+  font-size: 1rem;
 }
 
 .security-grid {
@@ -168,13 +180,13 @@
 
 .security-item h3 {
   color: #111;
-  font-size: 0.97rem;
+  font-size: 1.08rem;
   margin-bottom: 0.2rem;
 }
 
 .security-item p {
   color: var(--text-soft);
-  font-size: 0.9rem;
+  font-size: 0.98rem;
 }
 
 .support-grid {
@@ -201,7 +213,7 @@
 }
 
 .step-count {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--grey-text);
   margin-bottom: 0.45rem;
   font-weight: 600;
@@ -239,7 +251,7 @@
   position: relative;
   padding-left: 1.4rem;
   color: #111;
-  font-size: 0.93rem;
+  font-size: 1.04rem;
 }
 
 .checklist li::before {
@@ -257,8 +269,8 @@
 .status-bad,
 .status-neutral {
   border-radius: 8px;
-  padding: 0.72rem 0.9rem;
-  font-size: 0.9rem;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
 }
 
 .status-good {
@@ -296,7 +308,7 @@
   grid-template-columns: 115px 1fr;
   gap: 0.7rem;
   align-items: center;
-  font-size: 0.89rem;
+  font-size: 1rem;
 }
 
 .form-list li span:first-child {
