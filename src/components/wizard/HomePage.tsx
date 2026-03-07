@@ -19,24 +19,24 @@ function getServiceCopy(option: RenewalOption, language: Language) {
 
 type ServiceCategory = {
   id: string;
-  title: string;
+  title: 'serviceCategoryIdentityTravel' | 'serviceCategoryHealthLicensing' | 'serviceCategoryPersonalRecords';
   serviceIds: string[];
 };
 
 const SERVICE_CATEGORIES: ServiceCategory[] = [
   {
     id: 'identity-travel',
-    title: 'Identity & Travel',
+    title: 'serviceCategoryIdentityTravel',
     serviceIds: ['passport', 'pr-card'],
   },
   {
     id: 'health-licensing',
-    title: 'Health & Licensing',
+    title: 'serviceCategoryHealthLicensing',
     serviceIds: ['drivers-license', 'health-card', 'sin'],
   },
   {
     id: 'personal-records',
-    title: 'Personal Records',
+    title: 'serviceCategoryPersonalRecords',
     serviceIds: ['address-change', 'birth-certificate', 'name-change'],
   },
 ];
@@ -74,7 +74,7 @@ export function HomePage({ t, language, onStartService, onNavigate }: HomePagePr
           <div className="service-selector-panel" aria-label={t.supportedServices}>
             {SERVICE_CATEGORIES.map((category) => (
               <section key={category.id} className="service-category">
-                <h3>{category.title}</h3>
+                <h3>{t[category.title]}</h3>
                 <ul className="service-compact-list">
                   {category.serviceIds.map((serviceId) => {
                     const option = RENEWAL_OPTIONS.find((item) => item.id === serviceId);
@@ -116,7 +116,7 @@ export function HomePage({ t, language, onStartService, onNavigate }: HomePagePr
               <h3>{getServiceCopy(selectedOption, language).title}</h3>
               <p>{getServiceCopy(selectedOption, language).description}</p>
               <div className={`service-detail-status ${selectedOption.available ? 'is-active' : 'is-soon'}`}>
-                {selectedOption.available ? 'Active' : t.comingSoon}
+                {selectedOption.available ? t.serviceStatusActive : t.comingSoon}
               </div>
               <Button
                 onClick={() => onStartService(selectedOption.id)}

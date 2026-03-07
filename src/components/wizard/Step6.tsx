@@ -13,10 +13,10 @@ interface Step6Props {
   selectedOption: RenewalOption | null;
 }
 
-function FormCard({ form }: { form: RenewalForm }) {
+function FormCard({ form, t }: { form: RenewalForm; t: UIStrings }) {
   const isPDF = form.linkType === 'pdf';
   const icon = isPDF ? 'picture_as_pdf' : 'open_in_new';
-  const badge = isPDF ? 'PDF' : 'Web';
+  const badge = isPDF ? t.formBadgePdf : t.formBadgeWeb;
   const badgeClass = isPDF ? 'form-badge form-badge--pdf' : 'form-badge form-badge--web';
 
   return (
@@ -43,12 +43,12 @@ function FormCard({ form }: { form: RenewalForm }) {
             target="_blank"
             rel="noopener noreferrer"
             className="form-card__link"
-            aria-label={`${isPDF ? 'Download' : 'Open'} ${form.label} on the Government of Canada website`}
+            aria-label={`${isPDF ? t.formActionDownload : t.formActionOpen} ${form.label}`}
           >
             <span className="material-symbols-outlined" aria-hidden="true">
               {isPDF ? 'download' : 'open_in_new'}
             </span>
-            <span>{isPDF ? 'Download' : 'Open'}</span>
+            <span>{isPDF ? t.formActionDownload : t.formActionOpen}</span>
           </a>
         ) : null}
       </div>
@@ -68,9 +68,9 @@ export function Step6({
 
       {/* ── Primary forms list ── */}
       {primaryForms.length > 0 ? (
-        <ul className="form-card-list" aria-label="Required forms">
+        <ul className="form-card-list" aria-label={t.requiredFormsAria}>
           {primaryForms.map((form) => (
-            <FormCard key={form.id} form={form} />
+            <FormCard key={form.id} form={form} t={t} />
           ))}
         </ul>
       ) : (

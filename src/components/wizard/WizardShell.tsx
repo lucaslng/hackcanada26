@@ -60,10 +60,12 @@ export function WizardShell({ t, state, actions, serviceTitle, language, onExit 
         return (
           <Step7
             t={t}
+            language={language}
             idPhoto={state.idPhoto}
             facePhoto={state.facePhoto}
             contactInfo={state.contactInfo}
             selectedOption={state.selectedOption}
+            serviceTitle={serviceTitle}
             matchScore={state.matchScore}
           />
         );

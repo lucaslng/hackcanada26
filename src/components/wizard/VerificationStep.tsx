@@ -2,8 +2,10 @@
 
 import type { CapturedPhoto, VerificationResult } from '../../types';
 import { useFaceVerification } from '../../hooks/useFaceVerification';
+import type { UIStrings } from '../../constants/i18n';
 
 interface VerificationStepProps {
+  t: UIStrings;
   idPhoto: CapturedPhoto;
   selfiePhoto: CapturedPhoto;
   serviceColor: string;
@@ -13,19 +15,8 @@ interface VerificationStepProps {
 
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string;
 
-// Maps our hook status to the animated step list labels
-const STATUS_LABELS: Record<string, string> = {
-  analyzing: 'Enhancing images with Cloudinary…',
-};
-
-const ANALYSIS_STEPS = [
-  'Enhancing images with Cloudinary…',
-  'Normalizing both face crops…',
-  'Computing resemble.js similarity…',
-  'Generating confidence score…',
-];
-
 export function VerificationStep({
+  t,
   idPhoto,
   selfiePhoto,
   serviceColor,
@@ -33,6 +24,15 @@ export function VerificationStep({
   onBack,
 }: VerificationStepProps) {
   const { result, verify, reset } = useFaceVerification(CLOUD_NAME);
+  const STATUS_LABELS: Record<string, string> = {
+    analyzing: t.step7ProgressEnhance,
+  };
+  const ANALYSIS_STEPS = [
+    t.step7ProgressEnhance,
+    t.step7ProgressVerify,
+    t.step7ProgressUpload,
+    t.step7ProgressConfirmation,
+  ];
 
   const isAnalyzing = result.status === 'analyzing';
   const isDone = result.status === 'done';
@@ -73,10 +73,9 @@ export function VerificationStep({
         >
           VR
         </div>
-        <h2>Identity Verification</h2>
+        <h2>{t.verifyIdentity}</h2>
         <p>
-          We enhance both images using Cloudinary, then run a resemble.js structural similarity
-          check in your browser to compare your ID face crop and selfie.
+          {t.verifyIdentityBody}
         </p>
       </div>
 
@@ -85,15 +84,15 @@ export function VerificationStep({
         {/* ── Photo comparison row ── */}
         <div className="photo-compare-row">
           <div className="compare-photo-card">
-            <div className="compare-photo-label">ID document photo</div>
+            <div className="compare-photo-label">{t.step7SummaryIdDocument}</div>
             <div className="compare-photo-frame" style={{ borderColor: serviceColor }}>
               <img
                 src={idPhoto.transformedUrl}
-                alt="ID document face"
+                alt={t.step7SummaryIdDocument}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
             </div>
-            <div className="compare-photo-tag">Cloudinary face-extracted</div>
+            <div className="compare-photo-tag">{t.step7CloudinaryEnhanced}</div>
           </div>
 
           <div
@@ -108,15 +107,15 @@ export function VerificationStep({
           </div>
 
           <div className="compare-photo-card">
-            <div className="compare-photo-label">Live selfie</div>
+            <div className="compare-photo-label">{t.step7SummarySelfie}</div>
             <div className="compare-photo-frame" style={{ borderColor: serviceColor }}>
               <img
                 src={selfiePhoto.transformedUrl}
-                alt="Live selfie face"
+                alt={t.step7SummarySelfie}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
             </div>
-            <div className="compare-photo-tag">Cloudinary AI enhanced</div>
+            <div className="compare-photo-tag">{t.step7CloudinaryEnhanced}</div>
           </div>
         </div>
 
@@ -124,16 +123,14 @@ export function VerificationStep({
         {result.status === 'idle' && (
           <div className="verify-idle-panel">
             <p className="verify-idle-desc">
-              Click <strong>Run Verification</strong> to enhance both images via Cloudinary and then
-              run a resemble.js-based image comparison entirely in your browser. No data is sent
-              to any external verification API.
+              {t.step7ReviewSubtitle}
             </p>
             <button
               className="btn-step-primary"
               style={{ background: serviceColor }}
               onClick={handleRun}
             >
-              Run Verification
+              {t.runVerification}
             </button>
           </div>
         )}
@@ -174,12 +171,12 @@ export function VerificationStep({
         {isDone && result.passed && result.similarity !== null && (
           <div className="result-panel result-panel--pass">
             <div className="result-icon result-icon--pass">✓</div>
-            <h3>Identity Verified</h3>
+            <h3>{t.verified}</h3>
             <p className="result-message">{result.message}</p>
 
             <div className="confidence-meter">
               <div className="confidence-label">
-                <span>Match Confidence</span>
+                <span>{t.matchScoreLabel}</span>
                 <strong style={{ color: confidenceColor }}>{result.similarity}%</strong>
               </div>
               <div className="confidence-bar-bg">
@@ -202,7 +199,7 @@ export function VerificationStep({
               style={{ background: serviceColor, marginTop: '0.5rem' }}
               onClick={handleContinue}
             >
-              Continue to documents
+              {t.continue}
             </button>
           </div>
         )}
@@ -211,12 +208,12 @@ export function VerificationStep({
         {isDone && !result.passed && result.similarity !== null && (
           <div className="result-panel result-panel--fail">
             <div className="result-icon result-icon--fail">✗</div>
-            <h3>Verification Failed</h3>
+            <h3>{t.notVerified}</h3>
             <p className="result-message">{result.message}</p>
 
             <div className="confidence-meter">
               <div className="confidence-label">
-                <span>Match Confidence</span>
+                <span>{t.matchScoreLabel}</span>
                 <strong style={{ color: '#dc2626' }}>{result.similarity}%</strong>
               </div>
               <div className="confidence-bar-bg">
@@ -235,10 +232,10 @@ export function VerificationStep({
             )}
 
             <p className="result-retry-hint">
-              Ensure your selfie closely matches the face on your ID — same lighting and direct gaze.
+              {t.step7IncompleteWarning}
             </p>
             <button className="btn-step-secondary" onClick={onBack}>
-              Retake photos
+              {t.back}
             </button>
           </div>
         )}
@@ -248,15 +245,15 @@ export function VerificationStep({
           <div className="result-panel result-panel--fail">
             <div className="result-icon result-icon--fail" style={{ fontSize: '1.5rem' }}>!</div>
             <h3>
-              Verification Error
+              {t.notVerified}
             </h3>
             <p className="result-message">{result.message}</p>
             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
               <button className="btn-step-secondary" onClick={handleRetry}>
-                Try Again
+                {t.runVerification}
               </button>
               <button className="btn-step-secondary" onClick={onBack}>
-                Retake photos
+                {t.back}
               </button>
             </div>
           </div>
@@ -266,7 +263,7 @@ export function VerificationStep({
       {result.status === 'idle' && (
         <div className="step-actions">
           <button className="btn-step-secondary" onClick={onBack}>
-            Back
+            {t.back}
           </button>
         </div>
       )}
