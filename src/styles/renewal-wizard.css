@@ -330,6 +330,35 @@
   font-weight: 700;
 }
 
+.contact-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.contact-field--full {
+  grid-column: 1 / -1;
+}
+
+.field-helper {
+  font-size: 0.88rem;
+  color: var(--text-soft);
+}
+
+.contact-note {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: var(--text-soft);
+  border-top: 1px solid var(--border);
+  padding-top: 0.85rem;
+}
+
 .segmented {
   display: inline-flex;
   border: 1px solid var(--border);
@@ -365,6 +394,10 @@
 @media (max-width: 640px) {
   .gov-home-hero {
     padding: 4rem 1.2rem;
+  }
+
+  .contact-form-grid {
+    grid-template-columns: 1fr;
   }
 
   .wizard-nav {
