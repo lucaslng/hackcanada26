@@ -1,6 +1,6 @@
 // Header.tsx
 
-import { MapleLeaf } from './MapleLeaf';
+import canadianFlag from '../../assets/canadian_flag.png';
 
 interface HeaderProps {
   onHome: () => void;
@@ -12,7 +12,7 @@ export function Header({ onHome }: HeaderProps) {
       <div className="header-inner">
         <button className="wordmark" onClick={onHome} aria-label="Go to home page">
           <span className="flag-bar">
-            <MapleLeaf />
+            <img src={canadianFlag} alt="" className="flag-image" />
           </span>
           <span className="wordmark-text">
             <span className="wordmark-canada">Service Canada</span>
