@@ -89,7 +89,7 @@ export function IDCaptureStep({ serviceColor, cloudName, uploadPreset, onNext, o
     <div className="wizard-step-content id-capture-step">
       <div className="step-header">
         <div className="step-icon-circle" style={{ background: `color-mix(in srgb, ${serviceColor} 12%, white)`, color: serviceColor }}>
-          🪪
+          ID
         </div>
         <h2>Photograph Your Photo ID</h2>
         <p>
@@ -131,13 +131,13 @@ export function IDCaptureStep({ serviceColor, cloudName, uploadPreset, onNext, o
                     className="id-retake-btn"
                     onClick={(e) => { e.stopPropagation(); setPreview(null); }}
                   >
-                    ↺ Retake
+                    Retake
                   </button>
                 )}
               </div>
             ) : (
               <div className="id-dropzone-empty">
-                <div className="id-dropzone-icon">🪪</div>
+                <div className="id-dropzone-icon">ID</div>
                 <p className="id-dropzone-title">
                   {dragOver ? 'Drop your ID here' : 'Upload or take a photo of your ID'}
                 </p>
@@ -151,7 +151,7 @@ export function IDCaptureStep({ serviceColor, cloudName, uploadPreset, onNext, o
 
           {error && (
             <div className="step-error">
-              ⚠ {error}
+              {error}
             </div>
           )}
         </div>
@@ -160,40 +160,40 @@ export function IDCaptureStep({ serviceColor, cloudName, uploadPreset, onNext, o
           <h4>Tips for a good photo</h4>
           <ul>
             <li>
-              <span className="tip-icon">💡</span>
+              <span className="tip-icon" aria-hidden="true">1.</span>
               Place ID on a flat, dark surface for contrast
             </li>
             <li>
-              <span className="tip-icon">🔆</span>
+              <span className="tip-icon" aria-hidden="true">2.</span>
               Use good lighting — avoid flash glare on laminated IDs
             </li>
             <li>
-              <span className="tip-icon">📐</span>
+              <span className="tip-icon" aria-hidden="true">3.</span>
               All four corners must be visible in the frame
             </li>
             <li>
-              <span className="tip-icon">🔍</span>
+              <span className="tip-icon" aria-hidden="true">4.</span>
               Your name and photo must be clearly legible
             </li>
             <li>
-              <span className="tip-icon">🚫</span>
+              <span className="tip-icon" aria-hidden="true">5.</span>
               Do not cover any part of the ID with your fingers
             </li>
           </ul>
 
           <div className="accepted-ids">
             <h4>Accepted IDs</h4>
-            <div className="id-pill">🚗 Driver's Licence</div>
-            <div className="id-pill">🛂 Passport</div>
-            <div className="id-pill">🍁 PR Card</div>
-            <div className="id-pill">🪪 Provincial ID Card</div>
+            <div className="id-pill">Driver's Licence</div>
+            <div className="id-pill">Passport</div>
+            <div className="id-pill">PR Card</div>
+            <div className="id-pill">Provincial ID Card</div>
           </div>
         </div>
       </div>
 
       <div className="step-actions">
         <button className="btn-step-secondary" onClick={onBack}>
-          ← Back
+          Back
         </button>
       </div>
     </div>

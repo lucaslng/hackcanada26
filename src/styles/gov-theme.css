@@ -1,0 +1,337 @@
+/* gov-theme.css */
+
+:root {
+  --red: #c8102e;
+  --red-dark: #a20d26;
+  --navy: #1f2f4a;
+  --navy-mid: #2a3f63;
+  --off-white: #f3f5f8;
+  --grey-light: #d8dde6;
+  --grey-mid: #a7b1c2;
+  --grey-text: #5a6578;
+  --text: #1f2937;
+  --text-soft: #4b5568;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 8px 18px rgba(15, 23, 42, 0.1);
+}
+
+body {
+  background: #f5f7fa;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Source Sans 3', sans-serif;
+  letter-spacing: 0.01em;
+}
+
+.site-header {
+  background: #fff;
+  color: var(--text);
+  border-top: 4px solid var(--red);
+  border-bottom: 1px solid var(--grey-light);
+  box-shadow: none;
+}
+
+.wordmark, .wordmark-canada {
+  color: var(--text);
+}
+
+.wordmark-canada {
+  font-size: 1.05rem;
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+.wordmark-service {
+  color: var(--grey-text);
+  font-size: 0.74rem;
+}
+
+.header-nav a {
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.header-nav a:hover {
+  color: var(--red-dark);
+}
+
+.hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.75rem 1.5rem 2.25rem;
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--grey-light);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.hero::before, .hero::after, .hero-art {
+  display: none;
+}
+
+.hero-content {
+  max-width: 760px;
+}
+
+.hero-eyebrow {
+  color: var(--navy);
+  letter-spacing: 0.06em;
+}
+
+.hero-title {
+  color: var(--text);
+  font-size: clamp(1.8rem, 3vw, 2.25rem);
+  margin-bottom: 0.8rem;
+}
+
+.hero-title em {
+  color: inherit;
+  font-style: normal;
+}
+
+.hero-body {
+  color: var(--text-soft);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+}
+
+.btn-primary,
+.btn-step-primary,
+.btn-submit,
+.btn-home {
+  border-radius: 4px;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  transition: background 0.15s ease;
+  transform: none;
+}
+
+.btn-primary:hover,
+.btn-step-primary:hover,
+.btn-submit:hover:not(:disabled),
+.btn-home:hover {
+  transform: none;
+}
+
+.btn-ghost,
+.btn-step-secondary,
+.btn-form-download,
+.btn-form-upload,
+.doc-replace-btn,
+.doc-upload-btn {
+  border-radius: 4px;
+}
+
+.btn-ghost {
+  background: #fff;
+  color: var(--navy);
+  border: 1px solid var(--grey-mid);
+}
+
+.btn-ghost:hover {
+  background: var(--off-white);
+}
+
+.service-grid-section {
+  padding-top: 2.25rem;
+}
+
+.section-header {
+  text-align: left;
+  margin-bottom: 1.35rem;
+}
+
+.section-header h2 {
+  font-size: 1.6rem;
+}
+
+.service-grid {
+  gap: 1rem;
+}
+
+.service-card {
+  border-left: none;
+  border-top: 3px solid var(--service-color, var(--navy));
+  border-radius: 8px;
+  padding: 1.1rem;
+  box-shadow: none;
+}
+
+.service-card::before {
+  display: none;
+}
+
+.service-card:hover {
+  box-shadow: var(--shadow-sm);
+  transform: none;
+}
+
+.service-card-icon,
+.service-view-icon {
+  width: 58px;
+  height: 38px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: color-mix(in srgb, var(--service-color, var(--navy)) 14%, white);
+  color: color-mix(in srgb, var(--service-color, var(--navy)) 78%, #111827);
+}
+
+.service-card-arrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid var(--grey-mid);
+  border-radius: 999px;
+  padding: 0.22rem 0.55rem;
+  color: var(--navy);
+}
+
+.service-card:hover .service-card-arrow {
+  transform: none;
+}
+
+.service-view-header {
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--grey-light);
+  border-left: 4px solid var(--service-color, var(--navy));
+  box-shadow: none;
+}
+
+.service-view-header::after {
+  display: none;
+}
+
+.service-view-eyebrow,
+.service-view-desc {
+  color: var(--text-soft);
+}
+
+.meta-pill {
+  background: var(--off-white);
+  border-color: var(--grey-light);
+  color: var(--text-soft);
+  border-radius: 4px;
+}
+
+.back-btn {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--grey-mid);
+  border-radius: 4px;
+  opacity: 1;
+}
+
+.back-btn:hover {
+  background: var(--off-white);
+}
+
+.wizard-step-content {
+  border-radius: 8px;
+  box-shadow: none;
+  animation: none;
+}
+
+.wizard-step-bubble {
+  border-width: 1.5px;
+}
+
+.step-icon-circle {
+  width: 54px;
+  height: 54px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.req-icon {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--grey-text);
+  border: 1px solid var(--grey-mid);
+  border-radius: 3px;
+  padding: 0.1rem 0.3rem;
+}
+
+.tip-icon {
+  min-width: 1.15rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--grey-text);
+}
+
+.id-dropzone-icon,
+.camera-idle-icon,
+.cloudinary-badge-icon {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--grey-mid);
+  border-radius: 4px;
+  padding: 0.2rem 0.35rem;
+  color: var(--text-soft);
+}
+
+.id-retake-btn {
+  border-radius: 4px;
+}
+
+.cloudinary-badge {
+  background: var(--off-white);
+  border-color: var(--grey-light);
+}
+
+.compare-photo-label {
+  text-transform: uppercase;
+}
+
+.confirmation-card,
+.submit-bar,
+.sidebar-card,
+.form-card {
+  box-shadow: none;
+  border-color: var(--grey-light);
+}
+
+.site-footer {
+  background: #fff;
+  color: var(--text-soft);
+  border-top: 1px solid var(--grey-light);
+  padding: 1.25rem 1.5rem;
+  margin-top: 2.5rem;
+}
+
+.footer-inner .maple-leaf {
+  color: var(--red);
+  opacity: 1;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid #0d5cab;
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .hero {
+    margin: 0;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
+
+  .service-card-icon {
+    width: 48px;
+    height: 34px;
+  }
+}

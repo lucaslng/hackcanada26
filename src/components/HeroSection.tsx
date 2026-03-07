@@ -13,17 +13,15 @@ export function HeroSection({ onSelect }: HeroSectionProps) {
       <div className="hero-content">
         <p className="hero-eyebrow">Service Canada Online</p>
         <h1 className="hero-title">
-          Submit Your Documents
-          <br />
-          <em>From Home</em>
+          Online Document Submission Portal
         </h1>
         <p className="hero-body">
-          Skip the trip to your local Service Canada Centre. Upload your documents securely for the
-          service you need — we'll process your application and contact you by mail or phone.
+          Submit required documents securely for participating Service Canada programs. Complete
+          identity verification and upload supporting forms in one guided process.
         </p>
         <div className="hero-cta">
           <a href="#services" className="btn-primary">
-            Choose a Service
+            Select a Service
           </a>
           <a
             href="https://offices.service.canada.ca/en/Search"
@@ -31,7 +29,7 @@ export function HeroSection({ onSelect }: HeroSectionProps) {
             rel="noreferrer"
             className="btn-ghost"
           >
-            Find a Centre Near You ↗
+            Find a Service Centre
           </a>
         </div>
       </div>

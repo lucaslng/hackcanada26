@@ -47,7 +47,7 @@ export class ErrorBoundary extends Component<Props, State> {
             fontFamily: 'inherit',
           }}
         >
-          <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>⚠️</div>
+          <div style={{ fontSize: '2rem', marginBottom: '0.75rem', fontWeight: 700 }}>!</div>
           <h2
             style={{
               color: '#991b1b',
