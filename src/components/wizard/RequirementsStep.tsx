@@ -12,7 +12,7 @@ export function RequirementsStep({ service, onNext }: RequirementsStepProps) {
     <div className="wizard-step-content requirements-step">
       <div className="step-header">
         <div className="step-icon-circle" style={{ background: `color-mix(in srgb, ${service.color} 12%, white)`, color: service.color }}>
-          📋
+          RQ
         </div>
         <h2>What You'll Need</h2>
         <p>Before we begin, make sure you have the following ready.</p>
@@ -21,21 +21,21 @@ export function RequirementsStep({ service, onNext }: RequirementsStepProps) {
       <div className="requirements-grid">
         <div className="req-section">
           <div className="req-section-title">
-            <span className="req-icon">🔐</span>
+            <span className="req-icon" aria-hidden="true">ID</span>
             <h3>Identity Verification</h3>
           </div>
           <p className="req-section-desc">
             We'll verify your identity in two steps: a photo of your government-issued ID, then a selfie scan.
           </p>
           <div className="req-item req-item--highlight" style={{ borderColor: service.color }}>
-            <span className="req-item-check" style={{ color: service.color }}>→</span>
+            <span className="req-item-check" style={{ color: service.color }}>•</span>
             <div>
               <strong>Photo ID</strong>
               <p>{service.idRequirement}</p>
             </div>
           </div>
           <div className="req-item req-item--highlight" style={{ borderColor: service.color }}>
-            <span className="req-item-check" style={{ color: service.color }}>→</span>
+            <span className="req-item-check" style={{ color: service.color }}>•</span>
             <div>
               <strong>Front-facing camera</strong>
               <p>Required for a live selfie scan to match your photo ID.</p>
@@ -45,7 +45,7 @@ export function RequirementsStep({ service, onNext }: RequirementsStepProps) {
 
         <div className="req-section">
           <div className="req-section-title">
-            <span className="req-icon">📄</span>
+            <span className="req-icon" aria-hidden="true">DOC</span>
             <h3>Supporting Documents</h3>
           </div>
           <ul className="req-docs-list">
@@ -63,7 +63,7 @@ export function RequirementsStep({ service, onNext }: RequirementsStepProps) {
 
         <div className="req-section">
           <div className="req-section-title">
-            <span className="req-icon">📝</span>
+            <span className="req-icon" aria-hidden="true">FORM</span>
             <h3>Forms to Complete</h3>
           </div>
           <p className="req-section-desc">You'll need to print, fill in, and scan the following forms:</p>
@@ -82,7 +82,7 @@ export function RequirementsStep({ service, onNext }: RequirementsStepProps) {
 
         <div className="req-section req-section--privacy">
           <div className="req-section-title">
-            <span className="req-icon">🔒</span>
+            <span className="req-icon" aria-hidden="true">SEC</span>
             <h3>Privacy & Security</h3>
           </div>
           <p>
@@ -103,7 +103,7 @@ export function RequirementsStep({ service, onNext }: RequirementsStepProps) {
           style={{ background: service.color }}
           onClick={onNext}
         >
-          Begin Application →
+          Begin application
         </button>
       </div>
     </div>

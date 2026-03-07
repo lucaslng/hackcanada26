@@ -7,7 +7,7 @@ export const SERVICES: Service[] = [
     id: 'employment-insurance',
     title: 'Employment Insurance',
     subtitle: 'EI Benefits',
-    icon: '💼',
+    icon: 'EI',
     color: '#0E4D92',
     processingTime: '28 days',
     description:
@@ -41,7 +41,7 @@ export const SERVICES: Service[] = [
     id: 'cpp',
     title: 'Canada Pension Plan',
     subtitle: 'CPP Retirement Pension',
-    icon: '🏦',
+    icon: 'CPP',
     color: '#2D6A4F',
     processingTime: '6–12 weeks',
     description:
@@ -75,7 +75,7 @@ export const SERVICES: Service[] = [
     id: 'old-age-security',
     title: 'Old Age Security',
     subtitle: 'OAS Pension',
-    icon: '🌿',
+    icon: 'OAS',
     color: '#6B3FA0',
     processingTime: '6 months',
     description:
@@ -101,7 +101,7 @@ export const SERVICES: Service[] = [
     id: 'sin',
     title: 'Social Insurance Number',
     subtitle: 'New SIN Application',
-    icon: '🪪',
+    icon: 'SIN',
     color: '#B5451B',
     processingTime: '20 business days',
     description:
@@ -127,7 +127,7 @@ export const SERVICES: Service[] = [
     id: 'child-benefit',
     title: 'Canada Child Benefit',
     subtitle: 'CCB Application',
-    icon: '👶',
+    icon: 'CCB',
     color: '#C8962A',
     processingTime: '8 weeks',
     description:
@@ -161,7 +161,7 @@ export const SERVICES: Service[] = [
     id: 'passport',
     title: 'Passport Application',
     subtitle: 'Adult & Child Passports',
-    icon: '✈️',
+    icon: 'PPT',
     color: '#C8102E',
     processingTime: '10–15 business days',
     description:

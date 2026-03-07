@@ -5,8 +5,8 @@ import { submitApplication } from '../api/submitApplication';
 import { uploadPreset } from '../cloudinary/config';
 import { WizardProgress } from './wizard/WizardProgress';
 import { RequirementsStep } from './wizard/RequirementsStep';
-import { IDCaptureStep } from './wizard/IdCaptureStep';
-import { FaceScanStep } from './wizard/FacescanStep';
+import { IDCaptureStep } from './wizard/IDCaptureStep';
+import { FaceScanStep } from './wizard/FaceScanStep';
 import { VerificationStep } from './wizard/VerificationStep';
 import { FormsStep } from './wizard/FormsStep';
 import type { CapturedPhoto, Service, UploadedFile, VerificationResult, WizardStep } from '../types';
@@ -86,12 +86,12 @@ export function ServiceView({ service, onBack, onSubmit }: ServiceViewProps) {
           <p className="service-view-desc">{service.description}</p>
         </div>
         <div className="service-view-meta">
-          <div className="meta-pill">⏱ Processing: {service.processingTime}</div>
+          <div className="meta-pill">Processing time: {service.processingTime}</div>
         </div>
       </div>
 
       <button className="back-btn" onClick={onBack} style={{ marginTop: '1rem' }}>
-        ← Back to Services
+        Back to services
       </button>
 
       {/* Wizard progress */}
@@ -144,7 +144,7 @@ export function ServiceView({ service, onBack, onSubmit }: ServiceViewProps) {
             onBack={() => setStep('verification')}
           />
           {submitError && (
-            <p className="step-warning" style={{ marginTop: '0.5rem' }}>⚠ {submitError}</p>
+            <p className="step-warning" style={{ marginTop: '0.5rem' }}>{submitError}</p>
           )}
           {submitting && (
             <div style={{ textAlign: 'center', padding: '1rem', color: 'var(--text-soft)' }}>

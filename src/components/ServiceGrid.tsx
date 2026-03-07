@@ -27,13 +27,13 @@ export function ServiceGrid({ onSelect }: ServiceGridProps) {
               <h3 className="service-card-title">{service.title}</h3>
               <p className="service-card-subtitle">{service.subtitle}</p>
               <div className="service-card-meta">
-                <span className="service-card-time">⏱ {service.processingTime}</span>
+                <span className="service-card-time">Processing: {service.processingTime}</span>
                 <span className="service-card-docs">
                   {service.docs.filter((d) => d.required).length} required docs
                 </span>
               </div>
             </div>
-            <span className="service-card-arrow">→</span>
+            <span className="service-card-arrow">Start</span>
           </button>
         ))}
       </div>

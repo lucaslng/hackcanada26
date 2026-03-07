@@ -3,12 +3,12 @@
 import type { WizardStep } from '../../types';
 
 const STEPS: { id: WizardStep; label: string; icon: string }[] = [
-  { id: 'requirements', label: 'Requirements', icon: '📋' },
-  { id: 'id-capture', label: 'Photo ID', icon: '🪪' },
-  { id: 'face-scan', label: 'Face Scan', icon: '🤳' },
-  { id: 'verification', label: 'Verification', icon: '🔍' },
-  { id: 'forms', label: 'Documents', icon: '📁' },
-  { id: 'submit', label: 'Submit', icon: '✅' },
+  { id: 'requirements', label: 'Requirements', icon: '1' },
+  { id: 'id-capture', label: 'Photo ID', icon: '2' },
+  { id: 'face-scan', label: 'Face Scan', icon: '3' },
+  { id: 'verification', label: 'Verification', icon: '4' },
+  { id: 'forms', label: 'Documents', icon: '5' },
+  { id: 'submit', label: 'Submit', icon: '6' },
 ];
 
 interface WizardProgressProps {

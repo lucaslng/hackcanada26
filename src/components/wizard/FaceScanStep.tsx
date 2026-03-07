@@ -208,14 +208,8 @@ export function FaceScanStep({
   return (
     <div className="wizard-step-content face-scan-step">
       <div className="step-header">
-        <div
-          className="step-icon-circle"
-          style={{
-            background: `color-mix(in srgb, ${serviceColor} 12%, white)`,
-            color: serviceColor,
-          }}
-        >
-          🤳
+        <div className="step-icon-circle" style={{ background: `color-mix(in srgb, ${serviceColor} 12%, white)`, color: serviceColor }}>
+          FS
         </div>
         <h2>Live Face Scan</h2>
         <p>
@@ -233,7 +227,7 @@ export function FaceScanStep({
           {/* ── Idle ── */}
           {scanState === 'idle' && (
             <div className="camera-idle">
-              <div className="camera-idle-icon">📷</div>
+              <div className="camera-idle-icon">CAM</div>
               <p>Click below to activate your camera</p>
               <button
                 className="btn-step-primary"
@@ -242,6 +236,7 @@ export function FaceScanStep({
               >
                 Activate Camera
               </button>
+              {error && <div className="step-error" style={{ marginTop: '1rem' }}>{error}</div>}
             </div>
           )}
 
@@ -300,21 +295,21 @@ export function FaceScanStep({
                   style={{ background: serviceColor }}
                   onClick={captureFrame}
                 >
-                  📸 Capture Photo
+                  Capture photo
                 </button>
               )}
 
               {scanState === 'captured' && (
                 <div className="capture-actions">
                   <button className="btn-step-secondary" onClick={retake}>
-                    ↺ Retake
+                    Retake
                   </button>
                   <button
                     className="btn-step-primary"
                     style={{ background: serviceColor }}
                     onClick={uploadToCloudinary}
                   >
-                    Use this photo →
+                    Use this photo
                   </button>
                 </div>
               )}
@@ -326,17 +321,12 @@ export function FaceScanStep({
             <div className="uploading-state">
               <div className="cloudinary-processing">
                 <div className="processing-spinner" style={{ borderTopColor: serviceColor }} />
-                <h3>Processing with Cloudinary AI</h3>
+                <h3>Processing image</h3>
                 <div className="processing-steps">
-                  {PROCESSING_STEPS.map((label, i) => (
-                    <div
-                      key={i}
-                      className={`proc-step ${i === procStep ? 'active' : i < procStep ? 'active' : ''}`}
-                      style={{ opacity: i <= procStep ? 1 : 0.4 }}
-                    >
-                      {label}
-                    </div>
-                  ))}
+                  <div className="proc-step active">Uploading image...</div>
+                  <div className="proc-step">Validating image quality...</div>
+                  <div className="proc-step">Preparing verification copy...</div>
+                  <div className="proc-step">Finalizing upload...</div>
                 </div>
               </div>
             </div>
@@ -371,31 +361,18 @@ export function FaceScanStep({
         <div className="face-scan-tips">
           <h4>For the best scan</h4>
           <ul>
-            <li>
-              <span className="tip-icon">☀️</span> Sit in a well-lit area, facing a light source
-            </li>
-            <li>
-              <span className="tip-icon">👀</span> Look directly at the camera lens
-            </li>
-            <li>
-              <span className="tip-icon">😐</span> Keep a neutral expression
-            </li>
-            <li>
-              <span className="tip-icon">🚫</span> Remove glasses, hats, or face coverings
-            </li>
-            <li>
-              <span className="tip-icon">📱</span> Hold the device steady at eye level
-            </li>
+            <li><span className="tip-icon" aria-hidden="true">1.</span> Sit in a well-lit area, facing a light source</li>
+            <li><span className="tip-icon" aria-hidden="true">2.</span> Look directly at the camera lens</li>
+            <li><span className="tip-icon" aria-hidden="true">3.</span> Keep a neutral expression</li>
+            <li><span className="tip-icon" aria-hidden="true">4.</span> Remove glasses, hats, or face coverings</li>
+            <li><span className="tip-icon" aria-hidden="true">5.</span> Hold the device steady at eye level</li>
           </ul>
 
           <div className="cloudinary-badge">
-            <span className="cloudinary-badge-icon">☁️</span>
+            <span className="cloudinary-badge-icon" aria-hidden="true">SEC</span>
             <div>
-              <strong>Cloudinary AI Processing</strong>
-              <p>
-                Your selfie is automatically face-cropped, enhanced, and sharpened using
-                Cloudinary's AI transformation pipeline.
-              </p>
+              <strong>Secure image handling</strong>
+              <p>Your selfie is processed automatically to support identity verification for this application.</p>
             </div>
           </div>
         </div>
@@ -403,7 +380,7 @@ export function FaceScanStep({
 
       <div className="step-actions">
         <button className="btn-step-secondary" onClick={onBack}>
-          ← Back
+          Back
         </button>
       </div>
     </div>

@@ -15,8 +15,8 @@ export function Header({ onHome }: HeaderProps) {
             <MapleLeaf />
           </span>
           <span className="wordmark-text">
-            <span className="wordmark-canada">Canada</span>
-            <span className="wordmark-service">Service Canada — Document Portal</span>
+            <span className="wordmark-canada">Service Canada</span>
+            <span className="wordmark-service">Document Portal</span>
           </span>
         </button>
         <nav className="header-nav">
