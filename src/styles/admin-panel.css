@@ -1,0 +1,237 @@
+.admin-panel-wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.25rem;
+}
+
+.admin-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-panel-kicker {
+  margin: 0 0 0.25rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--red);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-panel-header h1 {
+  margin: 0;
+  font-size: clamp(1.4rem, 1.9vw, 2rem);
+}
+
+.admin-panel-header p {
+  margin: 0.4rem 0 0;
+  color: var(--text-soft);
+  max-width: 64ch;
+}
+
+.admin-summary-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.55rem 0.75rem;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-summary-pill .material-symbols-outlined {
+  color: var(--red);
+}
+
+.admin-summary-pill strong {
+  display: block;
+  font-size: 1.1rem;
+  line-height: 1.1;
+}
+
+.admin-summary-pill span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.admin-table-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  overflow: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1060px;
+}
+
+.admin-table th,
+.admin-table td {
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.admin-table thead th {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--surface-2);
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.applicant-cell strong {
+  display: block;
+}
+
+.applicant-cell span {
+  display: inline-block;
+  margin-top: 0.22rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.status-chip {
+  display: inline-block;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid transparent;
+}
+
+.status-pending {
+  background: var(--status-neutral-bg);
+  border-color: var(--status-neutral-border);
+  color: var(--text-soft);
+}
+
+.status-approved {
+  background: var(--status-good-bg);
+  border-color: var(--status-good-border);
+  color: var(--status-good-text);
+}
+
+.status-rejected {
+  background: var(--status-bad-bg);
+  border-color: var(--status-bad-border);
+  color: var(--status-bad-text);
+}
+
+.review-log-line {
+  margin: 0.4rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+
+.thumbnail-row {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.thumbnail-row img {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  object-fit: cover;
+}
+
+.action-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.admin-action {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.36rem 0.62rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.admin-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-action-approve {
+  border-color: var(--status-good-border);
+  color: var(--status-good-text);
+  background: color-mix(in srgb, var(--status-good-bg) 70%, transparent);
+}
+
+.admin-action-reject {
+  border-color: var(--status-bad-border);
+  color: var(--status-bad-text);
+  background: color-mix(in srgb, var(--status-bad-bg) 70%, transparent);
+}
+
+.admin-action-cancel {
+  color: var(--text-muted);
+}
+
+.reject-form {
+  margin-top: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+  padding: 0.6rem;
+}
+
+.reject-form label {
+  display: block;
+  font-size: 0.79rem;
+  font-weight: 700;
+  color: var(--text-soft);
+  margin-bottom: 0.55rem;
+}
+
+.reject-form select,
+.reject-form textarea {
+  width: 100%;
+  margin-top: 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  padding: 0.44rem 0.52rem;
+}
+
+.reject-form textarea {
+  resize: vertical;
+}
+
+.reject-form-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+@media (max-width: 900px) {
+  .admin-panel-header {
+    flex-direction: column;
+  }
+
+  .admin-summary-pill {
+    align-self: flex-start;
+  }
+}
