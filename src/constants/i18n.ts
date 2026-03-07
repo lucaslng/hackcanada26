@@ -211,7 +211,13 @@ export const UI = {
   },
 } as const;
 
-export type UIStrings = typeof UI['en'];
+// Widened to string so both EN and FR literals satisfy the type.
+// Using typeof UI['en'] would lock every property to its English literal value.
+export type UIStrings = {
+  [K in keyof typeof UI['en']]: (typeof UI['en'])[K] extends Record<string, string>
+    ? Record<string, string>
+    : string;
+};
 
 export const SERVICE_TEXT: Record<
   string,
