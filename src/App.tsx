@@ -10,7 +10,34 @@ import { RENEWAL_OPTIONS, type RenewalForm, type RenewalOption } from './data/re
 import './App.css';
 
 type Language = 'en' | 'fr';
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 8;
+
+interface ContactInfo {
+  fullName: string;
+  email: string;
+  phone: string;
+  streetAddress: string;
+  unit: string;
+  city: string;
+  province: string;
+  postalCode: string;
+}
+
+const PROVINCES = [
+  { code: 'AB', name: 'Alberta' },
+  { code: 'BC', name: 'British Columbia' },
+  { code: 'MB', name: 'Manitoba' },
+  { code: 'NB', name: 'New Brunswick' },
+  { code: 'NL', name: 'Newfoundland and Labrador' },
+  { code: 'NT', name: 'Northwest Territories' },
+  { code: 'NS', name: 'Nova Scotia' },
+  { code: 'NU', name: 'Nunavut' },
+  { code: 'ON', name: 'Ontario' },
+  { code: 'PE', name: 'Prince Edward Island' },
+  { code: 'QC', name: 'Quebec' },
+  { code: 'SK', name: 'Saskatchewan' },
+  { code: 'YT', name: 'Yukon' },
+];
 
 const UI = {
   en: {
@@ -55,30 +82,48 @@ const UI = {
     step1Subtitle: 'Review requirements for your selected service.',
     selectedService: 'Service selected',
     selfieRequirement: 'Live selfie for identity verification',
-    step2Title: 'Step 2: Upload ID Document',
-    step2Subtitle: 'Upload a clear image of your government-issued ID.',
+    step2Title: 'Step 2: Contact Information',
+    step2Subtitle: 'Provide your contact details before identity verification.',
+    fullName: 'Full Name',
+    emailAddress: 'Email Address',
+    phoneNumber: 'Phone Number',
+    streetAddress: 'Street Address',
+    apartmentUnit: 'Apartment / Unit (optional)',
+    city: 'City',
+    province: 'Province',
+    postalCode: 'Postal Code',
+    selectProvince: 'Select province or territory',
+    contactInfoNotice:
+      'Your contact information will only be used for processing your service request.',
+    emailHelper: 'Used to send updates about your application.',
+    phoneHelper: 'Used if additional verification is required.',
+    invalidEmail: 'Enter a valid email address.',
+    invalidPhone: 'Enter a valid 10-digit Canadian phone number.',
+    invalidPostal: 'Enter a valid Canadian postal code (A1A 1A1).',
+    step3Title: 'Step 3: Upload ID Document',
+    step3Subtitle: 'Upload a clear image of your government-issued ID.',
     uploadIdBtn: 'Upload ID Document',
     uploadIdSuccess: 'ID upload completed successfully.',
-    step3Title: 'Step 3: Verify Identity with Selfie',
-    step3Subtitle: 'Capture a live photo for identity verification.',
+    step4Title: 'Step 4: Verify Identity with Selfie',
+    step4Subtitle: 'Capture a live photo for identity verification.',
     uploadSelfieBtn: 'Capture Selfie',
     uploadSelfieSuccess: 'Selfie captured successfully.',
-    step4Title: 'Step 4: Identity Comparison',
-    step4Subtitle: 'Run a secure comparison of ID and selfie photos.',
+    step5Title: 'Step 5: Identity Comparison',
+    step5Subtitle: 'Run a secure comparison of ID and selfie photos.',
     runVerification: 'Run Verification',
     verified: 'Verified',
     notVerified: 'Not verified',
-    step5Title: 'Step 5: Forms to Print and Sign',
-    step5Subtitle: 'Review forms and optionally auto-map from a typed request.',
+    step6Title: 'Step 6: Forms to Print and Sign',
+    step6Subtitle: 'Review forms and optionally auto-map from a typed request.',
     mapFormsLabel: 'Type your request to map forms',
     mapFormsPlaceholder: "Example: renew driver's licence",
     mapRequestBtn: 'Map Request',
-    step6Title: 'Step 6: Submission',
-    step6Subtitle: 'Submission remains disabled in this demonstration.',
+    step7Title: 'Step 7: Submission',
+    step7Subtitle: 'Submission remains disabled in this demonstration.',
     submissionNotice:
       'Submission is currently unavailable. Backend handoff will be enabled in a later release.',
-    step7Title: 'Step 7: Notifications',
-    step7Subtitle: 'Choose where updates should be sent.',
+    step8Title: 'Step 8: Notifications',
+    step8Subtitle: 'Choose where updates should be sent.',
     savePreference: 'Save Preference',
     updatesSent: 'Updates will be sent via',
     emailLabel: 'Email',
@@ -133,30 +178,48 @@ const UI = {
     step1Subtitle: 'Passez en revue les exigences pour le service choisi.',
     selectedService: 'Service choisi',
     selfieRequirement: 'Selfie en direct pour la vérification d’identité',
-    step2Title: "Étape 2 : Téléverser la pièce d'identité",
-    step2Subtitle: "Téléversez une image claire d'une pièce d'identité gouvernementale.",
+    step2Title: 'Étape 2 : Coordonnées',
+    step2Subtitle: 'Fournissez vos coordonnées avant la vérification.',
+    fullName: 'Nom complet',
+    emailAddress: 'Adresse courriel',
+    phoneNumber: 'Numéro de téléphone',
+    streetAddress: 'Adresse',
+    apartmentUnit: 'Appartement / Unité (optionnel)',
+    city: 'Ville',
+    province: 'Province',
+    postalCode: 'Code postal',
+    selectProvince: 'Choisir une province ou un territoire',
+    contactInfoNotice:
+      'Vos coordonnées seront utilisées uniquement pour le traitement de votre demande de service.',
+    emailHelper: 'Utilisé pour envoyer les mises à jour de votre demande.',
+    phoneHelper: 'Utilisé si une vérification supplémentaire est requise.',
+    invalidEmail: 'Saisissez une adresse courriel valide.',
+    invalidPhone: 'Saisissez un numéro canadien valide de 10 chiffres.',
+    invalidPostal: 'Saisissez un code postal canadien valide (A1A 1A1).',
+    step3Title: "Étape 3 : Téléverser la pièce d'identité",
+    step3Subtitle: "Téléversez une image claire d'une pièce d'identité gouvernementale.",
     uploadIdBtn: "Téléverser la pièce d'identité",
     uploadIdSuccess: 'Téléversement de la pièce réussi.',
-    step3Title: "Étape 3 : Vérifier l'identité avec un selfie",
-    step3Subtitle: 'Capturez une photo en direct pour la vérification.',
+    step4Title: "Étape 4 : Vérifier l'identité avec un selfie",
+    step4Subtitle: 'Capturez une photo en direct pour la vérification.',
     uploadSelfieBtn: 'Capturer le selfie',
     uploadSelfieSuccess: 'Selfie capturé avec succès.',
-    step4Title: "Étape 4 : Comparaison d'identité",
-    step4Subtitle: 'Lancez une comparaison sécurisée des photos.',
+    step5Title: "Étape 5 : Comparaison d'identité",
+    step5Subtitle: 'Lancez une comparaison sécurisée des photos.',
     runVerification: 'Lancer la vérification',
     verified: 'Vérifié',
     notVerified: 'Non vérifié',
-    step5Title: 'Étape 5 : Formulaires à imprimer et signer',
-    step5Subtitle: 'Consultez les formulaires et associez-les à partir du texte saisi.',
+    step6Title: 'Étape 6 : Formulaires à imprimer et signer',
+    step6Subtitle: 'Consultez les formulaires et associez-les à partir du texte saisi.',
     mapFormsLabel: 'Saisissez votre demande pour associer les formulaires',
     mapFormsPlaceholder: 'Exemple : renouveler le permis de conduire',
     mapRequestBtn: 'Associer la demande',
-    step6Title: 'Étape 6 : Soumission',
-    step6Subtitle: 'La soumission demeure désactivée dans cette démonstration.',
+    step7Title: 'Étape 7 : Soumission',
+    step7Subtitle: 'La soumission demeure désactivée dans cette démonstration.',
     submissionNotice:
       'La soumission est actuellement indisponible. Le transfert au backend sera activé ultérieurement.',
-    step7Title: 'Étape 7 : Notifications',
-    step7Subtitle: 'Choisissez où recevoir les mises à jour.',
+    step8Title: 'Étape 8 : Notifications',
+    step8Subtitle: 'Choisissez où recevoir les mises à jour.',
     savePreference: 'Enregistrer',
     updatesSent: 'Les mises à jour seront envoyées par',
     emailLabel: 'Courriel',
@@ -237,6 +300,16 @@ export default function App() {
   const [notificationChannel, setNotificationChannel] = useState<'email' | 'sms'>('email');
   const [contactValue, setContactValue] = useState('');
   const [notificationSaved, setNotificationSaved] = useState(false);
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({
+    fullName: '',
+    email: '',
+    phone: '',
+    streetAddress: '',
+    unit: '',
+    city: '',
+    province: '',
+    postalCode: '',
+  });
 
   const t = UI[language];
   const selectedOption = RENEWAL_OPTIONS.find((option) => option.id === selectedOptionId) ?? null;
@@ -254,6 +327,16 @@ export default function App() {
     setNotificationChannel('email');
     setContactValue('');
     setNotificationSaved(false);
+    setContactInfo({
+      fullName: '',
+      email: '',
+      phone: '',
+      streetAddress: '',
+      unit: '',
+      city: '',
+      province: '',
+      postalCode: '',
+    });
   };
 
   const resetFlow = () => {
@@ -279,12 +362,13 @@ export default function App() {
 
   const canContinue = () => {
     if (step === 1) return Boolean(selectedOptionId);
-    if (step === 2) return Boolean(idPhoto);
-    if (step === 3) return Boolean(facePhoto);
-    if (step === 4) return Boolean(matchScore && matchScore >= 82);
-    if (step === 5) return Boolean(selectedOptionId);
-    if (step === 6) return true;
-    if (step === 7) return Boolean(contactValue.trim());
+    if (step === 2) return true;
+    if (step === 3) return Boolean(idPhoto);
+    if (step === 4) return Boolean(facePhoto);
+    if (step === 5) return Boolean(matchScore && matchScore >= 82);
+    if (step === 6) return Boolean(selectedOptionId);
+    if (step === 7) return true;
+    if (step === 8) return Boolean(contactValue.trim());
     return false;
   };
 
@@ -309,6 +393,27 @@ export default function App() {
   const mapFormsFromText = (raw: string) => {
     const option = matchIntentToOption(raw) ?? selectedOption;
     setMappedForms(option ? option.forms : []);
+  };
+
+  const formatPhone = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 10);
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  };
+
+  const normalizePostal = (value: string) => {
+    const cleaned = value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    if (cleaned.length <= 3) return cleaned;
+    return `${cleaned.slice(0, 3)} ${cleaned.slice(3)}`;
+  };
+
+  const updateContactField = (field: keyof ContactInfo, value: string) => {
+    let nextValue = value;
+    if (field === 'phone') nextValue = formatPhone(value);
+    if (field === 'postalCode') nextValue = normalizePostal(value);
+
+    setContactInfo((prev) => ({ ...prev, [field]: nextValue }));
   };
 
   const compareFaces = () => {
@@ -343,7 +448,107 @@ export default function App() {
 
     if (step === 2) {
       return (
-        <SectionCard title={t.step2Title} subtitle={t.step2Subtitle} icon="upload_file">
+        <SectionCard title={t.step2Title} subtitle={t.step2Subtitle} icon="contact_mail">
+          <div className="contact-form-grid">
+            <div className="contact-field contact-field--full">
+              <label className="ui-label" htmlFor="full-name">{t.fullName}</label>
+              <input
+                id="full-name"
+                className="ui-input"
+                value={contactInfo.fullName}
+                onChange={(e) => updateContactField('fullName', e.target.value)}
+              />
+            </div>
+
+            <div className="contact-field">
+              <label className="ui-label" htmlFor="email">{t.emailAddress}</label>
+              <input
+                id="email"
+                type="email"
+                className="ui-input"
+                value={contactInfo.email}
+                onChange={(e) => updateContactField('email', e.target.value)}
+              />
+              <p className="field-helper">{t.emailHelper}</p>
+            </div>
+
+            <div className="contact-field">
+              <label className="ui-label" htmlFor="phone">{t.phoneNumber}</label>
+              <input
+                id="phone"
+                type="tel"
+                className="ui-input"
+                value={contactInfo.phone}
+                onChange={(e) => updateContactField('phone', e.target.value)}
+              />
+              <p className="field-helper">{t.phoneHelper}</p>
+            </div>
+
+            <div className="contact-field contact-field--full">
+              <label className="ui-label" htmlFor="street">{t.streetAddress}</label>
+              <input
+                id="street"
+                className="ui-input"
+                value={contactInfo.streetAddress}
+                onChange={(e) => updateContactField('streetAddress', e.target.value)}
+              />
+            </div>
+
+            <div className="contact-field">
+              <label className="ui-label" htmlFor="unit">{t.apartmentUnit}</label>
+              <input
+                id="unit"
+                className="ui-input"
+                value={contactInfo.unit}
+                onChange={(e) => updateContactField('unit', e.target.value)}
+              />
+            </div>
+
+            <div className="contact-field">
+              <label className="ui-label" htmlFor="city">{t.city}</label>
+              <input
+                id="city"
+                className="ui-input"
+                value={contactInfo.city}
+                onChange={(e) => updateContactField('city', e.target.value)}
+              />
+            </div>
+
+            <div className="contact-field">
+              <label className="ui-label" htmlFor="province">{t.province}</label>
+              <select
+                id="province"
+                className="ui-input"
+                value={contactInfo.province}
+                onChange={(e) => updateContactField('province', e.target.value)}
+              >
+                <option value="">{t.selectProvince}</option>
+                {PROVINCES.map((province) => (
+                  <option key={province.code} value={province.code}>
+                    {province.code} - {province.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="contact-field">
+              <label className="ui-label" htmlFor="postal">{t.postalCode}</label>
+              <input
+                id="postal"
+                className="ui-input"
+                value={contactInfo.postalCode}
+                onChange={(e) => updateContactField('postalCode', e.target.value)}
+              />
+            </div>
+          </div>
+          <p className="contact-note">{t.contactInfoNotice}</p>
+        </SectionCard>
+      );
+    }
+
+    if (step === 3) {
+      return (
+        <SectionCard title={t.step3Title} subtitle={t.step3Subtitle} icon="upload_file">
           <UploadWidget
             onUploadSuccess={(result) => setIdPhoto(result)}
             onUploadError={(error) => alert(`ID upload failed: ${error.message}`)}
@@ -354,9 +559,9 @@ export default function App() {
       );
     }
 
-    if (step === 3) {
+    if (step === 4) {
       return (
-        <SectionCard title={t.step3Title} subtitle={t.step3Subtitle} icon="photo_camera_front">
+        <SectionCard title={t.step4Title} subtitle={t.step4Subtitle} icon="photo_camera_front">
           <UploadWidget
             onUploadSuccess={(result) => setFacePhoto(result)}
             onUploadError={(error) => alert(`Face scan failed: ${error.message}`)}
@@ -367,9 +572,9 @@ export default function App() {
       );
     }
 
-    if (step === 4) {
+    if (step === 5) {
       return (
-        <SectionCard title={t.step4Title} subtitle={t.step4Subtitle} icon="person_search">
+        <SectionCard title={t.step5Title} subtitle={t.step5Subtitle} icon="person_search">
           <div className="ui-stack">
             <Button onClick={compareFaces} disabled={!idPhoto || !facePhoto}>
               {t.runVerification}
@@ -384,9 +589,9 @@ export default function App() {
       );
     }
 
-    if (step === 5) {
+    if (step === 6) {
       return (
-        <SectionCard title={t.step5Title} subtitle={t.step5Subtitle} icon="description">
+        <SectionCard title={t.step6Title} subtitle={t.step6Subtitle} icon="description">
           <ul className="form-list">
             {selectedOption?.forms.map((form) => (
               <li key={form.id}>
@@ -424,16 +629,16 @@ export default function App() {
       );
     }
 
-    if (step === 6) {
+    if (step === 7) {
       return (
-        <SectionCard title={t.step6Title} subtitle={t.step6Subtitle} icon="send">
+        <SectionCard title={t.step7Title} subtitle={t.step7Subtitle} icon="send">
           <p className="status-neutral">{t.submissionNotice}</p>
         </SectionCard>
       );
     }
 
     return (
-      <SectionCard title={t.step7Title} subtitle={t.step7Subtitle} icon="notifications_active">
+      <SectionCard title={t.step8Title} subtitle={t.step8Subtitle} icon="notifications_active">
         <div className="ui-stack">
           <div className="segmented" role="tablist" aria-label="Notification channel">
             <button
