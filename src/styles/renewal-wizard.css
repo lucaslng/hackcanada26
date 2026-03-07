@@ -242,12 +242,131 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.8rem;
 }
 
 .wizard-nav-left {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.wizard-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.step-track {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.step-track li {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.58rem 0.5rem;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  color: var(--text-soft);
+  font-size: 0.8rem;
+  text-align: center;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.step-track li .material-symbols-outlined {
+  font-size: 1rem;
+}
+
+.step-track li.active {
+  border-color: color-mix(in srgb, var(--red) 70%, var(--border));
+  background: color-mix(in srgb, var(--red) 10%, var(--surface));
+  color: var(--text);
+}
+
+.step-track li.done {
+  border-color: var(--status-good-border);
+  background: var(--status-good-bg);
+  color: var(--status-good-text);
+}
+
+.step-track li.skipped {
+  border-style: dashed;
+}
+
+.field-error {
+  font-size: 0.86rem;
+  color: var(--status-bad-text);
+}
+
+.ui-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.upload-block {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 0.9rem;
+}
+
+.review-section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.review-section-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 0.95rem;
+}
+
+.review-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.review-head h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.review-grid {
+  margin-top: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.review-grid div {
+  border-top: 1px solid var(--border);
+  padding-top: 0.55rem;
+}
+
+.review-grid dt {
+  color: var(--text-soft);
+  font-size: 0.86rem;
+}
+
+.review-grid dd {
+  margin: 0.2rem 0 0;
+  color: var(--text);
+  font-weight: 600;
 }
 
 .checklist {
@@ -396,7 +515,15 @@
     padding: 4rem 1.2rem;
   }
 
+  .step-track {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .contact-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .review-grid {
     grid-template-columns: 1fr;
   }
 
@@ -408,5 +535,10 @@
   .wizard-nav-left {
     width: 100%;
     justify-content: flex-start;
+  }
+
+  .wizard-nav-right {
+    width: 100%;
+    justify-content: flex-end;
   }
 }
