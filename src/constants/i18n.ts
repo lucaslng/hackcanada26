@@ -100,7 +100,7 @@ export const UI = {
     mappedFormsHeading: "Suggested forms based on your description:",
     mapFormsHint: 'Press "Map Request" to find matching forms.',
     step6Title: "Step 6: Forms to Print and Sign",
-    step6Subtitle: "Review forms and optionally auto-map from a typed request.",
+    step6Subtitle: "Review and fill in forms.",
     mapFormsLabel: "Type your request to map forms",
     mapFormsPlaceholder: "Example: renew driver's licence",
     mapRequestBtn: "Map Request",
