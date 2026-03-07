@@ -1,6 +1,14 @@
+// renewalOptions.ts
+
 export interface RenewalForm {
   id: string;
   label: string;
+  /** Official Government of Canada / provincial government URL for this form */
+  url?: string;
+  /** Short description of what the form is for */
+  description?: string;
+  /** Whether to download as PDF or open as a web page */
+  linkType?: 'pdf' | 'web';
 }
 
 export interface RenewalOption {
@@ -28,8 +36,34 @@ export const RENEWAL_OPTIONS: RenewalOption[] = [
       'Completed renewal application',
     ],
     forms: [
-      { id: 'pptc-054', label: 'PPTC 054 - Adult Simplified Renewal Application' },
-      { id: 'pptc-040', label: 'PPTC 040 - Child General Passport Application' },
+      {
+        id: 'PPTC 054',
+        label: 'Adult Passport Renewal Application',
+        description: 'Primary form for renewing an adult Canadian passport (ages 16+).',
+        url: 'https://www.canada.ca/content/dam/ircc/migration/ircc/english/passport/forms/pdf/pptc054.pdf',
+        linkType: 'pdf',
+      },
+      {
+        id: 'PPTC 084',
+        label: 'Credit Card Payment Authorization',
+        description: 'Authorise credit card payment for passport fees (inside Canada and the US).',
+        url: 'https://www.canada.ca/content/dam/ircc/documents/pdf/english/kits/forms/pptc084.pdf',
+        linkType: 'pdf',
+      },
+      {
+        id: 'PPTC 056',
+        label: 'Additional Information – Address and Occupation',
+        description: 'Supplementary details if your address or occupation differs from the main form.',
+        url: 'https://www.canada.ca/content/dam/ircc/documents/pdf/english/kits/forms/pptc056.pdf',
+        linkType: 'pdf',
+      },
+      {
+        id: 'PPTC 203',
+        label: 'Declaration – Lost, Stolen or Damaged Passport',
+        description: 'Required if your current passport was lost, stolen or damaged.',
+        url: 'https://www.canada.ca/content/dam/ircc/documents/pdf/english/kits/forms/pptc203e.pdf',
+        linkType: 'pdf',
+      },
     ],
     keywords: ['passport', 'travel', 'pptc'],
   },
@@ -46,8 +80,20 @@ export const RENEWAL_OPTIONS: RenewalOption[] = [
       'Vision/medical confirmation (if requested by province)',
     ],
     forms: [
-      { id: 'dl-renew-01', label: "Driver's Licence Renewal Form" },
-      { id: 'dl-address-02', label: 'Address Confirmation Form' },
+      {
+        id: 'ServiceOntario',
+        label: "Renew Your Driver's Licence Online",
+        description: 'ServiceOntario online renewal — eligible if your address and photo are unchanged.',
+        url: 'https://www.ontario.ca/page/renew-drivers-licence',
+        linkType: 'web',
+      },
+      {
+        id: 'MTO Form',
+        label: 'Address Confirmation / In-Person Visit',
+        description: 'Must visit a ServiceOntario centre if your address changed within the last 90 days.',
+        url: 'https://www.ontario.ca/locations/serviceontario',
+        linkType: 'web',
+      },
     ],
     keywords: ['driver', 'licence', 'license', 'driving', 'car'],
   },
@@ -63,8 +109,20 @@ export const RENEWAL_OPTIONS: RenewalOption[] = [
       'Current health card number',
     ],
     forms: [
-      { id: 'hc-renew-01', label: 'Health Coverage Renewal Form' },
-      { id: 'hc-res-02', label: 'Residency Confirmation Form' },
+      {
+        id: 'ServiceOntario',
+        label: 'Renew Your Health Card (OHIP)',
+        description: 'Online renewal for eligible Ontario residents. Bring two original identity documents.',
+        url: 'https://www.ontario.ca/page/health-card-renewal',
+        linkType: 'web',
+      },
+      {
+        id: 'HC Document List',
+        label: 'Accepted Identity Documents for Health Card',
+        description: 'Official list of documents accepted to prove identity and residency.',
+        url: 'https://www.ontario.ca/page/documents-needed-get-health-card',
+        linkType: 'web',
+      },
     ],
     keywords: ['health', 'ohip', 'coverage', 'medical'],
   },
@@ -80,8 +138,20 @@ export const RENEWAL_OPTIONS: RenewalOption[] = [
       'Proof of address',
     ],
     forms: [
-      { id: 'sin-100', label: 'SIN Update Application Form' },
-      { id: 'sin-102', label: 'Supporting Document Declaration' },
+      {
+        id: 'SIN Online',
+        label: 'Apply / Update SIN Online (MSCA)',
+        description: 'Fastest method — apply or update your SIN via My Service Canada Account.',
+        url: 'https://www.canada.ca/en/employment-social-development/services/sin/apply.html',
+        linkType: 'web',
+      },
+      {
+        id: 'SIN Docs',
+        label: 'Required Documents for SIN Application',
+        description: 'Full list of accepted primary and secondary identity documents.',
+        url: 'https://www.canada.ca/en/employment-social-development/services/sin/required-documents.html',
+        linkType: 'web',
+      },
     ],
     keywords: ['sin', 'social insurance', 'benefits', 'work'],
   },

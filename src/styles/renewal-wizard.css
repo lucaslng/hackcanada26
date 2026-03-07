@@ -542,3 +542,293 @@
     justify-content: flex-end;
   }
 }
+
+/* ─────────────────────────────────────────────────────────
+   Step 6: Forms — form-card-list, form-gov-notice,
+   form-mapper-section
+   Add this block to renewal-wizard.css
+   ───────────────────────────────────────────────────────── */
+
+/* ── Form card list ── */
+.form-card-list {
+  list-style: none;
+  margin: 0 0 1.25rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.form-card {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: start;
+  gap: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.95rem 1rem;
+  background: var(--surface);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.25s ease;
+}
+
+.form-card:hover {
+  border-color: var(--border-2);
+  box-shadow: var(--shadow-md);
+}
+
+/* Left column: type icon */
+.form-card__left {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 0.1rem;
+}
+
+.form-card__type-icon {
+  font-size: 1.45rem;
+}
+
+.form-card__type-icon.pdf {
+  color: #dc2626; /* universal PDF red */
+}
+
+.form-card__type-icon.web {
+  color: var(--navy, #1f2f4a);
+}
+
+[data-theme="dark"] .form-card__type-icon.web {
+  color: var(--navy, #7ba4d4);
+}
+
+/* Body */
+.form-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.form-card__top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.form-card__id {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--red);
+  font-family: 'Source Sans 3', monospace;
+}
+
+.form-card__label {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.form-card__desc {
+  font-size: 0.9rem;
+  color: var(--text-soft);
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Badges */
+.form-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  padding: 0.15rem 0.45rem;
+  flex-shrink: 0;
+}
+
+.form-badge--pdf {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.form-badge--web {
+  background: color-mix(in srgb, var(--navy, #1f2f4a) 10%, var(--surface));
+  color: var(--navy, #1f2f4a);
+  border: 1px solid color-mix(in srgb, var(--navy, #1f2f4a) 25%, var(--border));
+}
+
+[data-theme="dark"] .form-badge--pdf {
+  background: #450a0a;
+  color: #f87171;
+  border-color: #7f1d1d;
+}
+
+[data-theme="dark"] .form-badge--web {
+  background: color-mix(in srgb, var(--navy, #7ba4d4) 15%, var(--surface));
+  color: var(--navy, #7ba4d4);
+  border-color: color-mix(in srgb, var(--navy, #7ba4d4) 30%, var(--border));
+}
+
+/* Right column: link button */
+.form-card__action {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 0.05rem;
+  flex-shrink: 0;
+}
+
+.form-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--red);
+  padding: 0.42rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--red) 35%, var(--border));
+  border-radius: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  background: color-mix(in srgb, var(--red) 5%, var(--surface));
+}
+
+.form-card__link:hover,
+.form-card__link:focus-visible {
+  background: color-mix(in srgb, var(--red) 12%, var(--surface));
+  border-color: var(--red);
+  outline: none;
+}
+
+.form-card__link .material-symbols-outlined {
+  font-size: 1rem;
+}
+
+/* ── Government disclaimer notice ── */
+.form-gov-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  background: color-mix(in srgb, var(--navy, #1f2f4a) 4%, var(--surface));
+  margin-bottom: 1.25rem;
+}
+
+.form-gov-notice .material-symbols-outlined {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-top: 0.08rem;
+}
+
+.form-gov-notice p {
+  font-size: 0.88rem;
+  color: var(--text-soft);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── AI intent mapper ── */
+.form-mapper-section {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.form-mapper-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  background: var(--surface-2);
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.form-mapper-toggle:hover {
+  background: var(--surface-3);
+}
+
+.form-mapper-toggle .material-symbols-outlined:first-child {
+  font-size: 1.15rem;
+  color: var(--red);
+  flex-shrink: 0;
+}
+
+.form-mapper-chevron {
+  margin-left: auto;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.form-mapper-chevron.open {
+  transform: rotate(180deg);
+}
+
+.form-mapper-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.form-mapper-input-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.form-mapper-input-row .ui-input {
+  flex: 1;
+  min-width: 180px;
+}
+
+.form-mapper-results__heading {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--status-good-text);
+  margin: 0 0 0.6rem;
+}
+
+.form-mapper-results__heading .material-symbols-outlined {
+  font-size: 1rem;
+}
+
+.form-mapper-hint {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .form-card {
+    grid-template-columns: 36px 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .form-card__action {
+    grid-column: 2;
+    padding-top: 0.4rem;
+  }
+}

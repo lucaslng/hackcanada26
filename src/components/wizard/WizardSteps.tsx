@@ -4,7 +4,7 @@ import { SectionCard } from '../ui/SectionCard';
 import { Button } from '../ui/Button';
 import { UploadWidget } from '../../cloudinary/UploadWidget';
 import type { CloudinaryUploadResult } from '../../cloudinary/UploadWidget';
-import type { RenewalForm, RenewalOption } from '../../data/renewalOptions';
+import type { RenewalOption } from '../../data/renewalOptions';
 import type { UIStrings } from '../../constants/i18n';
 import type { ContactInfo } from '../../hooks/useWizard';
 import { PROVINCES } from '../../hooks/useWizard';
@@ -204,63 +204,6 @@ export function Step5({ t, idPhoto, facePhoto, matchScore, onCompare }: Step5Pro
             Match score: {matchScore}%{' '}
             {matchScore >= 82 ? `(${t.verified})` : `(${t.notVerified})`}
           </p>
-        )}
-      </div>
-    </SectionCard>
-  );
-}
-
-// ─── Step 6: Forms ────────────────────────────────────────────────────────────
-
-interface Step6Props extends BaseStepProps {
-  selectedOption: RenewalOption | null;
-  typedIntent: string;
-  mappedForms: RenewalForm[];
-  onIntentChange: (value: string) => void;
-  onMapForms: () => void;
-}
-
-export function Step6({
-  t,
-  selectedOption,
-  typedIntent,
-  mappedForms,
-  onIntentChange,
-  onMapForms,
-}: Step6Props) {
-  return (
-    <SectionCard title={t.step6Title} subtitle={t.step6Subtitle} icon="description">
-      <ul className="form-list">
-        {selectedOption?.forms.map((form) => (
-          <li key={form.id}>
-            <span>{form.id}</span>
-            <span>{form.label}</span>
-          </li>
-        ))}
-      </ul>
-      <div className="ui-stack">
-        <label className="ui-label" htmlFor="map-form-input">
-          {t.mapFormsLabel}
-        </label>
-        <input
-          id="map-form-input"
-          className="ui-input"
-          placeholder={t.mapFormsPlaceholder}
-          value={typedIntent}
-          onChange={(e) => onIntentChange(e.target.value)}
-        />
-        <Button variant="secondary" onClick={onMapForms}>
-          {t.mapRequestBtn}
-        </Button>
-        {mappedForms.length > 0 && (
-          <ul className="form-list">
-            {mappedForms.map((form) => (
-              <li key={`mapped-${form.id}`}>
-                <span>{form.id}</span>
-                <span>{form.label}</span>
-              </li>
-            ))}
-          </ul>
         )}
       </div>
     </SectionCard>
