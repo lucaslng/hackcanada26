@@ -19,7 +19,7 @@ export default function App() {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
 
   const t = UI[language];
-  const { state, actions, reset } = useWizard(selectedOptionId);
+  const { state, actions, reset } = useWizard(selectedOptionId, language);
 
   const selectedOption = RENEWAL_OPTIONS.find((o) => o.id === selectedOptionId) ?? null;
   const serviceTitle = selectedOption
@@ -53,7 +53,7 @@ export default function App() {
         onNavigate={navigateToSection}
         language={language}
         onLanguageChange={setLanguage}
-        labels={t.nav}
+        t={t}
         theme={theme}
         onThemeChange={setTheme}
       />
@@ -64,6 +64,7 @@ export default function App() {
             state={state}
             actions={actions}
             serviceTitle={serviceTitle}
+            language={language}
             onExit={resetFlow}
           />
         ) : (

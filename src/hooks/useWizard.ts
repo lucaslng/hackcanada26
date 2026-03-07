@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import type { CloudinaryUploadResult } from '../cloudinary/UploadWidget';
 import { RENEWAL_OPTIONS, type RenewalForm, type RenewalOption } from '../data/renewalOptions';
+import { SERVICE_DETAILS_TEXT, SERVICE_TEXT, type Language } from '../constants/i18n';
 
 export const TOTAL_STEPS = 8;
 
@@ -30,19 +31,19 @@ const EMPTY_CONTACT: ContactInfo = {
 };
 
 export const PROVINCES = [
-  { code: 'AB', name: 'Alberta' },
-  { code: 'BC', name: 'British Columbia' },
-  { code: 'MB', name: 'Manitoba' },
-  { code: 'NB', name: 'New Brunswick' },
-  { code: 'NL', name: 'Newfoundland and Labrador' },
-  { code: 'NT', name: 'Northwest Territories' },
-  { code: 'NS', name: 'Nova Scotia' },
-  { code: 'NU', name: 'Nunavut' },
-  { code: 'ON', name: 'Ontario' },
-  { code: 'PE', name: 'Prince Edward Island' },
-  { code: 'QC', name: 'Quebec' },
-  { code: 'SK', name: 'Saskatchewan' },
-  { code: 'YT', name: 'Yukon' },
+  { code: 'AB', name: { en: 'Alberta', fr: 'Alberta' } },
+  { code: 'BC', name: { en: 'British Columbia', fr: 'Colombie-Britannique' } },
+  { code: 'MB', name: { en: 'Manitoba', fr: 'Manitoba' } },
+  { code: 'NB', name: { en: 'New Brunswick', fr: 'Nouveau-Brunswick' } },
+  { code: 'NL', name: { en: 'Newfoundland and Labrador', fr: 'Terre-Neuve-et-Labrador' } },
+  { code: 'NT', name: { en: 'Northwest Territories', fr: 'Territoires du Nord-Ouest' } },
+  { code: 'NS', name: { en: 'Nova Scotia', fr: 'Nouvelle-Ecosse' } },
+  { code: 'NU', name: { en: 'Nunavut', fr: 'Nunavut' } },
+  { code: 'ON', name: { en: 'Ontario', fr: 'Ontario' } },
+  { code: 'PE', name: { en: 'Prince Edward Island', fr: 'Ile-du-Prince-Edouard' } },
+  { code: 'QC', name: { en: 'Quebec', fr: 'Quebec' } },
+  { code: 'SK', name: { en: 'Saskatchewan', fr: 'Saskatchewan' } },
+  { code: 'YT', name: { en: 'Yukon', fr: 'Yukon' } },
 ];
 
 // ─── Public types ─────────────────────────────────────────────────────────────
@@ -79,7 +80,7 @@ export interface WizardActions {
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
-export function useWizard(selectedOptionId: string | null) {
+export function useWizard(selectedOptionId: string | null, language: Language) {
   const [step, setStep] = useState(1);
   const [contactInfo, setContactInfo] = useState<ContactInfo>(EMPTY_CONTACT);
   const [typedIntent, setTypedIntent] = useState('');
@@ -143,7 +144,16 @@ export function useWizard(selectedOptionId: string | null) {
     if (!text) return null;
     return (
       availableOptions.find(
-        (o) => o.keywords.some((kw) => text.includes(kw)) || text.includes(o.title.toLowerCase()),
+        (o) => {
+          const localizedTitle = SERVICE_TEXT[o.id]?.[language]?.title ?? '';
+          const localizedKeywords = SERVICE_DETAILS_TEXT[o.id]?.[language]?.keywords ?? [];
+          const allKeywords = [...o.keywords, ...localizedKeywords];
+          return (
+            allKeywords.some((kw) => text.includes(kw.toLowerCase()))
+            || text.includes(o.title.toLowerCase())
+            || text.includes(localizedTitle.toLowerCase())
+          );
+        },
       ) ?? null
     );
   };

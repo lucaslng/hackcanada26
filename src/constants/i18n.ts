@@ -41,6 +41,20 @@ export const UI = {
     phone: 'Phone',
     email: 'Email',
     hours: 'Hours',
+    hoursValue: '8:00 AM - 8:00 PM (local)',
+    goHomeAria: 'Go to home page',
+    primaryNavigationAria: 'Primary navigation',
+    languageSwitcherAria: 'Language switcher',
+    colourSchemeAria: 'Colour scheme',
+    themeLight: 'Light',
+    themeSystem: 'System',
+    themeDark: 'Dark',
+    notificationChannelAria: 'Notification channel',
+    matchScoreLabel: 'Match score',
+    idUploadFailed: 'ID upload failed:',
+    selfieUploadFailed: 'Face scan failed:',
+    uploadWidgetLoading: 'Loading…',
+    uploadWidgetLoadError: 'Upload widget failed to load. Please refresh the page or check your network connection.',
     // Step 1
     step1Title: 'Step 1: Renewal Requirements',
     step1Subtitle: 'Review requirements for your selected service.',
@@ -144,6 +158,20 @@ export const UI = {
     phone: 'Téléphone',
     email: 'Courriel',
     hours: 'Heures',
+    hoursValue: '8 h 00 - 20 h 00 (heure locale)',
+    goHomeAria: "Aller à la page d'accueil",
+    primaryNavigationAria: 'Navigation principale',
+    languageSwitcherAria: 'Sélecteur de langue',
+    colourSchemeAria: 'Palette de couleurs',
+    themeLight: 'Clair',
+    themeSystem: 'Système',
+    themeDark: 'Sombre',
+    notificationChannelAria: 'Canal de notification',
+    matchScoreLabel: 'Score de correspondance',
+    idUploadFailed: "Échec du téléversement de la pièce d'identité :",
+    selfieUploadFailed: 'Échec de la capture du selfie :',
+    uploadWidgetLoading: 'Chargement…',
+    uploadWidgetLoadError: 'Le module de téléversement ne peut pas se charger. Actualisez la page ou vérifiez votre connexion réseau.',
     // Step 1
     step1Title: 'Étape 1 : Exigences de renouvellement',
     step1Subtitle: 'Passez en revue les exigences pour le service choisi.',
@@ -254,5 +282,122 @@ export const SERVICE_TEXT: Record<
   'name-change': {
     en: { title: 'Name Change', description: 'Submit forms for legal name change records.' },
     fr: { title: 'Changement de nom', description: 'Soumettez les formulaires pour un changement de nom légal.' },
+  },
+};
+
+export const SERVICE_DETAILS_TEXT: Record<
+  string,
+  {
+    en: { requirements: string[]; forms: Record<string, string>; keywords: string[] };
+    fr: { requirements: string[]; forms: Record<string, string>; keywords: string[] };
+  }
+> = {
+  passport: {
+    en: {
+      requirements: [
+        'Current or expired passport',
+        'Government-issued photo ID',
+        'Two passport photos',
+        'Completed renewal application',
+      ],
+      forms: {
+        'pptc-054': 'PPTC 054 - Adult Simplified Renewal Application',
+        'pptc-040': 'PPTC 040 - Child General Passport Application',
+      },
+      keywords: ['passport', 'travel', 'pptc'],
+    },
+    fr: {
+      requirements: [
+        'Passeport actuel ou expiré',
+        "Pièce d'identité avec photo délivrée par le gouvernement",
+        'Deux photos de passeport',
+        'Demande de renouvellement remplie',
+      ],
+      forms: {
+        'pptc-054': 'PPTC 054 - Demande de renouvellement simplifié adulte',
+        'pptc-040': 'PPTC 040 - Demande générale de passeport enfant',
+      },
+      keywords: ['passeport', 'voyage', 'pptc'],
+    },
+  },
+  'drivers-license': {
+    en: {
+      requirements: [
+        'Government photo ID',
+        'Current licence number',
+        'Current address details',
+        'Vision/medical confirmation (if requested by province)',
+      ],
+      forms: {
+        'dl-renew-01': "Driver's Licence Renewal Form",
+        'dl-address-02': 'Address Confirmation Form',
+      },
+      keywords: ['driver', 'licence', 'license', 'driving', 'car'],
+    },
+    fr: {
+      requirements: [
+        'Pièce d’identité gouvernementale avec photo',
+        'Numéro de permis actuel',
+        'Coordonnées actuelles de votre adresse',
+        'Confirmation visuelle/médicale (si demandée par la province)',
+      ],
+      forms: {
+        'dl-renew-01': 'Formulaire de renouvellement du permis de conduire',
+        'dl-address-02': "Formulaire de confirmation d'adresse",
+      },
+      keywords: ['permis', 'conduire', 'conduite', 'auto', 'licence'],
+    },
+  },
+  'health-card': {
+    en: {
+      requirements: [
+        'Government-issued photo ID',
+        'Proof of provincial residency',
+        'Current health card number',
+      ],
+      forms: {
+        'hc-renew-01': 'Health Coverage Renewal Form',
+        'hc-res-02': 'Residency Confirmation Form',
+      },
+      keywords: ['health', 'ohip', 'coverage', 'medical'],
+    },
+    fr: {
+      requirements: [
+        "Pièce d'identité gouvernementale avec photo",
+        'Preuve de résidence provinciale',
+        'Numéro de carte santé actuel',
+      ],
+      forms: {
+        'hc-renew-01': 'Formulaire de renouvellement de couverture santé',
+        'hc-res-02': 'Formulaire de confirmation de résidence',
+      },
+      keywords: ['sante', 'santé', 'ohip', 'couverture', 'medical', 'médical'],
+    },
+  },
+  sin: {
+    en: {
+      requirements: [
+        'Primary identity document',
+        'Supporting immigration/citizenship document',
+        'Proof of address',
+      ],
+      forms: {
+        'sin-100': 'SIN Update Application Form',
+        'sin-102': 'Supporting Document Declaration',
+      },
+      keywords: ['sin', 'social insurance', 'benefits', 'work'],
+    },
+    fr: {
+      requirements: [
+        "Document d'identité principal",
+        "Document d'appui d'immigration/citoyenneté",
+        "Preuve d'adresse",
+      ],
+      forms: {
+        'sin-100': 'Formulaire de mise à jour du NAS',
+        'sin-102': "Déclaration de documents d'appui",
+      },
+      keywords: ['nas', 'assurance sociale', 'prestations', 'travail'],
+    },
   },
 };

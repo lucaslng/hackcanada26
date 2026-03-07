@@ -128,7 +128,7 @@ export function HomePage({ t, language, onStartService, onNavigate }: HomePagePr
         <div className="support-grid">
           <p>{t.phone}: <strong>1-800-622-6232</strong></p>
           <p>{t.email}: <strong>service-support@gov.example</strong></p>
-          <p>{t.hours}: <strong>8:00 AM - 8:00 PM (local)</strong></p>
+          <p>{t.hours}: <strong>{t.hoursValue}</strong></p>
         </div>
       </RevealSection>
 

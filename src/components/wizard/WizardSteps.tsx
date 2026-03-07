@@ -5,7 +5,7 @@ import { Button } from '../ui/Button';
 import { UploadWidget } from '../../cloudinary/UploadWidget';
 import type { CloudinaryUploadResult } from '../../cloudinary/UploadWidget';
 import type { RenewalForm, RenewalOption } from '../../data/renewalOptions';
-import type { UIStrings } from '../../constants/i18n';
+import { SERVICE_DETAILS_TEXT, type Language, type UIStrings } from '../../constants/i18n';
 import type { ContactInfo } from '../../hooks/useWizard';
 import { PROVINCES } from '../../hooks/useWizard';
 
@@ -18,18 +18,23 @@ interface BaseStepProps {
 // ─── Step 1: Requirements ─────────────────────────────────────────────────────
 
 interface Step1Props extends BaseStepProps {
+  language: Language;
   selectedOption: RenewalOption | null;
   serviceTitle: string;
 }
 
-export function Step1({ t, selectedOption, serviceTitle }: Step1Props) {
+export function Step1({ t, language, selectedOption, serviceTitle }: Step1Props) {
+  const requirements = selectedOption
+    ? (SERVICE_DETAILS_TEXT[selectedOption.id]?.[language]?.requirements ?? selectedOption.requirements)
+    : [];
+
   return (
     <SectionCard title={t.step1Title} subtitle={t.step1Subtitle} icon="fact_check">
       <div className="ui-banner">
         {t.selectedService}: <strong>{serviceTitle}</strong>
       </div>
       <ul className="checklist">
-        {selectedOption?.requirements.map((req) => <li key={req}>{req}</li>)}
+        {requirements.map((req) => <li key={req}>{req}</li>)}
         <li>{t.selfieRequirement}</li>
       </ul>
     </SectionCard>
@@ -39,11 +44,12 @@ export function Step1({ t, selectedOption, serviceTitle }: Step1Props) {
 // ─── Step 2: Contact Information ──────────────────────────────────────────────
 
 interface Step2Props extends BaseStepProps {
+  language: Language;
   contactInfo: ContactInfo;
   onFieldChange: (field: keyof ContactInfo, value: string) => void;
 }
 
-export function Step2({ t, contactInfo, onFieldChange }: Step2Props) {
+export function Step2({ t, language, contactInfo, onFieldChange }: Step2Props) {
   return (
     <SectionCard title={t.step2Title} subtitle={t.step2Subtitle} icon="contact_mail">
       <div className="contact-form-grid">
@@ -122,7 +128,7 @@ export function Step2({ t, contactInfo, onFieldChange }: Step2Props) {
             <option value="">{t.selectProvince}</option>
             {PROVINCES.map((p) => (
               <option key={p.code} value={p.code}>
-                {p.code} - {p.name}
+                {p.code} - {p.name[language]}
               </option>
             ))}
           </select>
@@ -155,8 +161,10 @@ export function Step3({ t, idPhoto, onUpload }: Step3Props) {
     <SectionCard title={t.step3Title} subtitle={t.step3Subtitle} icon="upload_file">
       <UploadWidget
         onUploadSuccess={onUpload}
-        onUploadError={(err) => alert(`ID upload failed: ${err.message}`)}
+        onUploadError={(err) => alert(`${t.idUploadFailed} ${err.message}`)}
         buttonText={t.uploadIdBtn}
+        loadingText={t.uploadWidgetLoading}
+        loadErrorText={t.uploadWidgetLoadError}
       />
       {idPhoto && <p className="status-good">{t.uploadIdSuccess}</p>}
     </SectionCard>
@@ -175,8 +183,10 @@ export function Step4({ t, facePhoto, onUpload }: Step4Props) {
     <SectionCard title={t.step4Title} subtitle={t.step4Subtitle} icon="photo_camera_front">
       <UploadWidget
         onUploadSuccess={onUpload}
-        onUploadError={(err) => alert(`Face scan failed: ${err.message}`)}
+        onUploadError={(err) => alert(`${t.selfieUploadFailed} ${err.message}`)}
         buttonText={t.uploadSelfieBtn}
+        loadingText={t.uploadWidgetLoading}
+        loadErrorText={t.uploadWidgetLoadError}
       />
       {facePhoto && <p className="status-good">{t.uploadSelfieSuccess}</p>}
     </SectionCard>
@@ -201,7 +211,7 @@ export function Step5({ t, idPhoto, facePhoto, matchScore, onCompare }: Step5Pro
         </Button>
         {matchScore !== null && (
           <p className={matchScore >= 82 ? 'status-good' : 'status-bad'}>
-            Match score: {matchScore}%{' '}
+            {t.matchScoreLabel}: {matchScore}%{' '}
             {matchScore >= 82 ? `(${t.verified})` : `(${t.notVerified})`}
           </p>
         )}
@@ -213,6 +223,7 @@ export function Step5({ t, idPhoto, facePhoto, matchScore, onCompare }: Step5Pro
 // ─── Step 6: Forms ────────────────────────────────────────────────────────────
 
 interface Step6Props extends BaseStepProps {
+  language: Language;
   selectedOption: RenewalOption | null;
   typedIntent: string;
   mappedForms: RenewalForm[];
@@ -222,19 +233,28 @@ interface Step6Props extends BaseStepProps {
 
 export function Step6({
   t,
+  language,
   selectedOption,
   typedIntent,
   mappedForms,
   onIntentChange,
   onMapForms,
 }: Step6Props) {
+  const getLocalizedFormLabel = (form: RenewalForm) => {
+    for (const serviceDetails of Object.values(SERVICE_DETAILS_TEXT)) {
+      const label = serviceDetails[language].forms[form.id];
+      if (label) return label;
+    }
+    return form.label;
+  };
+
   return (
     <SectionCard title={t.step6Title} subtitle={t.step6Subtitle} icon="description">
       <ul className="form-list">
         {selectedOption?.forms.map((form) => (
           <li key={form.id}>
             <span>{form.id}</span>
-            <span>{form.label}</span>
+            <span>{getLocalizedFormLabel(form)}</span>
           </li>
         ))}
       </ul>
@@ -257,7 +277,7 @@ export function Step6({
             {mappedForms.map((form) => (
               <li key={`mapped-${form.id}`}>
                 <span>{form.id}</span>
-                <span>{form.label}</span>
+                <span>{getLocalizedFormLabel(form)}</span>
               </li>
             ))}
           </ul>
@@ -300,7 +320,7 @@ export function Step8({
   return (
     <SectionCard title={t.step8Title} subtitle={t.step8Subtitle} icon="notifications_active">
       <div className="ui-stack">
-        <div className="segmented" role="tablist" aria-label="Notification channel">
+        <div className="segmented" role="tablist" aria-label={t.notificationChannelAria}>
           <button
             className={notificationChannel === 'email' ? 'active' : ''}
             onClick={() => onChannelChange('email')}
@@ -323,7 +343,7 @@ export function Step8({
         <Button onClick={onSave}>{t.savePreference}</Button>
         {notificationSaved && (
           <p className="status-good">
-            {t.updatesSent} {notificationChannel.toUpperCase()} {t.to} {contactValue}.
+            {t.updatesSent} {notificationChannel === 'email' ? t.emailLabel : t.smsLabel} {t.to} {contactValue}.
           </p>
         )}
       </div>
