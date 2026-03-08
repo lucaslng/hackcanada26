@@ -14,11 +14,17 @@ const SERVICE_COLOR = '#c8102e';
 
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string;
 
-/** Build a Cloudinary face-crop preview URL for display in VerificationStep. */
+/**
+ * Build a Cloudinary face-crop preview URL for display in VerificationStep.
+ *
+ * Must match buildFaceUrl() in useFaceVerification.ts exactly so the user
+ * sees the same image that the model analyses — no e_improve / e_sharpen so
+ * face detection confidence scores are not degraded.
+ */
 function toFaceUrl(publicId: string): string {
   return (
     `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/` +
-    `c_fill,g_face,w_400,h_400,e_improve,q_auto,f_jpg/` +
+    `c_fill,g_face,w_400,h_400,q_auto,f_jpg/` +
     publicId
   );
 }
