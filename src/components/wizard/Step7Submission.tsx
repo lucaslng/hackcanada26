@@ -21,77 +21,140 @@ interface Step7Props {
 
 type SubmitStatus = 'idle' | 'processing' | 'done';
 
-// ─── Cloudinary enhancement helper ───────────────────────────────────────────
+// ─── Cloudinary helpers ───────────────────────────────────────────────────────
 
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string;
 
-function buildDocPreviewUrl(publicId: string): string {
-  return (
-    `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/` +
-    `c_fill,w_280,h_176,g_auto,e_improve,e_sharpen:50,q_auto,f_jpg/` +
-    publicId
+/**
+ * Build a Cloudinary composite URL that layers the selfie as a circular
+ * face-cropped portrait on top of the enhanced ID document.
+ *
+ * URL anatomy:
+ *   /image/upload
+ *   /{base-transforms}           ← enhance the ID doc canvas
+ *   /l_{selfie-id}               ← start the selfie overlay layer
+ *   /{selfie-transforms}         ← face-crop + circle + white border
+ *   /fl_layer_apply,{position}   ← place the selfie on the base
+ *   /{optional VERIFIED text}
+ *   /{id-doc-public-id}          ← the base asset
+ */
+function buildCompositeUrl(
+  idPublicId: string,
+  selfiePublicId: string,
+  matchScore: number | null,
+): string {
+  // Encode the selfie public ID for use in a Cloudinary overlay:
+  // slashes become colons  (samples/face → samples:face)
+  const selfieId = selfiePublicId.replace(/\//g, ':');
+
+  const segments: string[] = [
+    `https://res.cloudinary.com/${CLOUD_NAME}/image/upload`,
+    // Base: landscape crop + full AI enhancement pipeline
+    `c_fill,w_680,h_400,g_auto,e_improve,e_sharpen:40,e_auto_contrast,q_auto,f_jpg`,
+    // Selfie layer: face-detect crop → circle → white border
+    `l_${selfieId}/c_fill,w_150,h_150,g_face,r_max,bo_4px_solid_white`,
+    // Position selfie: top-right corner with padding
+    `fl_layer_apply,g_north_east,x_18,y_18`,
+  ];
+
+  // "VERIFIED" text badge (bottom-left) when identity check passed
+  if (matchScore !== null && matchScore >= 82) {
+    segments.push(
+      `l_text:arial_14_bold:VERIFIED,co_rgb:22c55e`,
+      `fl_layer_apply,g_south_west,x_18,y_14`,
+    );
+  }
+
+  // SERVICE CANADA wordmark (top-left)
+  segments.push(
+    `l_text:arial_12:SERVICE+CANADA,co_rgb:ffffff`,
+    `fl_layer_apply,g_north_west,x_16,y_16`,
   );
+
+  segments.push(idPublicId);
+  return segments.join('/');
 }
 
-function buildFacePreviewUrl(publicId: string): string {
-  return (
-    `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/` +
-    `c_fill,w_120,h_120,g_face,e_improve,e_sharpen:40,q_auto,f_jpg,r_max/` +
-    publicId
-  );
-}
+// ─── ApplicationCompositeCard ─────────────────────────────────────────────────
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function EnhancedDocPreview({ photo, label, t }: { photo: CloudinaryUploadResult; label: string; t: UIStrings }) {
+/**
+ * Shows the ID document and selfie combined into a single Cloudinary-generated
+ * composite image using the overlay/layer transformation pipeline.
+ *
+ * If the match score is ≥ 82 the composite also carries a "VERIFIED" badge
+ * burned into the image via a Cloudinary text overlay.
+ */
+function ApplicationCompositeCard({
+  idPhoto,
+  facePhoto,
+  matchScore,
+  t,
+}: {
+  idPhoto: CloudinaryUploadResult;
+  facePhoto: CloudinaryUploadResult;
+  matchScore: number | null;
+  t: UIStrings;
+}) {
   const [loaded, setLoaded] = useState(false);
-  const url = buildDocPreviewUrl(photo.public_id);
+  const compositeUrl = buildCompositeUrl(idPhoto.public_id, facePhoto.public_id, matchScore);
+
+  const passed  = matchScore !== null && matchScore >= 82;
+  const pending = matchScore === null;
 
   return (
-    <div className="s7-doc-preview">
-      <div className="s7-doc-img-wrap" data-loaded={loaded}>
-        {!loaded && <div className="s7-doc-skeleton" />}
+    <div className="app-composite">
+      <div className="app-composite__header">
+        <span className="material-symbols-outlined">auto_fix_high</span>
+        Cloudinary Application Package — AI-enhanced composite
+      </div>
+
+      <div className="app-composite__img-wrap">
+        {!loaded && <div className="ins-skeleton" />}
         <img
-          src={url}
-          alt={`Enhanced ${label}`}
+          src={compositeUrl}
+          alt="Application composite: ID document with selfie overlay"
+          className="app-composite__img"
           onLoad={() => setLoaded(true)}
           style={{ opacity: loaded ? 1 : 0 }}
         />
-        <div className="s7-doc-badge">
-          <span className="material-symbols-outlined">auto_fix_high</span>
-          {t.step7CloudinaryEnhanced}
-        </div>
       </div>
-      <p className="s7-doc-label">{label}</p>
+
+      <div className="app-composite__footer">
+        <span className="app-composite__note">
+          <span className="material-symbols-outlined">layers</span>
+          ID doc enhanced · selfie face-cropped &amp; composited via Cloudinary overlay pipeline
+        </span>
+
+        {pending ? (
+          <span className="app-composite__badge app-composite__badge--pending">
+            <span className="material-symbols-outlined">schedule</span>
+            Verification pending
+          </span>
+        ) : passed ? (
+          <span className="app-composite__badge app-composite__badge--pass">
+            <span className="material-symbols-outlined">verified</span>
+            {matchScore}% match · Verified
+          </span>
+        ) : (
+          <span className="app-composite__badge app-composite__badge--fail">
+            <span className="material-symbols-outlined">warning</span>
+            {matchScore}% match · Not verified
+          </span>
+        )}
+      </div>
     </div>
   );
 }
 
-function FaceChip({ photo, t }: { photo: CloudinaryUploadResult; t: UIStrings }) {
-  const [loaded, setLoaded] = useState(false);
-  const url = buildFacePreviewUrl(photo.public_id);
-
-  return (
-    <div className="s7-face-chip" data-loaded={loaded}>
-      {!loaded && <div className="s7-face-skeleton" />}
-      <img
-        src={url}
-        alt={t.step7FaceVerifiedAlt}
-        onLoad={() => setLoaded(true)}
-        style={{ opacity: loaded ? 1 : 0 }}
-      />
-      <span className="s7-face-tick material-symbols-outlined">verified</span>
-    </div>
-  );
-}
+// ─── Progress steps ───────────────────────────────────────────────────────────
 
 function ProgressSteps({ active, t }: { active: number; t: UIStrings }) {
   const steps = [
-    { icon: 'cloud_upload', label: t.step7ProgressUpload },
-    { icon: 'auto_fix_high', label: t.step7ProgressEnhance },
-    { icon: 'verified_user', label: t.step7ProgressVerify },
-    { icon: 'send', label: t.step7ProgressSubmit },
-    { icon: 'task_alt', label: t.step7ProgressConfirmation },
+    { icon: 'cloud_upload',    label: t.step7ProgressUpload       },
+    { icon: 'auto_fix_high',   label: t.step7ProgressEnhance      },
+    { icon: 'verified_user',   label: t.step7ProgressVerify       },
+    { icon: 'send',            label: t.step7ProgressSubmit       },
+    { icon: 'task_alt',        label: t.step7ProgressConfirmation },
   ];
 
   return (
@@ -134,9 +197,9 @@ export function Step7({
   const [confirmationId] = useState(() =>
     'SC-' + Math.random().toString(36).slice(2, 6).toUpperCase() + '-' + Date.now().toString().slice(-4)
   );
-  const [submittedAt] = useState(() => new Date().toLocaleString(language, {
-    dateStyle: 'long', timeStyle: 'short',
-  }));
+  const [submittedAt] = useState(() =>
+    new Date().toLocaleString(language, { dateStyle: 'long', timeStyle: 'short' })
+  );
 
   const canSubmit = Boolean(idPhoto && facePhoto && contactInfo.fullName && contactInfo.email);
 
@@ -151,7 +214,6 @@ export function Step7({
       cumulative += delay;
       setTimeout(() => setProgressStep(i + 1), cumulative);
     });
-
     setTimeout(() => setStatus('done'), cumulative + 600);
   };
 
@@ -168,29 +230,20 @@ export function Step7({
         </div>
       </div>
 
-      {/* ── Document previews ── */}
-      {(idPhoto || facePhoto) && (
+      {/* ── Cloudinary Application Composite ── */}
+      {idPhoto && facePhoto && (
         <div className="s7-section">
           <div className="s7-section-label">
-            <span className="material-symbols-outlined">auto_fix_high</span>
+            <span className="material-symbols-outlined">layers</span>
             {t.step7DocPreviewHeading}
           </div>
-          <div className="s7-doc-row">
-            {idPhoto && <EnhancedDocPreview photo={idPhoto} label={t.step7SummaryIdDocument} t={t} />}
-            {facePhoto && (
-              <div className="s7-face-col">
-                <FaceChip photo={facePhoto} t={t} />
-                {matchScore !== null && (
-                  <span className={`s7-match-badge ${matchScore >= 82 ? 's7-match-badge--pass' : 's7-match-badge--fail'}`}>
-                    <span className="material-symbols-outlined">{matchScore >= 82 ? 'verified' : 'warning'}</span>
-                    {matchScore}% {t.matchScoreLabel}
-                  </span>
-                )}
-                <p className="s7-doc-label">{t.step7SummarySelfie}</p>
-              </div>
-            )}
-          </div>
-          <p className="s7-cloudinary-note">{t.step7CloudinaryEnhanced}</p>
+          <ApplicationCompositeCard
+            idPhoto={idPhoto}
+            facePhoto={facePhoto}
+            matchScore={matchScore}
+            t={t}
+          />
+          <p className="s7-cloudinary-note">{t.step7CloudinaryEnhanced} · Cloudinary overlay pipeline</p>
         </div>
       )}
 

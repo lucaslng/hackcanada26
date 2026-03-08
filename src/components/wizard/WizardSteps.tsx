@@ -3,6 +3,7 @@
 import { SectionCard } from '../ui/SectionCard';
 import { Button } from '../ui/Button';
 import { UploadWidget } from '../../cloudinary/UploadWidget';
+import { DocumentInsightsPanel } from '../../cloudinary/DocumentInsightsPanel';
 import type { CloudinaryUploadResult } from '../../cloudinary/UploadWidget';
 import type { RenewalOption } from '../../data/renewalOptions';
 import { getProvinceName, getServiceDetailsText, type Language, type UIStrings } from '../../constants/i18n';
@@ -190,15 +191,23 @@ export function Step3({ t, idPhoto, onUpload }: Step3Props) {
           loadErrorText={t.uploadWidgetLoadError}
         />
       </div>
+
       {idPhoto && (
-        <div className="upload-preview-card">
-          <img src={idPhoto.secure_url} alt={t.step7SummaryIdDocument} />
-          <div>
-            <p>{t.uploadIdSuccess}</p>
-            <p>{Math.round(idPhoto.bytes / 1024)} KB · {idPhoto.format.toUpperCase()}</p>
+        <>
+          <div className="upload-preview-card">
+            <img src={idPhoto.secure_url} alt={t.step7SummaryIdDocument} />
+            <div>
+              <p>{t.uploadIdSuccess}</p>
+              <p>{Math.round(idPhoto.bytes / 1024)} KB · {idPhoto.format.toUpperCase()}</p>
+            </div>
+            <button type="button" className="upload-remove-btn" onClick={() => onUpload(null)}>
+              Remove
+            </button>
           </div>
-          <button type="button" className="upload-remove-btn" onClick={() => onUpload(null)}>Remove</button>
-        </div>
+
+          {/* Cloudinary Document Intelligence Panel */}
+          <DocumentInsightsPanel photo={idPhoto} label="ID Document" />
+        </>
       )}
     </SectionCard>
   );
@@ -224,15 +233,23 @@ export function Step4({ t, facePhoto, onUpload }: Step4Props) {
           loadErrorText={t.uploadWidgetLoadError}
         />
       </div>
+
       {facePhoto && (
-        <div className="upload-preview-card upload-preview-card--selfie">
-          <img src={facePhoto.secure_url} alt={t.step7SummarySelfie} />
-          <div>
-            <p>{t.uploadSelfieSuccess}</p>
-            <p>{Math.round(facePhoto.bytes / 1024)} KB · {facePhoto.format.toUpperCase()}</p>
+        <>
+          <div className="upload-preview-card upload-preview-card--selfie">
+            <img src={facePhoto.secure_url} alt={t.step7SummarySelfie} />
+            <div>
+              <p>{t.uploadSelfieSuccess}</p>
+              <p>{Math.round(facePhoto.bytes / 1024)} KB · {facePhoto.format.toUpperCase()}</p>
+            </div>
+            <button type="button" className="upload-remove-btn" onClick={() => onUpload(null)}>
+              Remove
+            </button>
           </div>
-          <button type="button" className="upload-remove-btn" onClick={() => onUpload(null)}>Remove</button>
-        </div>
+
+          {/* Cloudinary Document Intelligence Panel */}
+          <DocumentInsightsPanel photo={facePhoto} label="Selfie" />
+        </>
       )}
     </SectionCard>
   );
