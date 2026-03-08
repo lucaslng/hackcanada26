@@ -7,7 +7,7 @@
 
 .gov-home-hero {
   margin-top: 1rem;
-  padding: 6.25rem 2.4rem;
+  padding: 3.8rem 2.2rem;
   border-radius: 20px;
   background:
     radial-gradient(circle at 15% 20%, rgba(200, 16, 46, 0.08), transparent 40%),
@@ -32,7 +32,7 @@
   line-height: 1.1;
   color: var(--text);
   margin-bottom: 1.1rem;
-  max-width: 20ch;
+  max-width: 16ch;
   font-weight: 700;
 }
 
@@ -58,8 +58,13 @@
   flex-wrap: wrap;
 }
 
+.hero-main {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
 .gov-home-section {
-  margin-top: 5.75rem;
+  margin-top: 3.2rem;
 }
 
 .section-title-row {
@@ -76,6 +81,45 @@
   color: var(--text-soft);
   max-width: 68ch;
   font-size: 1.08rem;
+}
+
+.popular-services-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.popular-service-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.popular-service-icon {
+  color: var(--red);
+  font-size: 1.5rem;
+}
+
+.popular-service-card h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.popular-service-card p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  min-height: 2.7em;
+}
+
+.popular-service-card .ui-btn {
+  margin-top: auto;
 }
 
 .service-selector-layout {
@@ -242,6 +286,10 @@
 }
 
 @media (max-width: 920px) {
+  .popular-services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .service-selector-layout {
     grid-template-columns: 1fr;
   }
@@ -259,6 +307,24 @@
   padding: 1.15rem;
   background: var(--surface);
   transition: background 0.25s ease, border-color 0.25s ease;
+  position: relative;
+}
+
+.how-step-number {
+  position: absolute;
+  top: 0.72rem;
+  right: 0.72rem;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--red) 60%, var(--border));
+  color: var(--red);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.84rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--red) 10%, var(--surface));
 }
 
 .how-step .material-symbols-outlined {
@@ -280,7 +346,7 @@
 
 .security-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
 }
 
@@ -883,6 +949,7 @@
 
 @media (max-width: 940px) {
 
+  .popular-services-grid,
   .how-grid,
   .security-grid,
   .support-grid {
@@ -892,7 +959,7 @@
 
 @media (max-width: 640px) {
   .gov-home-hero {
-    padding: 4rem 1.2rem;
+    padding: 2.7rem 1.2rem;
   }
 
   .step-track {
