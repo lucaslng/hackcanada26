@@ -54,8 +54,18 @@ export function HomePage({ t, language, onStartService, onNavigate }: HomePagePr
       {/* ── Hero ── */}
       <RevealSection className="gov-home-hero" id="home">
         <p className="gov-eyebrow">{t.heroEyebrow}</p>
-        <h1>{t.heroTitle}</h1>
-        <p>{t.heroBody}</p>
+        <h1>
+          {t.heroTitle.endsWith(' Faster')
+            ? (
+                <>
+                  {t.heroTitle.slice(0, -7).trim()}
+                  {' '}
+                  <span className="hero-title-emphasis">Faster</span>
+                </>
+              )
+            : t.heroTitle}
+        </h1>
+        <p className="gov-hero-body">{t.heroBody}</p>
         <div className="hero-actions">
           <Button onClick={() => onNavigate('services')}>{t.startService}</Button>
           <Button variant="secondary" onClick={() => onNavigate('information')}>

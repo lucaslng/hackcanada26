@@ -5,10 +5,10 @@ import type { LocalePack } from './types';
 export const en: LocalePack = {
   ui: {
     nav: { home: 'Home', services: 'Services', information: 'Information', contact: 'Contact Us', support: 'Help / Support' },
-    heroEyebrow: 'Service Ontario Digital Pre-Service',
+    heroEyebrow: 'Service Canada Digital Renewal System',
     heroTitle: 'Renew Government Documents Faster',
     heroBody:
-      'Verify your identity and upload required documents before visiting ServiceOntario to reduce wait times and complete renewals faster.',
+      'No need to visit the service center.\n\nSimply verify your identity and upload the necessary documents to complete your renewal online.',
     startService: 'Start Service',
     learnMore: 'Learn More',
     supportedServices: 'Supported Services',

@@ -42,6 +42,15 @@
   font-size: 1.14rem;
 }
 
+.gov-hero-body {
+  white-space: pre-line;
+}
+
+.hero-title-emphasis {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
 .hero-actions {
   margin-top: 1.4rem;
   display: flex;
