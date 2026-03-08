@@ -1,43 +1,29 @@
-# hackcanada26
+# Service Canada Online
 
-A Cloudinary React + Vite + TypeScript project scaffolded with [create-cloudinary-react](https://github.com/cloudinary-devs/create-cloudinary-react).
+## Inspiration
 
-## Quick Start
+Canadians are **TIRED** of Service Canada's notorious wait times. For most Canadians, a visit to Service Canada almost always means a multi-hour wait. It doesn't have to be like this. We've built a system on top of Service Canada to **eliminate** physical wait times and **expedite** government services.
 
-```bash
-npm run dev
-```
+Introducing Service Canada, remade.
 
-## Cloudinary Setup
+## What it does
 
-This project uses Cloudinary for image management. If you don't have a Cloudinary account yet:
-- [Sign up for free](https://cld.media/reactregister)
-- Find your cloud name in your [dashboard](https://console.cloudinary.com/app/home/dashboard)
+Our website allows Canadians to submit forms for different services online. These could range from passport renewals to name changes. To prevent identity fraud, we use artificial intelligence to perform a **similarity check** between an identification document and a webcam selfie. After verifying your identity, users can easily access required documents to fill out and submit to Service Canada. As uploaded images may have an improper size, aspect ratio, be blurry, or have glare from lights we used Cloudinary to **transform and optimize images** for verification and review.
 
-## Environment Variables
+## How we built it
 
-Your `.env` file has been pre-configured with:
-- `VITE_CLOUDINARY_CLOUD_NAME`: dqem5bdzl
-- `VITE_CLOUDINARY_UPLOAD_PRESET`: default
+The website is built using React and Vite. We used face-api.js for the face verification and Cloudinary to process images.
 
-**Note**: Transformations work without an upload preset (using sample images). Uploads require an unsigned upload preset.
+## Challenges and Accomplishments
 
-To create an unsigned upload preset:
-1. Go to https://console.cloudinary.com/app/settings/upload/presets
-2. Click "Add upload preset"
-3. Set it to "Unsigned" mode
-4. Add the preset name to your `.env` file
-5. **Save** the `.env` file and restart the dev server so the new values load correctly.
+Should this ever become an official government service, **accessibility** across languages is non-negotiable. That's why our website has translations for 11 of the most common languages in Canada.
 
+We deliberately modeled our design after official Canadian government websites, easing the transition for Canadians already familiar with them. The challenge was striking a balance between the familiarity of existing government interfaces and a more modern, intuitive experience.
 
-## AI Assistant Support
+## What we learned
 
-This project includes AI coding rules for your selected AI assistant(s). The rules help AI assistants understand Cloudinary React SDK patterns, common errors, and best practices.
+This is the first time we've ever **internationalized** a project!
 
-**Try the AI Prompts**: Check out the "🤖 Try Asking Your AI Assistant" section in the app for ready-to-use Cloudinary prompts! Copy and paste them into your AI assistant to get started.
+## What's next for Service Canada
 
-## Learn More
-
-- [Cloudinary React SDK Docs](https://cloudinary.com/documentation/react_integration)
-- [Vite Documentation](https://vite.dev)
-- [React Documentation](https://react.dev)
+Maybe a government contract? 🙏🙏🙏
