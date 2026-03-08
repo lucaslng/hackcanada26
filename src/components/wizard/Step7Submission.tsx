@@ -88,7 +88,6 @@ function ApplicationCompositeCard({
   idPhoto,
   facePhoto,
   matchScore,
-  t,
 }: {
   idPhoto: CloudinaryUploadResult;
   facePhoto: CloudinaryUploadResult;
