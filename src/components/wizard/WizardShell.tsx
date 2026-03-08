@@ -66,7 +66,14 @@ export function WizardShell({ t, state, actions, serviceTitle, language, onExit 
           />
         );
       case 6:
-        return <Step6 t={t} selectedOption={state.selectedOption} />;
+        return (
+          <Step6
+            t={t}
+            selectedOption={state.selectedOption}
+            requiredUploads={state.requiredUploads}
+            onRequiredUpload={actions.setRequiredUpload}
+          />
+        );
       case 7:
         return (
           <Step7
@@ -78,6 +85,7 @@ export function WizardShell({ t, state, actions, serviceTitle, language, onExit 
             selectedOption={state.selectedOption}
             serviceTitle={serviceTitle}
             matchScore={state.matchScore}
+            requiredUploads={state.requiredUploads}
           />
         );
       case 8:

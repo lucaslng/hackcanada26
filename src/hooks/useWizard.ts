@@ -43,6 +43,7 @@ export interface WizardState {
   mappedForms: RenewalForm[];
   idPhoto: CloudinaryUploadResult | null;
   facePhoto: CloudinaryUploadResult | null;
+  requiredUploads: Record<string, CloudinaryUploadResult | null>;
   matchScore: number | null;
   notificationChannel: 'email' | 'sms';
   contactValue: string;
@@ -55,6 +56,7 @@ export interface WizardActions {
   setTypedIntent: (value: string) => void;
   setIdPhoto: (result: CloudinaryUploadResult | null) => void;
   setFacePhoto: (result: CloudinaryUploadResult | null) => void;
+  setRequiredUpload: (requirement: string, result: CloudinaryUploadResult | null) => void;
   setNotificationChannel: (channel: 'email' | 'sms') => void;
   setContactValue: (value: string) => void;
   goNext: () => void;
@@ -74,6 +76,7 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
   const [mappedForms, setMappedForms] = useState<RenewalForm[]>([]);
   const [idPhoto, setIdPhoto] = useState<CloudinaryUploadResult | null>(null);
   const [facePhoto, setFacePhoto] = useState<CloudinaryUploadResult | null>(null);
+  const [requiredUploads, setRequiredUploads] = useState<Record<string, CloudinaryUploadResult | null>>({});
   const [matchScore, setMatchScore] = useState<number | null>(null);
   const [notificationChannel, setNotificationChannel] = useState<'email' | 'sms'>('email');
   const [contactValue, setContactValue] = useState('');
@@ -112,7 +115,12 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     if (step === 3) return Boolean(idPhoto);
     if (step === 4) return Boolean(facePhoto);
     if (step === 5) return Boolean(matchScore && matchScore >= 82);
-    if (step === 6) return Boolean(selectedOptionId);
+    if (step === 6) {
+      if (!selectedOption) return false;
+      const requiredForms = selectedOption.forms;
+      if (requiredForms.length === 0) return true;
+      return requiredForms.every((form) => Boolean(requiredUploads[form.id]));
+    }
     if (step === 7) return true;
     if (step === 8) return Boolean(contactValue.trim());
     return false;
@@ -164,6 +172,10 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     // setMatchScore(70 + (checksum % 30));
   };
 
+  const setRequiredUpload = (requirement: string, result: CloudinaryUploadResult | null) => {
+    setRequiredUploads((prev) => ({ ...prev, [requirement]: result }));
+  };
+
   const saveNotifications = () => {
     if (!contactValue.trim()) return;
     setNotificationSaved(true);
@@ -176,6 +188,7 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     setMappedForms([]);
     setIdPhoto(null);
     setFacePhoto(null);
+    setRequiredUploads({});
     setMatchScore(null);
     setNotificationChannel('email');
     setContactValue('');
@@ -193,6 +206,7 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     mappedForms,
     idPhoto,
     facePhoto,
+    requiredUploads,
     matchScore,
     notificationChannel,
     contactValue,
@@ -205,6 +219,7 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     setTypedIntent,
     setIdPhoto,
     setFacePhoto,
+    setRequiredUpload,
     setNotificationChannel: (ch) => setNotificationChannel(ch),
     setContactValue: (v) => { setContactValue(v); setNotificationSaved(false); },
     goNext,

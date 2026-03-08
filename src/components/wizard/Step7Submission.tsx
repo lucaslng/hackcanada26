@@ -19,6 +19,7 @@ interface Step7Props {
   selectedOption: RenewalOption | null;
   serviceTitle: string;
   matchScore: number | null;
+  requiredUploads: Record<string, CloudinaryUploadResult | null>;
 }
 
 type SubmitStatus = 'idle' | 'processing' | 'done';
@@ -137,6 +138,7 @@ export function Step7({
   selectedOption,
   serviceTitle,
   matchScore,
+  requiredUploads,
 }: Step7Props) {
   const [status, setStatus] = useState<SubmitStatus>('idle');
   const [progressStep, setProgressStep] = useState(0);
@@ -147,7 +149,16 @@ export function Step7({
     dateStyle: 'long', timeStyle: 'short',
   }));
 
-  const canSubmit = Boolean(idPhoto && facePhoto && contactInfo.fullName && contactInfo.email);
+  const requiredForms = selectedOption?.forms ?? [];
+  const allRequiredUploaded = requiredForms.every((form) => Boolean(requiredUploads[form.id]));
+
+  const canSubmit = Boolean(
+    idPhoto
+    && facePhoto
+    && contactInfo.fullName
+    && contactInfo.email
+    && allRequiredUploaded,
+  );
 
   const handleSubmit = () => {
     if (!canSubmit || status !== 'idle') return;
@@ -247,6 +258,15 @@ export function Step7({
           </article>
         </div>
       </div>
+
+      {status === 'idle' && requiredForms.length > 0 && (
+        <div className="s7-section">
+          <div className="s7-section-label">
+            <span className="material-symbols-outlined">task_alt</span>
+            Signed forms uploaded ({requiredForms.filter((form) => requiredUploads[form.id]).length}/{requiredForms.length})
+          </div>
+        </div>
+      )}
 
       {/* ── Processing animation ── */}
       {status === 'processing' && (
