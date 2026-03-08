@@ -58,6 +58,7 @@ export interface WizardActions {
   setFacePhoto: (result: CloudinaryUploadResult | null) => void;
   setRequiredUpload: (requirement: string, result: CloudinaryUploadResult | null) => void;
   setMatchScore: (score: number) => void;
+  completeVerification: (score: number) => void;
   setNotificationChannel: (channel: 'email' | 'sms') => void;
   setContactValue: (value: string) => void;
   goNext: () => void;
@@ -114,7 +115,7 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     if (step === 2) return true;
     if (step === 3) return Boolean(idPhoto);
     if (step === 4) return Boolean(facePhoto);
-    if (step === 5) return Boolean(matchScore && matchScore >= 82);
+    if (step === 5) return matchScore !== null && matchScore >= 82;
     if (step === 6) return Boolean(selectedOptionId);
     if (step === 7) return true;
     if (step === 8) return Boolean(contactValue.trim());
@@ -159,6 +160,11 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
 
   const setRequiredUpload = (requirement: string, result: CloudinaryUploadResult | null) => {
     setRequiredUploads((prev) => ({ ...prev, [requirement]: result }));
+  };
+
+  const completeVerification = (score: number) => {
+    setMatchScore(score);
+    setStep((prev) => (prev === 5 ? prev + 1 : prev));
   };
 
   const saveNotifications = () => {
@@ -206,6 +212,7 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     setFacePhoto,
     setRequiredUpload,
     setMatchScore,
+    completeVerification,
     setNotificationChannel: (ch) => setNotificationChannel(ch),
     setContactValue: (v) => { setContactValue(v); setNotificationSaved(false); },
     goNext,

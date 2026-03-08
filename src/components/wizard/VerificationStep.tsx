@@ -178,7 +178,7 @@ export function VerificationStep({
             {result.score !== null && (
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
                 Euclidean distance: <strong>{result.score}</strong>
-                &nbsp;(threshold&nbsp;≤&nbsp;0.55)
+                &nbsp;(threshold&nbsp;≤&nbsp;0.60)
               </p>
             )}
 
@@ -215,7 +215,7 @@ export function VerificationStep({
             {result.score !== null && (
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
                 Euclidean distance: <strong>{result.score}</strong>
-                &nbsp;(threshold&nbsp;≤&nbsp;0.55)
+                &nbsp;(threshold&nbsp;≤&nbsp;0.60)
               </p>
             )}
 
