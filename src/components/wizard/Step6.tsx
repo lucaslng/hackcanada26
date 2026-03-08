@@ -60,14 +60,14 @@ function FormCard({
               <span className="material-symbols-outlined" aria-hidden="true">
                 {isPDF ? 'download' : 'open_in_new'}
               </span>
-              <span>{isPDF ? 'Download official form' : 'Open official form page'}</span>
+              <span>{isPDF ? t.formDownloadOfficial : t.formOpenOfficialPage}</span>
             </a>
           ) : null}
 
           <UploadWidget
             onUploadSuccess={(result) => onRequiredUpload(form.id, result)}
-            onUploadError={(err) => alert(`Upload failed: ${err.message}`)}
-            buttonText={hasUpload ? 'Replace uploaded document' : 'Upload signed document'}
+            onUploadError={(err) => alert(`${t.formUploadFailedPrefix} ${err.message}`)}
+            buttonText={hasUpload ? t.formReplaceUploaded : t.formUploadSigned}
             loadingText={t.uploadWidgetLoading}
             loadErrorText={t.uploadWidgetLoadError}
             className="form-card__btn form-card__btn--primary"
@@ -82,7 +82,7 @@ function FormCard({
                 className="form-card__btn form-card__uploaded-link"
               >
                 <span className="material-symbols-outlined" aria-hidden="true">visibility</span>
-                <span>View uploaded document</span>
+                <span>{t.formViewUploaded}</span>
               </a>
               <button
                 type="button"
@@ -90,10 +90,10 @@ function FormCard({
                 onClick={() => onRequiredUpload(form.id, null)}
               >
                 <span className="material-symbols-outlined" aria-hidden="true">delete</span>
-                <span>Remove upload</span>
+                <span>{t.formRemoveUpload}</span>
               </button>
               <p className="form-card__upload-meta">
-                Uploaded: {Math.round(uploadedFile.bytes / 1024)} KB · {uploadedFile.format.toUpperCase()}
+                {t.formUploadedMetaPrefix}: {Math.round(uploadedFile.bytes / 1024)} KB · {uploadedFile.format.toUpperCase()}
               </p>
             </>
           )}
@@ -117,14 +117,14 @@ export function Step6({ t, selectedOption, requiredUploads, onRequiredUpload }: 
   return (
     <SectionCard title={t.step6Title} subtitle={t.step6Subtitle} icon="description">
       {primaryForms.length > 0 && (
-        <div className="forms-filter-row" role="tablist" aria-label="Form filters">
+        <div className="forms-filter-row" role="tablist" aria-label={t.formFiltersAria}>
           <button
             type="button"
             className={activeFilter === 'all' ? 'active' : ''}
             onClick={() => setActiveFilter('all')}
             aria-selected={activeFilter === 'all'}
           >
-            Required ({primaryForms.length})
+            {t.formFilterRequired} ({primaryForms.length})
           </button>
           <button
             type="button"
@@ -132,7 +132,7 @@ export function Step6({ t, selectedOption, requiredUploads, onRequiredUpload }: 
             onClick={() => setActiveFilter('pdf')}
             aria-selected={activeFilter === 'pdf'}
           >
-            PDF ({pdfCount})
+            {t.formFilterPdf} ({pdfCount})
           </button>
           <button
             type="button"
@@ -140,7 +140,7 @@ export function Step6({ t, selectedOption, requiredUploads, onRequiredUpload }: 
             onClick={() => setActiveFilter('web')}
             aria-selected={activeFilter === 'web'}
           >
-            Online ({webCount})
+            {t.formFilterOnline} ({webCount})
           </button>
         </div>
       )}
@@ -149,8 +149,11 @@ export function Step6({ t, selectedOption, requiredUploads, onRequiredUpload }: 
         <>
           <p className={`form-upload-progress ${allUploadsComplete ? 'status-good' : 'status-neutral'}`}>
             {allUploadsComplete
-              ? 'All required forms uploaded. You can continue.'
-              : `Uploaded ${uploadedCount}/${primaryForms.length} required forms. ${remainingCount} remaining before you can continue.`}
+              ? t.formAllUploaded
+              : t.formUploadProgress
+                  .replace('{uploaded}', String(uploadedCount))
+                  .replace('{total}', String(primaryForms.length))
+                  .replace('{remaining}', String(remainingCount))}
           </p>
           <ul className="form-card-list" aria-label={t.requiredFormsAria}>
           {filteredForms.map((form) => (
