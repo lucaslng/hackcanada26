@@ -58,11 +58,7 @@ export interface WizardActions {
   setFacePhoto: (result: CloudinaryUploadResult | null) => void;
   setRequiredUpload: (requirement: string, result: CloudinaryUploadResult | null) => void;
   setMatchScore: (score: number) => void;
-<<<<<<< HEAD
-  completeVerification: (score: number) => void;
-=======
   setMatchScoreAndGoNext: (score: number) => void;
->>>>>>> 4001d67 (minor ui & bug fixes)
   setNotificationChannel: (channel: 'email' | 'sms') => void;
   setContactValue: (value: string) => void;
   goNext: () => void;
@@ -176,11 +172,6 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     setRequiredUploads((prev) => ({ ...prev, [requirement]: result }));
   };
 
-  const completeVerification = (score: number) => {
-    setMatchScore(score);
-    setStep((prev) => (prev === 5 ? prev + 1 : prev));
-  };
-
   const saveNotifications = () => {
     if (!contactValue.trim()) return;
     setNotificationSaved(true);
@@ -226,11 +217,7 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     setFacePhoto,
     setRequiredUpload,
     setMatchScore,
-<<<<<<< HEAD
-    completeVerification,
-=======
     setMatchScoreAndGoNext,
->>>>>>> 4001d67 (minor ui & bug fixes)
     setNotificationChannel: (ch) => setNotificationChannel(ch),
     setContactValue: (v) => { setContactValue(v); setNotificationSaved(false); },
     goNext,

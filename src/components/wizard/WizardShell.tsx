@@ -103,11 +103,7 @@ export function WizardShell({ t, state, actions, serviceTitle, language, onExit 
             selfiePhoto={selfieCaptured}
             serviceColor={SERVICE_COLOR}
             onNext={(result) => {
-<<<<<<< HEAD
-              actions.completeVerification(result.confidence);
-=======
               actions.setMatchScoreAndGoNext(result.confidence);
->>>>>>> 4001d67 (minor ui & bug fixes)
             }}
             onBack={actions.goBack}
           />
