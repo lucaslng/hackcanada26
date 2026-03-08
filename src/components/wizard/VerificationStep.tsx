@@ -24,45 +24,34 @@ export function VerificationStep({
   onBack,
 }: VerificationStepProps) {
   const { result, verify, reset } = useFaceVerification(CLOUD_NAME);
-  const STATUS_LABELS: Record<string, string> = {
-    analyzing: t.step7ProgressEnhance,
-  };
+
   const ANALYSIS_STEPS = [
+    'Loading face recognition models',
     t.step7ProgressEnhance,
+    'Detecting faces',
     t.step7ProgressVerify,
-    t.step7ProgressUpload,
-    t.step7ProgressConfirmation,
   ];
 
+  const isLoadingModels = result.status === 'loading-models';
   const isAnalyzing = result.status === 'analyzing';
+  const isBusy = isLoadingModels || isAnalyzing;
   const isDone = result.status === 'done';
   const isError = result.status === 'error';
 
-  // Map status → which step bullet is "active" in the animated list
   const activeStep =
-    result.status === 'analyzing' ? 1
+    result.status === 'loading-models' ? 0
+      : result.status === 'analyzing' ? 2
         : isDone ? ANALYSIS_STEPS.length
           : 0;
 
-  const handleRun = () => {
-    verify(idPhoto.publicId, selfiePhoto.publicId);
-  };
-
-  const handleRetry = () => {
-    reset();
-  };
-
+  const handleRun = () => verify(idPhoto.publicId, selfiePhoto.publicId);
+  const handleRetry = () => reset();
   const handleContinue = () => {
     if (!result.passed || result.similarity === null) return;
-    onNext({
-      passed: true,
-      confidence: result.similarity,
-      message: result.message,
-    });
+    onNext({ passed: true, confidence: result.similarity, message: result.message });
   };
 
-  const confidenceColor =
-    result.passed ? '#16a34a' : '#dc2626';
+  const confidenceColor = result.passed ? '#16a34a' : '#dc2626';
 
   return (
     <div className="wizard-step-content verification-step">
@@ -74,9 +63,7 @@ export function VerificationStep({
           VR
         </div>
         <h2>{t.verifyIdentity}</h2>
-        <p>
-          {t.verifyIdentityBody}
-        </p>
+        <p>{t.verifyIdentityBody}</p>
       </div>
 
       <div className="verification-layout">
@@ -96,14 +83,14 @@ export function VerificationStep({
           </div>
 
           <div
-            className={`compare-vs-badge ${isAnalyzing ? 'pulsing' : ''}`}
+            className={`compare-vs-badge ${isBusy ? 'pulsing' : ''}`}
             style={
               isDone && result.passed ? { color: '#16a34a' }
                 : isDone && !result.passed ? { color: '#dc2626' }
                   : { color: serviceColor }
             }
           >
-            {isDone && result.passed ? '✓' : isDone && !result.passed ? '✗' : isAnalyzing ? '⟳' : 'VS'}
+            {isDone && result.passed ? '✓' : isDone && !result.passed ? '✗' : isBusy ? '⟳' : 'VS'}
           </div>
 
           <div className="compare-photo-card">
@@ -122,9 +109,7 @@ export function VerificationStep({
         {/* ── Idle: prompt to start ── */}
         {result.status === 'idle' && (
           <div className="verify-idle-panel">
-            <p className="verify-idle-desc">
-              {t.step7ReviewSubtitle}
-            </p>
+            <p className="verify-idle-desc">{t.step7ReviewSubtitle}</p>
             <button
               className="btn-step-primary"
               style={{ background: serviceColor }}
@@ -135,15 +120,18 @@ export function VerificationStep({
           </div>
         )}
 
-        {/* ── Analyzing ── */}
-        {isAnalyzing && (
+        {/* ── Loading models / Analyzing ── */}
+        {isBusy && (
           <div className="analyzing-panel">
             <div className="analyzing-header">
               <div className="analyzing-spinner" style={{ borderTopColor: serviceColor }} />
-              <strong>
-                {STATUS_LABELS[result.status] ?? 'Analysing…'}
-              </strong>
+              <strong>{result.message}</strong>
             </div>
+            {isLoadingModels && (
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '0.5rem 0 0' }}>
+                Neural network weights load once and are cached for this session.
+              </p>
+            )}
             <div className="analysis-steps-list">
               {ANALYSIS_STEPS.map((label, i) => (
                 <div
@@ -189,8 +177,8 @@ export function VerificationStep({
 
             {result.score !== null && (
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                Resemble score: <strong>{result.score}</strong>
-                &nbsp;(threshold&nbsp;≥&nbsp;0.62)
+                Euclidean distance: <strong>{result.score}</strong>
+                &nbsp;(threshold&nbsp;≤&nbsp;0.55)
               </p>
             )}
 
@@ -204,7 +192,7 @@ export function VerificationStep({
           </div>
         )}
 
-        {/* ── Fail: similarity too low ── */}
+        {/* ── Fail: distance too high ── */}
         {isDone && !result.passed && result.similarity !== null && (
           <div className="result-panel result-panel--fail">
             <div className="result-icon result-icon--fail">✗</div>
@@ -226,14 +214,12 @@ export function VerificationStep({
 
             {result.score !== null && (
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                Resemble score: <strong>{result.score}</strong>
-                &nbsp;(threshold&nbsp;≥&nbsp;0.62)
+                Euclidean distance: <strong>{result.score}</strong>
+                &nbsp;(threshold&nbsp;≤&nbsp;0.55)
               </p>
             )}
 
-            <p className="result-retry-hint">
-              {t.step7IncompleteWarning}
-            </p>
+            <p className="result-retry-hint">{t.step7IncompleteWarning}</p>
             <button className="btn-step-secondary" onClick={onBack}>
               {t.back}
             </button>
@@ -244,9 +230,7 @@ export function VerificationStep({
         {isError && (
           <div className="result-panel result-panel--fail">
             <div className="result-icon result-icon--fail" style={{ fontSize: '1.5rem' }}>!</div>
-            <h3>
-              {t.notVerified}
-            </h3>
+            <h3>{t.notVerified}</h3>
             <p className="result-message">{result.message}</p>
             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
               <button className="btn-step-secondary" onClick={handleRetry}>

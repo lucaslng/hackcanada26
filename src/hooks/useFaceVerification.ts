@@ -1,171 +1,297 @@
 // useFaceVerification.ts
-// Compares two Cloudinary-transformed image URLs using resemble.js.
+// Compares two Cloudinary-transformed image URLs using face-api.js.
+// face-api.js extracts 128-dimensional face descriptors via a neural network
+// and computes Euclidean distance — giving genuine facial similarity scores
+// rather than pixel-level comparison.
+//
+// Install:  npm install face-api.js
+// Models are loaded from the official jsDelivr CDN (no local assets needed).
 
 import { useCallback, useRef, useState } from 'react';
-// import { ssim } from 'ssim.js';
-import resemble from 'resemblejs';
+import * as faceapi from 'face-api.js';
 
-export type FaceVerifyStatus =
-    | 'idle'
-    | 'analyzing'
-    | 'done'
-    | 'error';
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+export type FaceVerifyStatus = 'idle' | 'loading-models' | 'analyzing' | 'done' | 'error';
 
 export interface FaceVerifyResult {
-    status: FaceVerifyStatus;
-    /** 0-100 similarity score, present when status is 'done' */
-    similarity: number | null;
-    /** Resemble score from 0-1 (higher = more similar) */
-    score: number | null;
-    /** Human-readable message */
-    message: string;
-    /** true if same person (score >= threshold) */
-    passed: boolean;
+  status: FaceVerifyStatus;
+  /** 0–100 similarity percentage, present when status is 'done' */
+  similarity: number | null;
+  /** Raw Euclidean distance between face descriptors (lower = more similar) */
+  score: number | null;
+  /** Human-readable message */
+  message: string;
+  /** true if faces match (distance ≤ PASS_THRESHOLD) */
+  passed: boolean;
 }
 
-const PASS_THRESHOLD = 0.62;
-const COMPARISON_CANVAS_SIZE = 256;
+// ── Constants ─────────────────────────────────────────────────────────────────
 
 /**
- * Fetch an image from a URL.
+ * face-api.js face recognition networks use a 128-D descriptor.
+ * Euclidean distance ≤ 0.55 is a strong match; ≤ 0.6 is the default threshold.
+ * We use 0.6 for a reasonable balance of precision and recall.
  */
-async function loadImageFromUrl(url: string): Promise<HTMLImageElement> {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => resolve(img);
-        img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
-        // Cache-bust to avoid CORS preflight cache issues
-        img.src = url + (url.includes('?') ? '&' : '?') + '_cb=' + Date.now();
-    });
+const PASS_THRESHOLD = 0.60;
+
+/**
+ * Maximum meaningful Euclidean distance for display purposes.
+ * Distances above ~1.2 are effectively "no match".
+ */
+const MAX_DISPLAY_DISTANCE = 1.2;
+
+/** Official model weights hosted on jsDelivr — no local files needed. */
+const MODEL_URL =
+  'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights';
+
+/**
+ * SSD MobileNet detection options.
+ * minConfidence is intentionally low (0.3) so the detector fires on
+ * compressed / cropped passport-style photos where confidence scores
+ * are naturally lower than a full-frame webcam shot.
+ */
+const DETECTION_OPTIONS = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.3 });
+
+// ── Module-level model cache ──────────────────────────────────────────────────
+
+let modelsLoaded = false;
+let modelLoadPromise: Promise<void> | null = null;
+
+async function ensureModelsLoaded(): Promise<void> {
+  if (modelsLoaded) return;
+  if (modelLoadPromise) return modelLoadPromise;
+
+  modelLoadPromise = Promise.all([
+    // SSD MobileNet v1 — face detection
+    faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
+    // 68-point face landmark model — required before face recognition
+    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+    // Face recognition net — produces 128-D descriptor
+    faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
+  ]).then(() => {
+    modelsLoaded = true;
+    modelLoadPromise = null;
+  });
+
+  return modelLoadPromise;
 }
 
-function toDataUrl(img: HTMLImageElement, size: number): string {
-    const canvas = document.createElement('canvas');
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Failed to create 2D canvas context for comparison.');
-    ctx.drawImage(img, 0, 0, size, size);
-    return canvas.toDataURL('image/jpeg', 0.92);
-}
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
-function compareWithResemble(firstDataUrl: string, secondDataUrl: string): Promise<number> {
-    return new Promise((resolve, reject) => {
-        resemble(firstDataUrl)
-            .compareTo(secondDataUrl)
-            .ignoreAntialiasing()
-            .onComplete((data: { misMatchPercentage?: string }) => {
-                const mismatch = Number.parseFloat(data.misMatchPercentage ?? '');
-                if (Number.isNaN(mismatch)) {
-                    reject(new Error('Resemble returned an invalid mismatch percentage.'));
-                    return;
-                }
-                const similarity = Math.max(0, 1 - mismatch / 100);
-                resolve(similarity);
-            });
-    });
+/**
+ * Load an HTMLImageElement from a URL with CORS enabled.
+ * Does NOT append cache-busting params — Cloudinary delivery URLs are
+ * immutable per transformation string, so busting breaks nothing useful
+ * and can interfere with signed/restricted delivery profiles.
+ */
+async function loadImage(url: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
+    img.src = url;
+  });
 }
 
 /**
- * Apply face-enhancing Cloudinary transformations to a public_id.
- * This normalizes lighting, upscales, sharpens, and face-crops both images
- * to the same 400x400 canvas before resemble.js comparison.
+ * Convert Euclidean distance (0 = identical, ~1.2 = very different)
+ * to a 0–100 integer similarity score for display.
+ */
+function distanceToSimilarity(distance: number): number {
+  return Math.max(0, Math.round((1 - distance / MAX_DISPLAY_DISTANCE) * 100));
+}
+
+/**
+ * Build a Cloudinary face-normalisation URL optimised for face-api.js input:
+ *  - g_face  : centre-crop on the detected face
+ *  - 400×400 : consistent input size the model expects
+ *  - q_auto  : let Cloudinary pick quality (avoid over-compression)
+ *  - f_jpg   : decode to a concrete raster format
+ *
+ * Intentionally NO e_improve / e_sharpen — those filters shift pixel values
+ * and reduce the model's face-detection confidence scores.
  */
 export function buildFaceUrl(cloudName: string, publicId: string): string {
-    return (
-        `https://res.cloudinary.com/${cloudName}/image/upload/` +
-        `c_fill,g_face,w_400,h_400,e_sharpen:60,e_improve,q_auto,f_jpg/` +
-        publicId
-    );
+  return (
+    `https://res.cloudinary.com/${cloudName}/image/upload/` +
+    `c_fill,g_face,w_400,h_400,q_auto,f_jpg/` +
+    publicId
+  );
 }
 
+// ── Hook ──────────────────────────────────────────────────────────────────────
+
 export function useFaceVerification(cloudName: string) {
-    const [result, setResult] = useState<FaceVerifyResult>({
-        status: 'idle',
+  const [result, setResult] = useState<FaceVerifyResult>({
+    status: 'idle',
+    similarity: null,
+    score: null,
+    message: '',
+    passed: false,
+  });
+
+  const runningRef = useRef(false);
+
+  const verify = useCallback(
+    async (idPublicId: string, selfiePublicId: string) => {
+      if (runningRef.current) return;
+      runningRef.current = true;
+
+      // ── Step 1: Load face-api.js models (cached after first call) ──────────
+      setResult({
+        status: 'loading-models',
         similarity: null,
         score: null,
-        message: '',
+        message: 'Loading face recognition models…',
         passed: false,
-    });
+      });
 
-    const runningRef = useRef(false);
-
-    const verify = useCallback(
-        async (idPublicId: string, selfiePublicId: string) => {
-            if (runningRef.current) return;
-            runningRef.current = true;
-
-            // ── Step 1: Preprocess via Cloudinary ───────────────────────────
-            setResult({ status: 'analyzing', similarity: null, score: null, message: 'Enhancing images with Cloudinary…', passed: false });
-
-            const idUrl = buildFaceUrl(cloudName, idPublicId);
-            const selfieUrl = buildFaceUrl(cloudName, selfiePublicId);
-
-            let idImg: HTMLImageElement;
-            let selfieImg: HTMLImageElement;
-
-            try {
-                [idImg, selfieImg] = await Promise.all([
-                    loadImageFromUrl(idUrl),
-                    loadImageFromUrl(selfieUrl),
-                ]);
-            } catch (err) {
-                setResult({
-                    status: 'error',
-                    similarity: null,
-                    score: null,
-                    message: `Could not load images for comparison: ${err instanceof Error ? err.message : 'network error'}`,
-                    passed: false,
-                });
-                runningRef.current = false;
-                return;
-            }
-
-            // ── Step 2: Compute resemble.js similarity ───────────────────────
-            let score: number;
-            try {
-                const idDataUrl = toDataUrl(idImg, COMPARISON_CANVAS_SIZE);
-                const selfieDataUrl = toDataUrl(selfieImg, COMPARISON_CANVAS_SIZE);
-                score = await compareWithResemble(idDataUrl, selfieDataUrl);
-                // const idData = toImageData(idImg, COMPARISON_CANVAS_SIZE);
-                // const selfieData = toImageData(selfieImg, COMPARISON_CANVAS_SIZE);
-                // const { mssim } = ssim(idData, selfieData);
-                // score = mssim;
-            } catch (err) {
-                setResult({
-                    status: 'error',
-                    similarity: null,
-                    score: null,
-                    message: `Resemble.js comparison failed: ${err instanceof Error ? err.message : 'unknown error'}`,
-                    passed: false,
-                });
-                runningRef.current = false;
-                return;
-            }
-
-            const similarity = Math.round(score * 100);
-            const passed = score >= PASS_THRESHOLD;
-
-            setResult({
-                status: 'done',
-                similarity,
-                score: Math.round(score * 1000) / 1000,
-                message: passed
-                    ? 'Image structures are consistent across your ID and selfie.'
-                    : `The ID and selfie are not structurally similar enough. Score: ${score.toFixed(3)}`,
-                passed,
-            });
-
-            runningRef.current = false;
-        },
-        [cloudName],
-    );
-
-    const reset = useCallback(() => {
+      try {
+        await ensureModelsLoaded();
+      } catch (err) {
+        setResult({
+          status: 'error',
+          similarity: null,
+          score: null,
+          message: `Failed to load face recognition models: ${
+            err instanceof Error ? err.message : 'network error'
+          }`,
+          passed: false,
+        });
         runningRef.current = false;
-        setResult({ status: 'idle', similarity: null, score: null, message: '', passed: false });
-    }, []);
+        return;
+      }
 
-    return { result, verify, reset };
+      // ── Step 2: Build clean Cloudinary URLs and load images ────────────────
+      setResult({
+        status: 'analyzing',
+        similarity: null,
+        score: null,
+        message: 'Enhancing images with Cloudinary…',
+        passed: false,
+      });
+
+      const idUrl = buildFaceUrl(cloudName, idPublicId);
+      const selfieUrl = buildFaceUrl(cloudName, selfiePublicId);
+
+      let idImg: HTMLImageElement;
+      let selfieImg: HTMLImageElement;
+
+      try {
+        [idImg, selfieImg] = await Promise.all([
+          loadImage(idUrl),
+          loadImage(selfieUrl),
+        ]);
+      } catch (err) {
+        setResult({
+          status: 'error',
+          similarity: null,
+          score: null,
+          message: `Could not load images for analysis: ${
+            err instanceof Error ? err.message : 'network error'
+          }. Ensure your Cloudinary cloud name is correct and the images are publicly accessible.`,
+          passed: false,
+        });
+        runningRef.current = false;
+        return;
+      }
+
+      // ── Step 3: Detect faces and extract descriptors ───────────────────────
+      setResult((prev) => ({ ...prev, message: 'Detecting faces and extracting descriptors…' }));
+
+      type DetectionResult = faceapi.WithFaceDescriptor<
+        faceapi.WithFaceLandmarks<
+          { detection: faceapi.FaceDetection },
+          faceapi.FaceLandmarks68
+        >
+      > | undefined;
+
+      let idDetection: DetectionResult;
+      let selfieDetection: DetectionResult;
+
+      try {
+        [idDetection, selfieDetection] = await Promise.all([
+          faceapi
+            .detectSingleFace(idImg, DETECTION_OPTIONS)
+            .withFaceLandmarks()
+            .withFaceDescriptor(),
+          faceapi
+            .detectSingleFace(selfieImg, DETECTION_OPTIONS)
+            .withFaceLandmarks()
+            .withFaceDescriptor(),
+        ]);
+      } catch (err) {
+        setResult({
+          status: 'error',
+          similarity: null,
+          score: null,
+          message: `Face detection error: ${
+            err instanceof Error ? err.message : 'unknown error'
+          }`,
+          passed: false,
+        });
+        runningRef.current = false;
+        return;
+      }
+
+      // ── Step 4: Validate detections — with actionable error messages ───────
+      if (!idDetection) {
+        setResult({
+          status: 'error',
+          similarity: null,
+          score: null,
+          message:
+            'No face detected in the ID document. Please upload a clear, well-lit photo showing a complete face. Avoid photos where the face is obscured, very small, or at a sharp angle.',
+          passed: false,
+        });
+        runningRef.current = false;
+        return;
+      }
+
+      if (!selfieDetection) {
+        setResult({
+          status: 'error',
+          similarity: null,
+          score: null,
+          message:
+            'No face detected in the selfie. Please retake in good lighting, looking directly at the camera with your full face visible.',
+          passed: false,
+        });
+        runningRef.current = false;
+        return;
+      }
+
+      // ── Step 5: Compute Euclidean distance between descriptors ─────────────
+      const distance = faceapi.euclideanDistance(
+        idDetection.descriptor,
+        selfieDetection.descriptor,
+      );
+
+      const similarity = distanceToSimilarity(distance);
+      const roundedDistance = Math.round(distance * 1000) / 1000;
+      const passed = distance <= PASS_THRESHOLD;
+
+      setResult({
+        status: 'done',
+        similarity,
+        score: roundedDistance,
+        message: passed
+          ? `Face descriptors match with high confidence (distance ${roundedDistance}).`
+          : `Face descriptors do not match closely enough (distance ${roundedDistance}, threshold ${PASS_THRESHOLD}).`,
+        passed,
+      });
+
+      runningRef.current = false;
+    },
+    [cloudName],
+  );
+
+  const reset = useCallback(() => {
+    runningRef.current = false;
+    setResult({ status: 'idle', similarity: null, score: null, message: '', passed: false });
+  }, []);
+
+  return { result, verify, reset };
 }

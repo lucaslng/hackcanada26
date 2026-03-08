@@ -57,12 +57,12 @@ export interface WizardActions {
   setIdPhoto: (result: CloudinaryUploadResult | null) => void;
   setFacePhoto: (result: CloudinaryUploadResult | null) => void;
   setRequiredUpload: (requirement: string, result: CloudinaryUploadResult | null) => void;
+  setMatchScore: (score: number) => void;
   setNotificationChannel: (channel: 'email' | 'sms') => void;
   setContactValue: (value: string) => void;
   goNext: () => void;
   goBack: () => void;
   jumpToStep: (targetStep: number) => void;
-  compareFaces: () => void;
   mapFormsFromText: (raw: string) => void;
   saveNotifications: () => void;
 }
@@ -115,12 +115,7 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     if (step === 3) return Boolean(idPhoto);
     if (step === 4) return Boolean(facePhoto);
     if (step === 5) return Boolean(matchScore && matchScore >= 82);
-    if (step === 6) {
-      if (!selectedOption) return false;
-      const requiredForms = selectedOption.forms;
-      if (requiredForms.length === 0) return true;
-      return requiredForms.every((form) => Boolean(requiredUploads[form.id]));
-    }
+    if (step === 6) return Boolean(selectedOptionId);
     if (step === 7) return true;
     if (step === 8) return Boolean(contactValue.trim());
     return false;
@@ -144,32 +139,22 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     const text = raw.toLowerCase().trim();
     if (!text) return null;
     return (
-      availableOptions.find(
-        (o) => {
-          const localizedTitle = getServiceText(o.id, language)?.title ?? '';
-          const localizedKeywords = getServiceDetailsText(o.id, language)?.keywords ?? [];
-          const allKeywords = [...o.keywords, ...localizedKeywords];
-          return (
-            allKeywords.some((kw) => text.includes(kw.toLowerCase()))
-            || text.includes(o.title.toLowerCase())
-            || text.includes(localizedTitle.toLowerCase())
-          );
-        },
-      ) ?? null
+      availableOptions.find((o) => {
+        const localizedTitle = getServiceText(o.id, language)?.title ?? '';
+        const localizedKeywords = getServiceDetailsText(o.id, language)?.keywords ?? [];
+        const allKeywords = [...o.keywords, ...localizedKeywords];
+        return (
+          allKeywords.some((kw) => text.includes(kw.toLowerCase()))
+          || text.includes(o.title.toLowerCase())
+          || text.includes(localizedTitle.toLowerCase())
+        );
+      }) ?? null
     );
   };
 
   const mapFormsFromText = (raw: string) => {
     const option = matchIntentToOption(raw) ?? selectedOption;
     setMappedForms(option ? option.forms : []);
-  };
-
-  const compareFaces = () => {
-    if (!idPhoto || !facePhoto) return;
-		setMatchScore(100);
-    // const fingerprint = `${idPhoto.public_id}:${facePhoto.public_id}`;
-    // const checksum = [...fingerprint].reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    // setMatchScore(70 + (checksum % 30));
   };
 
   const setRequiredUpload = (requirement: string, result: CloudinaryUploadResult | null) => {
@@ -220,12 +205,12 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     setIdPhoto,
     setFacePhoto,
     setRequiredUpload,
+    setMatchScore,
     setNotificationChannel: (ch) => setNotificationChannel(ch),
     setContactValue: (v) => { setContactValue(v); setNotificationSaved(false); },
     goNext,
     goBack,
     jumpToStep,
-    compareFaces,
     mapFormsFromText,
     saveNotifications,
   };
