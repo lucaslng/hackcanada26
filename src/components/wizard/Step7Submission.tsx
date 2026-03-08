@@ -1,6 +1,4 @@
 // Step7Submission.tsx
-// Drop-in replacement for the Step7 export in WizardSteps.tsx
-// Shows enhanced Cloudinary previews of uploaded documents + a dummy submission flow.
 
 import { useState } from 'react';
 import type { CloudinaryUploadResult } from '../../cloudinary/UploadWidget';
@@ -19,7 +17,6 @@ interface Step7Props {
   selectedOption: RenewalOption | null;
   serviceTitle: string;
   matchScore: number | null;
-  requiredUploads: Record<string, CloudinaryUploadResult | null>;
 }
 
 type SubmitStatus = 'idle' | 'processing' | 'done';
@@ -28,10 +25,6 @@ type SubmitStatus = 'idle' | 'processing' | 'done';
 
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string;
 
-/**
- * Build an "enhanced document" URL — auto-contrast, sharpen, trim,
- * restricted to a thumbnail size. Safe to show as a preview.
- */
 function buildDocPreviewUrl(publicId: string): string {
   return (
     `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/` +
@@ -40,9 +33,6 @@ function buildDocPreviewUrl(publicId: string): string {
   );
 }
 
-/**
- * Build an "enhanced face" URL — crop to face, normalise lighting.
- */
 function buildFacePreviewUrl(publicId: string): string {
   return (
     `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/` +
@@ -138,7 +128,6 @@ export function Step7({
   selectedOption,
   serviceTitle,
   matchScore,
-  requiredUploads,
 }: Step7Props) {
   const [status, setStatus] = useState<SubmitStatus>('idle');
   const [progressStep, setProgressStep] = useState(0);
@@ -149,23 +138,13 @@ export function Step7({
     dateStyle: 'long', timeStyle: 'short',
   }));
 
-  const requiredForms = selectedOption?.forms ?? [];
-  const allRequiredUploaded = requiredForms.every((form) => Boolean(requiredUploads[form.id]));
-
-  const canSubmit = Boolean(
-    idPhoto
-    && facePhoto
-    && contactInfo.fullName
-    && contactInfo.email
-    && allRequiredUploaded,
-  );
+  const canSubmit = Boolean(idPhoto && facePhoto && contactInfo.fullName && contactInfo.email);
 
   const handleSubmit = () => {
     if (!canSubmit || status !== 'idle') return;
     setStatus('processing');
     setProgressStep(0);
 
-    // Animate through steps
     const delays = [800, 1400, 1000, 1200];
     let cumulative = 0;
     delays.forEach((delay, i) => {
@@ -173,7 +152,6 @@ export function Step7({
       setTimeout(() => setProgressStep(i + 1), cumulative);
     });
 
-    // Finish
     setTimeout(() => setStatus('done'), cumulative + 600);
   };
 
@@ -186,9 +164,7 @@ export function Step7({
         </div>
         <div>
           <h2>{t.step7Title}</h2>
-          <p className="s7-subtitle">
-            {t.step7ReviewSubtitle}
-          </p>
+          <p className="s7-subtitle">{t.step7ReviewSubtitle}</p>
         </div>
       </div>
 
@@ -214,9 +190,7 @@ export function Step7({
               </div>
             )}
           </div>
-          <p className="s7-cloudinary-note">
-            {t.step7CloudinaryEnhanced}
-          </p>
+          <p className="s7-cloudinary-note">{t.step7CloudinaryEnhanced}</p>
         </div>
       )}
 
@@ -259,15 +233,6 @@ export function Step7({
         </div>
       </div>
 
-      {status === 'idle' && requiredForms.length > 0 && (
-        <div className="s7-section">
-          <div className="s7-section-label">
-            <span className="material-symbols-outlined">task_alt</span>
-            Signed forms uploaded ({requiredForms.filter((form) => requiredUploads[form.id]).length}/{requiredForms.length})
-          </div>
-        </div>
-      )}
-
       {/* ── Processing animation ── */}
       {status === 'processing' && (
         <div className="s7-section">
@@ -282,9 +247,7 @@ export function Step7({
             <span className="material-symbols-outlined">task_alt</span>
           </div>
           <h3>{t.step7SuccessTitle}</h3>
-          <p>
-            {t.step7SuccessBody}
-          </p>
+          <p>{t.step7SuccessBody}</p>
           <div className="s7-confirmation-chip">
             <span className="s7-conf-label">{t.step7ConfirmationNumber}</span>
             <strong className="s7-conf-id">{confirmationId}</strong>
