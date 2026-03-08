@@ -18,8 +18,8 @@ const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string;
  * Build a Cloudinary face-crop preview URL for display in VerificationStep.
  *
  * Must match buildFaceUrl() in useFaceVerification.ts exactly so the user
- * sees the same image that the model analyses — no e_improve / e_sharpen so
- * face detection confidence scores are not degraded.
+ * sees the same image the model analyses. No e_improve / e_sharpen —
+ * those filters degrade face-detection confidence scores.
  */
 function toFaceUrl(publicId: string): string {
   return (
@@ -111,14 +111,7 @@ export function WizardShell({ t, state, actions, serviceTitle, language, onExit 
         );
       }
       case 6:
-        return (
-          <Step6
-            t={t}
-            selectedOption={state.selectedOption}
-            requiredUploads={state.requiredUploads}
-            onRequiredUpload={actions.setRequiredUpload}
-          />
-        );
+        return <Step6 t={t} selectedOption={state.selectedOption} />;
       case 7:
         return (
           <Step7
@@ -130,7 +123,6 @@ export function WizardShell({ t, state, actions, serviceTitle, language, onExit 
             selectedOption={state.selectedOption}
             serviceTitle={serviceTitle}
             matchScore={state.matchScore}
-            requiredUploads={state.requiredUploads}
           />
         );
       case 8:
@@ -196,7 +188,7 @@ export function WizardShell({ t, state, actions, serviceTitle, language, onExit 
         {renderStep()}
       </div>
 
-      {/* Hide the shared nav bar on step 5 — VerificationStep has its own controls */}
+      {/* Step 5 manages its own nav — VerificationStep has built-in back/continue */}
       {!isVerificationStep && (
         <div className="wizard-nav wizard-nav-sticky">
           <div className="wizard-nav-left">
