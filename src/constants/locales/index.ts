@@ -15,16 +15,16 @@ export type { Language, LocalePack, UIStrings } from './types';
 
 export const LANGUAGE_OPTIONS: Array<{ value: Language; label: string }> = [
   { value: 'en', label: 'English' },
-  { value: 'fr', label: 'Francais' },
-  { value: 'es', label: 'Espanol' },
-  { value: 'zh-Hans', label: 'Chinese (Simplified)' },
-  { value: 'ar', label: 'Arabic' },
-  { value: 'hi', label: 'Hindi' },
+  { value: 'fr', label: 'Français' },
+  { value: 'es', label: 'Español' },
+  { value: 'zh-Hans', label: '简体中文' },
+  { value: 'ar', label: 'العربية' },
+  { value: 'hi', label: 'हिन्दी' },
   { value: 'tl', label: 'Tagalog' },
-  { value: 'zh-Hant', label: 'Chinese (Traditional)' },
-  { value: 'it', label: 'Italian' },
-  { value: 'de', label: 'German' },
-  { value: 'ur', label: 'Urdu' },
+  { value: 'zh-Hant', label: '繁體中文' },
+  { value: 'it', label: 'Italiano' },
+  { value: 'de', label: 'Deutsch' },
+  { value: 'ur', label: 'اردو' },
 ];
 
 const LOCALES: Record<Language, LocalePack> = {

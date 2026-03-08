@@ -43,6 +43,10 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
 
 export function HomePage({ t, language, onStartService, onNavigate }: HomePageProps) {
   const [selectedServiceId, setSelectedServiceId] = useState<string>(RENEWAL_OPTIONS[0]?.id ?? '');
+  const popularServiceIds = ['passport', 'drivers-license', 'health-card', 'sin'];
+  const popularServices = popularServiceIds
+    .map((id) => RENEWAL_OPTIONS.find((option) => option.id === id))
+    .filter((option): option is RenewalOption => Boolean(option));
 
   const selectedOption = useMemo(
     () => RENEWAL_OPTIONS.find((option) => option.id === selectedServiceId) ?? RENEWAL_OPTIONS[0] ?? null,
@@ -53,29 +57,44 @@ export function HomePage({ t, language, onStartService, onNavigate }: HomePagePr
     <div className="gov-home-wrap">
       {/* ── Hero ── */}
       <RevealSection className="gov-home-hero" id="home">
-        <p className="gov-eyebrow">{t.heroEyebrow}</p>
-        <h1>
-          {t.heroTitle.endsWith(' Faster')
-            ? (
-                <>
-                  {t.heroTitle.slice(0, -7).trim()}
-                  {' '}
-                  <span className="hero-title-emphasis">Faster</span>
-                </>
-              )
-            : t.heroTitle}
-        </h1>
-        <p className="gov-hero-body">{t.heroBody}</p>
-        <div className="hero-actions">
-          <Button onClick={() => onNavigate('services')}>{t.startService}</Button>
-          <Button variant="secondary" onClick={() => onNavigate('information')}>
-            {t.learnMore}
-          </Button>
+        <div className="hero-main">
+          <p className="gov-eyebrow">{t.heroEyebrow}</p>
+          <h1>{t.heroTitle}</h1>
+          <p className="gov-hero-body">{t.heroBody}</p>
+          <div className="hero-actions">
+            <Button onClick={() => onNavigate('services')}>{t.startService}</Button>
+            <Button variant="secondary" onClick={() => onNavigate('information')}>
+              {t.howItWorks}
+            </Button>
+          </div>
+        </div>
+      </RevealSection>
+
+      {/* ── Popular Services ── */}
+      <RevealSection className="gov-home-section" id="services">
+        <div className="section-title-row">
+          <h2>{t.popularServicesTitle}</h2>
+          <p>{t.popularServicesBody}</p>
+        </div>
+        <div className="popular-services-grid">
+          {popularServices.map((service) => {
+            const copy = getServiceCopy(service, language);
+            return (
+              <article key={service.id} className="popular-service-card">
+                <span className="material-symbols-outlined popular-service-icon" aria-hidden="true">{service.icon}</span>
+                <h3>{copy.title}</h3>
+                <p>{copy.description}</p>
+                <Button onClick={() => onStartService(service.id)} disabled={!service.available}>
+                  {service.available ? t.startService : t.comingSoon}
+                </Button>
+              </article>
+            );
+          })}
         </div>
       </RevealSection>
 
       {/* ── Services ── */}
-      <RevealSection className="gov-home-section" id="services">
+      <RevealSection className="gov-home-section">
         <div className="section-title-row">
           <h2>{t.supportedServices}</h2>
           <p>{t.supportedServicesBody}</p>
@@ -148,25 +167,66 @@ export function HomePage({ t, language, onStartService, onNavigate }: HomePagePr
         </div>
         <div className="how-grid">
           <div className="how-step">
+            <span className="how-step-number">1</span>
             <span className="material-symbols-outlined" aria-hidden="true">cloud_upload</span>
             <h3>{t.uploadDocuments}</h3>
             <p>{t.uploadDocumentsBody}</p>
           </div>
           <div className="how-step">
+            <span className="how-step-number">2</span>
             <span className="material-symbols-outlined" aria-hidden="true">verified_user</span>
             <h3>{t.verifyIdentity}</h3>
             <p>{t.verifyIdentityBody}</p>
           </div>
           <div className="how-step">
-            <span className="material-symbols-outlined" aria-hidden="true">queue_play_next</span>
-            <h3>{t.skipLine}</h3>
-            <p>{t.skipLineBody}</p>
+            <span className="how-step-number">3</span>
+            <span className="material-symbols-outlined" aria-hidden="true">send</span>
+            <h3>{t.submitApplication}</h3>
+            <p>{t.submitApplicationBody}</p>
+          </div>
+        </div>
+      </RevealSection>
+
+      {/* ── Why Portal ── */}
+      <RevealSection className="gov-home-section" id="security-privacy">
+        <div className="section-title-row">
+          <h2>{t.whyPortalTitle}</h2>
+          <p>{t.whyPortalBody}</p>
+        </div>
+        <div className="security-grid">
+          <div className="security-item">
+            <span className="material-symbols-outlined" aria-hidden="true">schedule</span>
+            <div>
+              <h3>{t.whySkipLinesTitle}</h3>
+              <p>{t.whySkipLinesBody}</p>
+            </div>
+          </div>
+          <div className="security-item">
+            <span className="material-symbols-outlined" aria-hidden="true">bolt</span>
+            <div>
+              <h3>{t.whyFasterProcessingTitle}</h3>
+              <p>{t.whyFasterProcessingBody}</p>
+            </div>
+          </div>
+          <div className="security-item">
+            <span className="material-symbols-outlined" aria-hidden="true">manage_search</span>
+            <div>
+              <h3>{t.whySecureVerificationTitle}</h3>
+              <p>{t.identityVerificationBody}</p>
+            </div>
+          </div>
+          <div className="security-item">
+            <span className="material-symbols-outlined" aria-hidden="true">public</span>
+            <div>
+              <h3>{t.whyAccessibleServicesTitle}</h3>
+              <p>{t.whyAccessibleServicesBody}</p>
+            </div>
           </div>
         </div>
       </RevealSection>
 
       {/* ── Security ── */}
-      <RevealSection className="gov-home-section" id="security-privacy">
+      <RevealSection className="gov-home-section">
         <div className="section-title-row">
           <h2>{t.securityPrivacy}</h2>
           <p>{t.securityPrivacyBody}</p>
@@ -191,6 +251,13 @@ export function HomePage({ t, language, onStartService, onNavigate }: HomePagePr
             <div>
               <h3>{t.encryptedProcessing}</h3>
               <p>{t.encryptedProcessingBody}</p>
+            </div>
+          </div>
+          <div className="security-item">
+            <span className="material-symbols-outlined" aria-hidden="true">task_alt</span>
+            <div>
+              <h3>{t.remoteProcessing}</h3>
+              <p>{t.remoteProcessingBody}</p>
             </div>
           </div>
         </div>
