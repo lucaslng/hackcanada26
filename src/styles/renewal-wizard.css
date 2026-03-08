@@ -947,6 +947,10 @@
   gap: 0.7rem;
 }
 
+.form-upload-progress {
+  margin: 0 0 0.8rem;
+}
+
 .forms-filter-row {
   display: inline-flex;
   align-items: center;
@@ -1099,7 +1103,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 0.35rem;
+  gap: 0.45rem;
   min-width: 188px;
 }
 
@@ -1118,19 +1122,20 @@
 }
 
 .form-card__link {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--red);
-  padding: 0.42rem 0.75rem;
-  border: 1px solid color-mix(in srgb, var(--red) 35%, var(--border));
-  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
-  background: color-mix(in srgb, var(--red) 5%, var(--surface));
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text);
+  padding: 0.5rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--navy, #1f2f4a) 35%, var(--border));
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  background: color-mix(in srgb, var(--navy, #1f2f4a) 7%, var(--surface));
 }
 
 .form-card__link:hover,
 .form-card__link:focus-visible {
-  background: color-mix(in srgb, var(--red) 12%, var(--surface));
-  border-color: var(--red);
+  background: color-mix(in srgb, var(--navy, #1f2f4a) 12%, var(--surface));
+  border-color: color-mix(in srgb, var(--navy, #1f2f4a) 55%, var(--border));
+  transform: translateY(-1px);
   outline: none;
 }
 
@@ -1156,6 +1161,39 @@
 .form-card__btn--primary:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+.form-card__uploaded-link {
+  border: 1px solid var(--status-good-border);
+  background: var(--status-good-bg);
+  color: var(--status-good-text);
+}
+
+.form-card__uploaded-link:hover,
+.form-card__uploaded-link:focus-visible {
+  border-color: color-mix(in srgb, var(--status-good-border) 80%, #000);
+  background: color-mix(in srgb, var(--status-good-bg) 88%, var(--surface));
+  outline: none;
+}
+
+.form-card__remove-btn {
+  border: 1px solid var(--status-bad-border);
+  background: var(--status-bad-bg);
+  color: var(--status-bad-text);
+  border-radius: 8px;
+}
+
+.form-card__remove-btn:hover:not(:disabled),
+.form-card__remove-btn:focus-visible {
+  border-color: color-mix(in srgb, var(--status-bad-border) 80%, #000);
+  background: color-mix(in srgb, var(--status-bad-bg) 90%, var(--surface));
+  outline: none;
+}
+
+.form-card__upload-meta {
+  margin: 0;
+  font-size: 0.76rem;
+  color: var(--text-muted);
 }
 
 .form-card__copy-btn {

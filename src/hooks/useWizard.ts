@@ -116,7 +116,11 @@ export function useWizard(selectedOptionId: string | null, language: Language) {
     if (step === 3) return Boolean(idPhoto);
     if (step === 4) return Boolean(facePhoto);
     if (step === 5) return matchScore !== null && matchScore >= 82;
-    if (step === 6) return Boolean(selectedOptionId);
+    if (step === 6) {
+      if (!selectedOption) return false;
+      if (selectedOption.forms.length === 0) return true;
+      return selectedOption.forms.every((form) => Boolean(requiredUploads[form.id]));
+    }
     if (step === 7) return true;
     if (step === 8) return Boolean(contactValue.trim());
     return false;
