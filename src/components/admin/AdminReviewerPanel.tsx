@@ -27,6 +27,17 @@ type ApplicationRecord = {
   reviewLog?: ReviewLog;
 };
 
+const SAMPLE_DOC_IMAGES = ["/f1.png", "/f2.png", "/f3.png", "/f4.png", "/f5.png"] as const;
+
+function pickRandomThumbnails(): DocumentThumbnails {
+  const shuffled = [...SAMPLE_DOC_IMAGES].sort(() => Math.random() - 0.5);
+  return {
+    passportScan: shuffled[0],
+    selfie: shuffled[1],
+    proofOfId: shuffled[2],
+  };
+}
+
 const REJECT_REASONS: RejectReason[] = ['Document incomplete', 'Mismatch in ID', 'Blurry photo', 'Other'];
 const REVIEWER_ID = 'admin.reviewer.001';
 
@@ -37,11 +48,7 @@ const INITIAL_APPLICATIONS: ApplicationRecord[] = [
     serviceRequested: 'Passport Renewal',
     submittedAt: '2026-03-06T13:20:00-05:00',
     status: 'Pending',
-    thumbnails: {
-      passportScan: 'https://res.cloudinary.com/demo/image/upload/c_fill,g_face,w_120,h_120/v1312461204/sample.jpg',
-      selfie: 'https://res.cloudinary.com/demo/image/upload/c_fill,g_face,w_120,h_120/samples/people/kitchen-bar.jpg',
-      proofOfId: 'https://res.cloudinary.com/demo/image/upload/c_fill,g_face,w_120,h_120/samples/people/boy-snow-hoodie.jpg',
-    },
+    thumbnails: pickRandomThumbnails(),
   },
   {
     id: 'APP-10022',
@@ -49,11 +56,7 @@ const INITIAL_APPLICATIONS: ApplicationRecord[] = [
     serviceRequested: 'Driver\u2019s Licence',
     submittedAt: '2026-03-07T09:04:00-05:00',
     status: 'Pending',
-    thumbnails: {
-      passportScan: 'https://res.cloudinary.com/demo/image/upload/c_fill,g_face,w_120,h_120/samples/people/jazz.jpg',
-      selfie: 'https://res.cloudinary.com/demo/image/upload/c_fill,g_face,w_120,h_120/samples/people/smiling-man.jpg',
-      proofOfId: 'https://res.cloudinary.com/demo/image/upload/c_fill,g_face,w_120,h_120/samples/people/bicycle.jpg',
-    },
+    thumbnails: pickRandomThumbnails(),
   },
   {
     id: 'APP-10023',
@@ -61,11 +64,7 @@ const INITIAL_APPLICATIONS: ApplicationRecord[] = [
     serviceRequested: 'Health Card',
     submittedAt: '2026-03-07T11:42:00-05:00',
     status: 'Pending',
-    thumbnails: {
-      passportScan: 'https://res.cloudinary.com/demo/image/upload/c_fill,g_face,w_120,h_120/samples/people/boy-snow-hoodie.jpg',
-      selfie: 'https://res.cloudinary.com/demo/image/upload/c_fill,g_face,w_120,h_120/samples/people/kitchen-bar.jpg',
-      proofOfId: 'https://res.cloudinary.com/demo/image/upload/c_fill,g_face,w_120,h_120/samples/people/jazz.jpg',
-    },
+    thumbnails: pickRandomThumbnails(),
   },
   {
     id: 'APP-10024',
@@ -73,11 +72,7 @@ const INITIAL_APPLICATIONS: ApplicationRecord[] = [
     serviceRequested: 'SIN Update',
     submittedAt: '2026-03-07T13:18:00-05:00',
     status: 'Pending',
-    thumbnails: {
-      passportScan: 'https://res.cloudinary.com/demo/image/upload/c_fill,g_face,w_120,h_120/samples/people/smiling-man.jpg',
-      selfie: 'https://res.cloudinary.com/demo/image/upload/c_fill,g_face,w_120,h_120/samples/people/bicycle.jpg',
-      proofOfId: 'https://res.cloudinary.com/demo/image/upload/c_fill,g_face,w_120,h_120/v1312461204/sample.jpg',
-    },
+    thumbnails: pickRandomThumbnails(),
   },
 ];
 

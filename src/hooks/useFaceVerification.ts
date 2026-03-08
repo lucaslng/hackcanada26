@@ -8,6 +8,7 @@
 // Models are loaded from the official jsDelivr CDN (no local assets needed).
 
 import { useCallback, useRef, useState } from 'react';
+import '@tensorflow/tfjs';
 import * as faceapi from 'face-api.js';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -79,6 +80,65 @@ async function ensureModelsLoaded(): Promise<void> {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+type TfRuntime = {
+  getBackend?: () => string;
+  setBackend?: (backend: string) => Promise<boolean> | boolean;
+  ready?: () => Promise<void>;
+};
+
+function getFaceApiTfRuntime(): TfRuntime {
+  const runtime = (faceapi as unknown as { tf?: TfRuntime }).tf;
+  if (!runtime) {
+    throw new Error('TensorFlow runtime not found on face-api instance.');
+  }
+  return runtime;
+}
+
+async function waitForTfReady(tfRuntime: TfRuntime): Promise<void> {
+  if (typeof tfRuntime.ready === 'function') {
+    await tfRuntime.ready();
+    return;
+  }
+  // Older tfjs versions used by face-api.js may not expose tf.ready().
+  await Promise.resolve();
+}
+
+async function ensureTensorflowBackend(): Promise<void> {
+  const tfRuntime = getFaceApiTfRuntime();
+
+  if (typeof tfRuntime.getBackend !== 'function' || typeof tfRuntime.setBackend !== 'function') {
+    throw new Error('TensorFlow runtime is missing backend APIs.');
+  }
+
+  const currentBackend = tfRuntime.getBackend();
+  if (currentBackend) {
+    await waitForTfReady(tfRuntime);
+    return;
+  }
+
+  try {
+    const webglOk = await tfRuntime.setBackend('webgl');
+    if (webglOk) {
+      await waitForTfReady(tfRuntime);
+      return;
+    }
+  } catch {
+    // Fall through to CPU backend attempt.
+  }
+
+  try {
+    const cpuOk = await tfRuntime.setBackend('cpu');
+    if (cpuOk) {
+      await waitForTfReady(tfRuntime);
+      return;
+    }
+  } catch {
+    // Handled by the error below.
+  }
+
+  throw new Error('Unable to initialize TensorFlow backend (webgl/cpu).');
+}
+
 /**
  * Load an HTMLImageElement from a URL with CORS enabled.
  * Does NOT append cache-busting params — Cloudinary delivery URLs are
@@ -149,13 +209,14 @@ export function useFaceVerification(cloudName: string) {
       });
 
       try {
+        await ensureTensorflowBackend();
         await ensureModelsLoaded();
       } catch (err) {
         setResult({
           status: 'error',
           similarity: null,
           score: null,
-          message: `Failed to load face recognition models: ${
+          message: `Failed to initialize face recognition runtime/models: ${
             err instanceof Error ? err.message : 'network error'
           }`,
           passed: false,
