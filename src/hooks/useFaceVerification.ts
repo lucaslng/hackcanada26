@@ -8,7 +8,6 @@
 // Models are loaded from the official jsDelivr CDN (no local assets needed).
 
 import { useCallback, useRef, useState } from 'react';
-import '@tensorflow/tfjs';
 import * as faceapi from 'face-api.js';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
